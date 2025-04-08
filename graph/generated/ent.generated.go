@@ -630,14 +630,11 @@ func (ec *executionContext) _Profile_name(ctx context.Context, field graphql.Col
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Profile_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -674,14 +671,11 @@ func (ec *executionContext) _Profile_gender(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Profile_gender(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1283,14 +1277,14 @@ func (ec *executionContext) unmarshalInputCreateProfileInput(ctx context.Context
 			it.Sub = data
 		case "name":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Name = data
 		case "gender":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gender"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -1346,7 +1340,7 @@ func (ec *executionContext) unmarshalInputProfileWhereInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "updateTimeIsNil", "updateTimeNotNil", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subEqualFold", "subContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "gender", "genderNEQ", "genderIn", "genderNotIn", "genderGT", "genderGTE", "genderLT", "genderLTE", "genderContains", "genderHasPrefix", "genderHasSuffix", "genderEqualFold", "genderContainsFold"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "updateTimeIsNil", "updateTimeNotNil", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subEqualFold", "subContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "gender", "genderNEQ", "genderIn", "genderNotIn", "genderGT", "genderGTE", "genderLT", "genderLTE", "genderContains", "genderHasPrefix", "genderHasSuffix", "genderIsNil", "genderNotNil", "genderEqualFold", "genderContainsFold"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -1724,6 +1718,20 @@ func (ec *executionContext) unmarshalInputProfileWhereInput(ctx context.Context,
 				return it, err
 			}
 			it.NameHasSuffix = data
+		case "nameIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameIsNil = data
+		case "nameNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameNotNil = data
 		case "nameEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -1815,6 +1823,20 @@ func (ec *executionContext) unmarshalInputProfileWhereInput(ctx context.Context,
 				return it, err
 			}
 			it.GenderHasSuffix = data
+		case "genderIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genderIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GenderIsNil = data
+		case "genderNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genderNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GenderNotNil = data
 		case "genderEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genderEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -1842,7 +1864,7 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updateTime", "clearUpdateTime", "sub", "name", "gender"}
+	fieldsInOrder := [...]string{"updateTime", "clearUpdateTime", "sub", "name", "clearName", "gender", "clearGender"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -1877,6 +1899,13 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 				return it, err
 			}
 			it.Name = data
+		case "clearName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearName"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearName = data
 		case "gender":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gender"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -1884,6 +1913,13 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 				return it, err
 			}
 			it.Gender = data
+		case "clearGender":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearGender"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearGender = data
 		}
 	}
 
@@ -1990,14 +2026,8 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "name":
 			out.Values[i] = ec._Profile_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "gender":
 			out.Values[i] = ec._Profile_gender(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

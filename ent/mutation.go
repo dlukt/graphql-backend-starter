@@ -301,9 +301,22 @@ func (m *ProfileMutation) OldName(ctx context.Context) (v string, err error) {
 	return oldValue.Name, nil
 }
 
+// ClearName clears the value of the "name" field.
+func (m *ProfileMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[profile.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *ProfileMutation) NameCleared() bool {
+	_, ok := m.clearedFields[profile.FieldName]
+	return ok
+}
+
 // ResetName resets all changes to the "name" field.
 func (m *ProfileMutation) ResetName() {
 	m.name = nil
+	delete(m.clearedFields, profile.FieldName)
 }
 
 // SetGender sets the "gender" field.
@@ -337,9 +350,22 @@ func (m *ProfileMutation) OldGender(ctx context.Context) (v string, err error) {
 	return oldValue.Gender, nil
 }
 
+// ClearGender clears the value of the "gender" field.
+func (m *ProfileMutation) ClearGender() {
+	m.gender = nil
+	m.clearedFields[profile.FieldGender] = struct{}{}
+}
+
+// GenderCleared returns if the "gender" field was cleared in this mutation.
+func (m *ProfileMutation) GenderCleared() bool {
+	_, ok := m.clearedFields[profile.FieldGender]
+	return ok
+}
+
 // ResetGender resets all changes to the "gender" field.
 func (m *ProfileMutation) ResetGender() {
 	m.gender = nil
+	delete(m.clearedFields, profile.FieldGender)
 }
 
 // Where appends a list predicates to the ProfileMutation builder.
@@ -506,6 +532,12 @@ func (m *ProfileMutation) ClearedFields() []string {
 	if m.FieldCleared(profile.FieldUpdateTime) {
 		fields = append(fields, profile.FieldUpdateTime)
 	}
+	if m.FieldCleared(profile.FieldName) {
+		fields = append(fields, profile.FieldName)
+	}
+	if m.FieldCleared(profile.FieldGender) {
+		fields = append(fields, profile.FieldGender)
+	}
 	return fields
 }
 
@@ -522,6 +554,12 @@ func (m *ProfileMutation) ClearField(name string) error {
 	switch name {
 	case profile.FieldUpdateTime:
 		m.ClearUpdateTime()
+		return nil
+	case profile.FieldName:
+		m.ClearName()
+		return nil
+	case profile.FieldGender:
+		m.ClearGender()
 		return nil
 	}
 	return fmt.Errorf("unknown Profile nullable field %s", name)

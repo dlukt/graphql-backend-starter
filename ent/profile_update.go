@@ -69,6 +69,12 @@ func (pu *ProfileUpdate) SetNillableName(s *string) *ProfileUpdate {
 	return pu
 }
 
+// ClearName clears the value of the "name" field.
+func (pu *ProfileUpdate) ClearName() *ProfileUpdate {
+	pu.mutation.ClearName()
+	return pu
+}
+
 // SetGender sets the "gender" field.
 func (pu *ProfileUpdate) SetGender(s string) *ProfileUpdate {
 	pu.mutation.SetGender(s)
@@ -80,6 +86,12 @@ func (pu *ProfileUpdate) SetNillableGender(s *string) *ProfileUpdate {
 	if s != nil {
 		pu.SetGender(*s)
 	}
+	return pu
+}
+
+// ClearGender clears the value of the "gender" field.
+func (pu *ProfileUpdate) ClearGender() *ProfileUpdate {
+	pu.mutation.ClearGender()
 	return pu
 }
 
@@ -170,8 +182,14 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.Name(); ok {
 		_spec.SetField(profile.FieldName, field.TypeString, value)
 	}
+	if pu.mutation.NameCleared() {
+		_spec.ClearField(profile.FieldName, field.TypeString)
+	}
 	if value, ok := pu.mutation.Gender(); ok {
 		_spec.SetField(profile.FieldGender, field.TypeString, value)
+	}
+	if pu.mutation.GenderCleared() {
+		_spec.ClearField(profile.FieldGender, field.TypeString)
 	}
 	_spec.AddModifiers(pu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
@@ -235,6 +253,12 @@ func (puo *ProfileUpdateOne) SetNillableName(s *string) *ProfileUpdateOne {
 	return puo
 }
 
+// ClearName clears the value of the "name" field.
+func (puo *ProfileUpdateOne) ClearName() *ProfileUpdateOne {
+	puo.mutation.ClearName()
+	return puo
+}
+
 // SetGender sets the "gender" field.
 func (puo *ProfileUpdateOne) SetGender(s string) *ProfileUpdateOne {
 	puo.mutation.SetGender(s)
@@ -246,6 +270,12 @@ func (puo *ProfileUpdateOne) SetNillableGender(s *string) *ProfileUpdateOne {
 	if s != nil {
 		puo.SetGender(*s)
 	}
+	return puo
+}
+
+// ClearGender clears the value of the "gender" field.
+func (puo *ProfileUpdateOne) ClearGender() *ProfileUpdateOne {
+	puo.mutation.ClearGender()
 	return puo
 }
 
@@ -366,8 +396,14 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 	if value, ok := puo.mutation.Name(); ok {
 		_spec.SetField(profile.FieldName, field.TypeString, value)
 	}
+	if puo.mutation.NameCleared() {
+		_spec.ClearField(profile.FieldName, field.TypeString)
+	}
 	if value, ok := puo.mutation.Gender(); ok {
 		_spec.SetField(profile.FieldGender, field.TypeString, value)
+	}
+	if puo.mutation.GenderCleared() {
+		_spec.ClearField(profile.FieldGender, field.TypeString)
 	}
 	_spec.AddModifiers(puo.modifiers...)
 	_node = &Profile{config: puo.config}

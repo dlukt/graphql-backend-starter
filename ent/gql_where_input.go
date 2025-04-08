@@ -78,6 +78,8 @@ type ProfileWhereInput struct {
 	NameContains     *string  `json:"nameContains,omitempty"`
 	NameHasPrefix    *string  `json:"nameHasPrefix,omitempty"`
 	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
+	NameIsNil        bool     `json:"nameIsNil,omitempty"`
+	NameNotNil       bool     `json:"nameNotNil,omitempty"`
 	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
 
@@ -93,6 +95,8 @@ type ProfileWhereInput struct {
 	GenderContains     *string  `json:"genderContains,omitempty"`
 	GenderHasPrefix    *string  `json:"genderHasPrefix,omitempty"`
 	GenderHasSuffix    *string  `json:"genderHasSuffix,omitempty"`
+	GenderIsNil        bool     `json:"genderIsNil,omitempty"`
+	GenderNotNil       bool     `json:"genderNotNil,omitempty"`
 	GenderEqualFold    *string  `json:"genderEqualFold,omitempty"`
 	GenderContainsFold *string  `json:"genderContainsFold,omitempty"`
 }
@@ -318,6 +322,12 @@ func (i *ProfileWhereInput) P() (predicate.Profile, error) {
 	if i.NameHasSuffix != nil {
 		predicates = append(predicates, profile.NameHasSuffix(*i.NameHasSuffix))
 	}
+	if i.NameIsNil {
+		predicates = append(predicates, profile.NameIsNil())
+	}
+	if i.NameNotNil {
+		predicates = append(predicates, profile.NameNotNil())
+	}
 	if i.NameEqualFold != nil {
 		predicates = append(predicates, profile.NameEqualFold(*i.NameEqualFold))
 	}
@@ -356,6 +366,12 @@ func (i *ProfileWhereInput) P() (predicate.Profile, error) {
 	}
 	if i.GenderHasSuffix != nil {
 		predicates = append(predicates, profile.GenderHasSuffix(*i.GenderHasSuffix))
+	}
+	if i.GenderIsNil {
+		predicates = append(predicates, profile.GenderIsNil())
+	}
+	if i.GenderNotNil {
+		predicates = append(predicates, profile.GenderNotNil())
 	}
 	if i.GenderEqualFold != nil {
 		predicates = append(predicates, profile.GenderEqualFold(*i.GenderEqualFold))

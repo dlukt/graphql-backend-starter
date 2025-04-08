@@ -26,8 +26,8 @@ func (Profile) Fields() []ent.Field {
 		field.Time("create_time").Default(time.Now).Immutable().Annotations(entgql.OrderField("CREATE_TIME")),
 		field.Time("update_time").Default(time.Now).UpdateDefault(time.Now).Optional().Annotations(entgql.OrderField("UPDATE_TIME")),
 		field.String("sub").Unique().MaxLen(36),
-		field.String("name").Annotations(entgql.OrderField("NAME")),
-		field.String("gender"),
+		field.String("name").Optional().Annotations(entgql.OrderField("NAME")),
+		field.String("gender").Optional(),
 	}
 }
 

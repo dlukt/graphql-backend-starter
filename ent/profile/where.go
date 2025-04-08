@@ -290,6 +290,16 @@ func NameHasSuffix(v string) predicate.Profile {
 	return predicate.Profile(sql.FieldHasSuffix(FieldName, v))
 }
 
+// NameIsNil applies the IsNil predicate on the "name" field.
+func NameIsNil() predicate.Profile {
+	return predicate.Profile(sql.FieldIsNull(FieldName))
+}
+
+// NameNotNil applies the NotNil predicate on the "name" field.
+func NameNotNil() predicate.Profile {
+	return predicate.Profile(sql.FieldNotNull(FieldName))
+}
+
 // NameEqualFold applies the EqualFold predicate on the "name" field.
 func NameEqualFold(v string) predicate.Profile {
 	return predicate.Profile(sql.FieldEqualFold(FieldName, v))
@@ -353,6 +363,16 @@ func GenderHasPrefix(v string) predicate.Profile {
 // GenderHasSuffix applies the HasSuffix predicate on the "gender" field.
 func GenderHasSuffix(v string) predicate.Profile {
 	return predicate.Profile(sql.FieldHasSuffix(FieldGender, v))
+}
+
+// GenderIsNil applies the IsNil predicate on the "gender" field.
+func GenderIsNil() predicate.Profile {
+	return predicate.Profile(sql.FieldIsNull(FieldGender))
+}
+
+// GenderNotNil applies the NotNil predicate on the "gender" field.
+func GenderNotNil() predicate.Profile {
+	return predicate.Profile(sql.FieldNotNull(FieldGender))
 }
 
 // GenderEqualFold applies the EqualFold predicate on the "gender" field.

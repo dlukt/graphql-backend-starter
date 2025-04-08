@@ -61,9 +61,25 @@ func (pc *ProfileCreate) SetName(s string) *ProfileCreate {
 	return pc
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (pc *ProfileCreate) SetNillableName(s *string) *ProfileCreate {
+	if s != nil {
+		pc.SetName(*s)
+	}
+	return pc
+}
+
 // SetGender sets the "gender" field.
 func (pc *ProfileCreate) SetGender(s string) *ProfileCreate {
 	pc.mutation.SetGender(s)
+	return pc
+}
+
+// SetNillableGender sets the "gender" field if the given value is not nil.
+func (pc *ProfileCreate) SetNillableGender(s *string) *ProfileCreate {
+	if s != nil {
+		pc.SetGender(*s)
+	}
 	return pc
 }
 
@@ -154,12 +170,6 @@ func (pc *ProfileCreate) check() error {
 		if err := profile.SubValidator(v); err != nil {
 			return &ValidationError{Name: "sub", err: fmt.Errorf(`ent: validator failed for field "Profile.sub": %w`, err)}
 		}
-	}
-	if _, ok := pc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Profile.name"`)}
-	}
-	if _, ok := pc.mutation.Gender(); !ok {
-		return &ValidationError{Name: "gender", err: errors.New(`ent: missing required field "Profile.gender"`)}
 	}
 	return nil
 }

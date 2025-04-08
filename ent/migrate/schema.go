@@ -14,8 +14,8 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime, Nullable: true},
 		{Name: "sub", Type: field.TypeString, Unique: true, Size: 36},
-		{Name: "name", Type: field.TypeString},
-		{Name: "gender", Type: field.TypeString},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "gender", Type: field.TypeString, Nullable: true},
 	}
 	// ProfilesTable holds the schema information for the "profiles" table.
 	ProfilesTable = &schema.Table{

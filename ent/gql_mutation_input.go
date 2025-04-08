@@ -11,8 +11,8 @@ type CreateProfileInput struct {
 	CreateTime *time.Time
 	UpdateTime *time.Time
 	Sub        string
-	Name       string
-	Gender     string
+	Name       *string
+	Gender     *string
 }
 
 // Mutate applies the CreateProfileInput on the ProfileMutation builder.
@@ -24,8 +24,12 @@ func (i *CreateProfileInput) Mutate(m *ProfileMutation) {
 		m.SetUpdateTime(*v)
 	}
 	m.SetSub(i.Sub)
-	m.SetName(i.Name)
-	m.SetGender(i.Gender)
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Gender; v != nil {
+		m.SetGender(*v)
+	}
 }
 
 // SetInput applies the change-set in the CreateProfileInput on the ProfileCreate builder.
@@ -39,7 +43,9 @@ type UpdateProfileInput struct {
 	ClearUpdateTime bool
 	UpdateTime      *time.Time
 	Sub             *string
+	ClearName       bool
 	Name            *string
+	ClearGender     bool
 	Gender          *string
 }
 
@@ -54,8 +60,14 @@ func (i *UpdateProfileInput) Mutate(m *ProfileMutation) {
 	if v := i.Sub; v != nil {
 		m.SetSub(*v)
 	}
+	if i.ClearName {
+		m.ClearName()
+	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
+	}
+	if i.ClearGender {
+		m.ClearGender()
 	}
 	if v := i.Gender; v != nil {
 		m.SetGender(*v)

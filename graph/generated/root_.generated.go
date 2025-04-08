@@ -398,8 +398,8 @@ input CreateProfileInput {
   createTime: Time
   updateTime: Time
   sub: String!
-  name: String!
-  gender: String!
+  name: String
+  gender: String
 }
 """
 Define a Relay Cursor type:
@@ -456,8 +456,8 @@ type Profile implements Node {
   createTime: Time!
   updateTime: Time
   sub: String!
-  name: String!
-  gender: String!
+  name: String
+  gender: String
 }
 """
 A connection to a list of items.
@@ -583,6 +583,8 @@ input ProfileWhereInput {
   nameContains: String
   nameHasPrefix: String
   nameHasSuffix: String
+  nameIsNil: Boolean
+  nameNotNil: Boolean
   nameEqualFold: String
   nameContainsFold: String
   """
@@ -599,6 +601,8 @@ input ProfileWhereInput {
   genderContains: String
   genderHasPrefix: String
   genderHasSuffix: String
+  genderIsNil: Boolean
+  genderNotNil: Boolean
   genderEqualFold: String
   genderContainsFold: String
 }
@@ -666,7 +670,9 @@ input UpdateProfileInput {
   clearUpdateTime: Boolean
   sub: String
   name: String
+  clearName: Boolean
   gender: String
+  clearGender: Boolean
 }
 `, BuiltIn: false},
 	{Name: "../../starter.graphql", Input: `type Mutation {
