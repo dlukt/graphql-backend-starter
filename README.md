@@ -144,4 +144,5 @@ On line 79 in `cmd/graphql.go` remove the `options.IsPermissive(),`.
 ## Further reading
 
 [Ent.io GraphQL Tutorial](https://entgo.io/docs/tutorial-todo-gql)
+
 [React Relay](https://relay.dev)
