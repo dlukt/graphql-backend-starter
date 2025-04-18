@@ -97,7 +97,7 @@ func (e *executableSchema) Schema() *ast.Schema {
 	return parsedSchema
 }
 
-func (e *executableSchema) Complexity(typeName, field string, childComplexity int, rawArgs map[string]any) (int, bool) {
+func (e *executableSchema) Complexity(ctx context.Context, typeName, field string, childComplexity int, rawArgs map[string]any) (int, bool) {
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
@@ -107,7 +107,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createProfile_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createProfile_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -119,7 +119,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteProfile_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteProfile_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -131,7 +131,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateProfile_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateProfile_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -248,7 +248,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_node_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_node_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -260,7 +260,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_nodes_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_nodes_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -272,7 +272,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_profiles_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_profiles_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
