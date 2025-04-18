@@ -11,9 +11,10 @@ This is here to make things easier and help people get started with GraphQL and 
   You will have to add the audience in Keycloak to the token, because Keycloak is dumb like that.
 - [xid](https://github.com/rs/xid) is used for globally unique IDs
 - The `Profile` schema is the root of your related entities.
-- Schema reflection is enabled
-- PostgreSQL is used as the backend. Optionally SQLite in-memory mode can be used or development purposes.
+- Schema introspection is enabled
+- PostgreSQL is used as the database. Optionally SQLite in-memory mode can be used or development purposes.
 - The Schema is automigrated on each graphql run.
+- Relay is used to provide filtering, ordering and pagination 
 
 ## How to run the backend
 
@@ -101,9 +102,9 @@ add the new entity to `gqlgen.yml`
 
 ```yaml
 autobind:
-  - github.com/dlukt/graphql-backend-starter/ent
-  - github.com/dlukt/graphql-backend-starter/ent/profile
-  - github.com/dlukt/graphql-backend-starter/ent/entity
+  - github.com/user/repo/ent
+  - github.com/user/repo/ent/profile
+  - github.com/user/repo/ent/entity
 ```
 
 and edit the `ent/schema/entity.go` file.
@@ -143,3 +144,5 @@ On line 79 in `cmd/graphql.go` remove the `options.IsPermissive(),`.
 ## Further reading
 
 [Ent.io GraphQL Tutorial](https://entgo.io/docs/tutorial-todo-gql)
+
+[React Relay](https://relay.dev)
