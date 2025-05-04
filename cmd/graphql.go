@@ -56,6 +56,9 @@ var graphqlCmd = &cobra.Command{
 			fmt.Println("Running with PostgreSQL")
 			client = openDB(config.DatabaseURI)
 		}
+		if graphqlDebug {
+			client = client.Debug()
+		}
 		defer client.Close()
 		if e := client.Schema.Create(
 			context.Background(),
