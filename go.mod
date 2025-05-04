@@ -7,7 +7,7 @@ require (
 	code.icod.de/dalu/oidc v0.0.0-20241126215649-eb821d08bbc4
 	entgo.io/contrib v0.6.0
 	entgo.io/ent v0.14.4
-	github.com/99designs/gqlgen v0.17.71
+	github.com/99designs/gqlgen v0.17.73
 	github.com/MadAppGang/httplog v1.3.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/google/uuid v1.6.0
@@ -18,11 +18,11 @@ require (
 	github.com/rs/xid v1.6.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
-	github.com/vektah/gqlparser/v2 v2.5.25
+	github.com/vektah/gqlparser/v2 v2.5.26
 )
 
 require (
-	ariga.io/atlas v0.32.0 // indirect
+	ariga.io/atlas v0.32.1 // indirect
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.2.1 // indirect
@@ -59,7 +59,7 @@ require (
 	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.14.0 // indirect
-	github.com/spf13/cast v1.7.1 // indirect
+	github.com/spf13/cast v1.8.0 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
