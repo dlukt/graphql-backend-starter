@@ -14,7 +14,7 @@ This is here to make things easier and help people get started with GraphQL and 
 - Schema introspection is enabled
 - PostgreSQL is used as the database. Optionally SQLite in-memory mode can be used or development purposes.
 - The Schema is automigrated on each graphql run.
-- Relay is used to provide filtering, ordering and pagination 
+- Relay is used to provide filtering, ordering and pagination
 
 ## How to run the backend
 
@@ -27,7 +27,19 @@ go run main.go graphql --sqlite=true --debug=true
 ### dev mode with PostgreSQL
 
 ```bash
-go run main.go graphql --debug=true
+go run main.go graphql \
+--debug=true \
+--db_uri="postgres://root:password@localhost:port/?sslmode=disable"
+
+#or
+
+go run main.go graphql \
+--debug=true \
+--db_user="username" \
+--db_password="password" \
+--db_name="database name" \
+--db_host="localhost" \
+--db_port="5432"
 ```
 
 ## Getting started
@@ -53,9 +65,9 @@ chmod +x ./update-repo.sh
 ### 3. remove all "starter" occurences and replace with your repo name
 
 ```bash
+# remember, repo is your repo name
 rm graph/generated/starter.generated.go
 mv starter.graphql repo.graphql
-# remember, repo is your repo name
 mv graph/starter.resolvers.go graph/repo.resolvers.go
 ```
 
