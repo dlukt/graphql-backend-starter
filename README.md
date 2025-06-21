@@ -133,7 +133,7 @@ go generate ./...
 This package assumes Keycloak being the OIDC IDP.
 Therefore the [claims object](rules/claims/claims.go) reflects Keycloak's claim structure.
 Change this to your claim structure.
-For instance I'm using Zitadel, adding per project grants.
+For instance I'm using Zitadel, adding per project grants and flattening roles and adding them to the root level as `roles`.
 The claims structure looks like this:
 
 ```go
