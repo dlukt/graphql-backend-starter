@@ -8,26 +8,204 @@ import (
 )
 
 var (
-	// ProfilesColumns holds the columns for the "profiles" table.
-	ProfilesColumns = []*schema.Column{
+	// AddonsColumns holds the columns for the "addons" table.
+	AddonsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
-		{Name: "create_time", Type: field.TypeTime},
-		{Name: "update_time", Type: field.TypeTime, Nullable: true},
-		{Name: "sub", Type: field.TypeString, Unique: true, Size: 36},
-		{Name: "name", Type: field.TypeString, Nullable: true},
-		{Name: "gender", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "monthly_fee_cents", Type: field.TypeInt},
 	}
-	// ProfilesTable holds the schema information for the "profiles" table.
-	ProfilesTable = &schema.Table{
-		Name:       "profiles",
-		Columns:    ProfilesColumns,
-		PrimaryKey: []*schema.Column{ProfilesColumns[0]},
+	// AddonsTable holds the schema information for the "addons" table.
+	AddonsTable = &schema.Table{
+		Name:       "addons",
+		Columns:    AddonsColumns,
+		PrimaryKey: []*schema.Column{AddonsColumns[0]},
+	}
+	// BandwidthsColumns holds the columns for the "bandwidths" table.
+	BandwidthsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "down_mbps", Type: field.TypeInt},
+		{Name: "up_mbps", Type: field.TypeInt},
+		{Name: "plan_bandwidth", Type: field.TypeString, Unique: true},
+	}
+	// BandwidthsTable holds the schema information for the "bandwidths" table.
+	BandwidthsTable = &schema.Table{
+		Name:       "bandwidths",
+		Columns:    BandwidthsColumns,
+		PrimaryKey: []*schema.Column{BandwidthsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "bandwidths_plans_bandwidth",
+				Columns:    []*schema.Column{BandwidthsColumns[3]},
+				RefColumns: []*schema.Column{PlansColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// OneTimeFeesColumns holds the columns for the "one_time_fees" table.
+	OneTimeFeesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "kind", Type: field.TypeEnum, Enums: []string{"activation", "shipping", "router_purchase", "misc"}},
+		{Name: "amount_cents", Type: field.TypeInt},
+		{Name: "plan_one_time_fees", Type: field.TypeString},
+	}
+	// OneTimeFeesTable holds the schema information for the "one_time_fees" table.
+	OneTimeFeesTable = &schema.Table{
+		Name:       "one_time_fees",
+		Columns:    OneTimeFeesColumns,
+		PrimaryKey: []*schema.Column{OneTimeFeesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "one_time_fees_plans_one_time_fees",
+				Columns:    []*schema.Column{OneTimeFeesColumns[3]},
+				RefColumns: []*schema.Column{PlansColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// PlansColumns holds the columns for the "plans" table.
+	PlansColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "technology", Type: field.TypeEnum, Enums: []string{"FTTH", "DSL", "CABLE", "MOBILE"}},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "min_term_months", Type: field.TypeInt, Default: 24},
+		{Name: "cancel_notice_days", Type: field.TypeInt, Nullable: true},
+		{Name: "valid_from", Type: field.TypeTime},
+		{Name: "valid_to", Type: field.TypeTime, Nullable: true},
+		{Name: "source_url", Type: field.TypeString},
+		{Name: "version_tag", Type: field.TypeString},
+		{Name: "provider_plans", Type: field.TypeString},
+	}
+	// PlansTable holds the schema information for the "plans" table.
+	PlansTable = &schema.Table{
+		Name:       "plans",
+		Columns:    PlansColumns,
+		PrimaryKey: []*schema.Column{PlansColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "plans_providers_plans",
+				Columns:    []*schema.Column{PlansColumns[10]},
+				RefColumns: []*schema.Column{ProvidersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// PriceTiersColumns holds the columns for the "price_tiers" table.
+	PriceTiersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "start_month", Type: field.TypeInt},
+		{Name: "end_month", Type: field.TypeInt},
+		{Name: "monthly_fee_cents", Type: field.TypeInt},
+		{Name: "plan_price_tiers", Type: field.TypeString},
+	}
+	// PriceTiersTable holds the schema information for the "price_tiers" table.
+	PriceTiersTable = &schema.Table{
+		Name:       "price_tiers",
+		Columns:    PriceTiersColumns,
+		PrimaryKey: []*schema.Column{PriceTiersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "price_tiers_plans_price_tiers",
+				Columns:    []*schema.Column{PriceTiersColumns[4]},
+				RefColumns: []*schema.Column{PlansColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// PromosColumns holds the columns for the "promos" table.
+	PromosColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "description", Type: field.TypeString},
+		{Name: "discount_cents", Type: field.TypeInt},
+		{Name: "months_applies", Type: field.TypeInt, Nullable: true},
+		{Name: "starts_at", Type: field.TypeTime, Nullable: true},
+		{Name: "ends_at", Type: field.TypeTime, Nullable: true},
+		{Name: "conditions", Type: field.TypeString, Nullable: true},
+		{Name: "plan_promos", Type: field.TypeString},
+	}
+	// PromosTable holds the schema information for the "promos" table.
+	PromosTable = &schema.Table{
+		Name:       "promos",
+		Columns:    PromosColumns,
+		PrimaryKey: []*schema.Column{PromosColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "promos_plans_promos",
+				Columns:    []*schema.Column{PromosColumns[7]},
+				RefColumns: []*schema.Column{PlansColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// ProvidersColumns holds the columns for the "providers" table.
+	ProvidersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "website", Type: field.TypeString},
+	}
+	// ProvidersTable holds the schema information for the "providers" table.
+	ProvidersTable = &schema.Table{
+		Name:       "providers",
+		Columns:    ProvidersColumns,
+		PrimaryKey: []*schema.Column{ProvidersColumns[0]},
+	}
+	// SnapshotsColumns holds the columns for the "snapshots" table.
+	SnapshotsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "month", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime},
+	}
+	// SnapshotsTable holds the schema information for the "snapshots" table.
+	SnapshotsTable = &schema.Table{
+		Name:       "snapshots",
+		Columns:    SnapshotsColumns,
+		PrimaryKey: []*schema.Column{SnapshotsColumns[0]},
+	}
+	// AddonPlansColumns holds the columns for the "addon_plans" table.
+	AddonPlansColumns = []*schema.Column{
+		{Name: "addon_id", Type: field.TypeString},
+		{Name: "plan_id", Type: field.TypeString},
+	}
+	// AddonPlansTable holds the schema information for the "addon_plans" table.
+	AddonPlansTable = &schema.Table{
+		Name:       "addon_plans",
+		Columns:    AddonPlansColumns,
+		PrimaryKey: []*schema.Column{AddonPlansColumns[0], AddonPlansColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "addon_plans_addon_id",
+				Columns:    []*schema.Column{AddonPlansColumns[0]},
+				RefColumns: []*schema.Column{AddonsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "addon_plans_plan_id",
+				Columns:    []*schema.Column{AddonPlansColumns[1]},
+				RefColumns: []*schema.Column{PlansColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		ProfilesTable,
+		AddonsTable,
+		BandwidthsTable,
+		OneTimeFeesTable,
+		PlansTable,
+		PriceTiersTable,
+		PromosTable,
+		ProvidersTable,
+		SnapshotsTable,
+		AddonPlansTable,
 	}
 )
 
 func init() {
+	BandwidthsTable.ForeignKeys[0].RefTable = PlansTable
+	OneTimeFeesTable.ForeignKeys[0].RefTable = PlansTable
+	PlansTable.ForeignKeys[0].RefTable = ProvidersTable
+	PriceTiersTable.ForeignKeys[0].RefTable = PlansTable
+	PromosTable.ForeignKeys[0].RefTable = PlansTable
+	AddonPlansTable.ForeignKeys[0].RefTable = AddonsTable
+	AddonPlansTable.ForeignKeys[1].RefTable = PlansTable
 }

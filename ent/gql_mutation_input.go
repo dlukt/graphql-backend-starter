@@ -4,84 +4,632 @@ package ent
 
 import (
 	"time"
+
+	"github.com/deicod/tarife/ent/onetimefee"
+	"github.com/deicod/tarife/ent/plan"
+	"github.com/rs/xid"
 )
 
-// CreateProfileInput represents a mutation input for creating profiles.
-type CreateProfileInput struct {
-	CreateTime *time.Time
-	UpdateTime *time.Time
-	Sub        string
-	Name       *string
-	Gender     *string
+// CreateAddonInput represents a mutation input for creating addons.
+type CreateAddonInput struct {
+	Name            string
+	MonthlyFeeCents int
+	PlanIDs         []xid.ID
 }
 
-// Mutate applies the CreateProfileInput on the ProfileMutation builder.
-func (i *CreateProfileInput) Mutate(m *ProfileMutation) {
-	if v := i.CreateTime; v != nil {
-		m.SetCreateTime(*v)
-	}
-	if v := i.UpdateTime; v != nil {
-		m.SetUpdateTime(*v)
-	}
-	m.SetSub(i.Sub)
-	if v := i.Name; v != nil {
-		m.SetName(*v)
-	}
-	if v := i.Gender; v != nil {
-		m.SetGender(*v)
+// Mutate applies the CreateAddonInput on the AddonMutation builder.
+func (i *CreateAddonInput) Mutate(m *AddonMutation) {
+	m.SetName(i.Name)
+	m.SetMonthlyFeeCents(i.MonthlyFeeCents)
+	if v := i.PlanIDs; len(v) > 0 {
+		m.AddPlanIDs(v...)
 	}
 }
 
-// SetInput applies the change-set in the CreateProfileInput on the ProfileCreate builder.
-func (c *ProfileCreate) SetInput(i CreateProfileInput) *ProfileCreate {
+// SetInput applies the change-set in the CreateAddonInput on the AddonCreate builder.
+func (c *AddonCreate) SetInput(i CreateAddonInput) *AddonCreate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// UpdateProfileInput represents a mutation input for updating profiles.
-type UpdateProfileInput struct {
-	ClearUpdateTime bool
-	UpdateTime      *time.Time
-	Sub             *string
-	ClearName       bool
+// UpdateAddonInput represents a mutation input for updating addons.
+type UpdateAddonInput struct {
 	Name            *string
-	ClearGender     bool
-	Gender          *string
+	MonthlyFeeCents *int
+	ClearPlans      bool
+	AddPlanIDs      []xid.ID
+	RemovePlanIDs   []xid.ID
 }
 
-// Mutate applies the UpdateProfileInput on the ProfileMutation builder.
-func (i *UpdateProfileInput) Mutate(m *ProfileMutation) {
-	if i.ClearUpdateTime {
-		m.ClearUpdateTime()
-	}
-	if v := i.UpdateTime; v != nil {
-		m.SetUpdateTime(*v)
-	}
-	if v := i.Sub; v != nil {
-		m.SetSub(*v)
-	}
-	if i.ClearName {
-		m.ClearName()
-	}
+// Mutate applies the UpdateAddonInput on the AddonMutation builder.
+func (i *UpdateAddonInput) Mutate(m *AddonMutation) {
 	if v := i.Name; v != nil {
 		m.SetName(*v)
 	}
-	if i.ClearGender {
-		m.ClearGender()
+	if v := i.MonthlyFeeCents; v != nil {
+		m.SetMonthlyFeeCents(*v)
 	}
-	if v := i.Gender; v != nil {
-		m.SetGender(*v)
+	if i.ClearPlans {
+		m.ClearPlans()
+	}
+	if v := i.AddPlanIDs; len(v) > 0 {
+		m.AddPlanIDs(v...)
+	}
+	if v := i.RemovePlanIDs; len(v) > 0 {
+		m.RemovePlanIDs(v...)
 	}
 }
 
-// SetInput applies the change-set in the UpdateProfileInput on the ProfileUpdate builder.
-func (c *ProfileUpdate) SetInput(i UpdateProfileInput) *ProfileUpdate {
+// SetInput applies the change-set in the UpdateAddonInput on the AddonUpdate builder.
+func (c *AddonUpdate) SetInput(i UpdateAddonInput) *AddonUpdate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// SetInput applies the change-set in the UpdateProfileInput on the ProfileUpdateOne builder.
-func (c *ProfileUpdateOne) SetInput(i UpdateProfileInput) *ProfileUpdateOne {
+// SetInput applies the change-set in the UpdateAddonInput on the AddonUpdateOne builder.
+func (c *AddonUpdateOne) SetInput(i UpdateAddonInput) *AddonUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateBandwidthInput represents a mutation input for creating bandwidths.
+type CreateBandwidthInput struct {
+	DownMbps int
+	UpMbps   int
+	PlanID   xid.ID
+}
+
+// Mutate applies the CreateBandwidthInput on the BandwidthMutation builder.
+func (i *CreateBandwidthInput) Mutate(m *BandwidthMutation) {
+	m.SetDownMbps(i.DownMbps)
+	m.SetUpMbps(i.UpMbps)
+	m.SetPlanID(i.PlanID)
+}
+
+// SetInput applies the change-set in the CreateBandwidthInput on the BandwidthCreate builder.
+func (c *BandwidthCreate) SetInput(i CreateBandwidthInput) *BandwidthCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateBandwidthInput represents a mutation input for updating bandwidths.
+type UpdateBandwidthInput struct {
+	DownMbps *int
+	UpMbps   *int
+	PlanID   *xid.ID
+}
+
+// Mutate applies the UpdateBandwidthInput on the BandwidthMutation builder.
+func (i *UpdateBandwidthInput) Mutate(m *BandwidthMutation) {
+	if v := i.DownMbps; v != nil {
+		m.SetDownMbps(*v)
+	}
+	if v := i.UpMbps; v != nil {
+		m.SetUpMbps(*v)
+	}
+	if v := i.PlanID; v != nil {
+		m.SetPlanID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateBandwidthInput on the BandwidthUpdate builder.
+func (c *BandwidthUpdate) SetInput(i UpdateBandwidthInput) *BandwidthUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateBandwidthInput on the BandwidthUpdateOne builder.
+func (c *BandwidthUpdateOne) SetInput(i UpdateBandwidthInput) *BandwidthUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateOneTimeFeeInput represents a mutation input for creating onetimefees.
+type CreateOneTimeFeeInput struct {
+	Kind        onetimefee.Kind
+	AmountCents int
+	PlanID      xid.ID
+}
+
+// Mutate applies the CreateOneTimeFeeInput on the OneTimeFeeMutation builder.
+func (i *CreateOneTimeFeeInput) Mutate(m *OneTimeFeeMutation) {
+	m.SetKind(i.Kind)
+	m.SetAmountCents(i.AmountCents)
+	m.SetPlanID(i.PlanID)
+}
+
+// SetInput applies the change-set in the CreateOneTimeFeeInput on the OneTimeFeeCreate builder.
+func (c *OneTimeFeeCreate) SetInput(i CreateOneTimeFeeInput) *OneTimeFeeCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateOneTimeFeeInput represents a mutation input for updating onetimefees.
+type UpdateOneTimeFeeInput struct {
+	Kind        *onetimefee.Kind
+	AmountCents *int
+	PlanID      *xid.ID
+}
+
+// Mutate applies the UpdateOneTimeFeeInput on the OneTimeFeeMutation builder.
+func (i *UpdateOneTimeFeeInput) Mutate(m *OneTimeFeeMutation) {
+	if v := i.Kind; v != nil {
+		m.SetKind(*v)
+	}
+	if v := i.AmountCents; v != nil {
+		m.SetAmountCents(*v)
+	}
+	if v := i.PlanID; v != nil {
+		m.SetPlanID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateOneTimeFeeInput on the OneTimeFeeUpdate builder.
+func (c *OneTimeFeeUpdate) SetInput(i UpdateOneTimeFeeInput) *OneTimeFeeUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateOneTimeFeeInput on the OneTimeFeeUpdateOne builder.
+func (c *OneTimeFeeUpdateOne) SetInput(i UpdateOneTimeFeeInput) *OneTimeFeeUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreatePlanInput represents a mutation input for creating plans.
+type CreatePlanInput struct {
+	Technology       plan.Technology
+	Name             string
+	Description      *string
+	MinTermMonths    *int
+	CancelNoticeDays *int
+	ValidFrom        time.Time
+	ValidTo          *time.Time
+	SourceURL        string
+	VersionTag       string
+	ProviderID       xid.ID
+	BandwidthID      *xid.ID
+	PriceTierIDs     []xid.ID
+	OneTimeFeeIDs    []xid.ID
+	PromoIDs         []xid.ID
+	AddonIDs         []xid.ID
+}
+
+// Mutate applies the CreatePlanInput on the PlanMutation builder.
+func (i *CreatePlanInput) Mutate(m *PlanMutation) {
+	m.SetTechnology(i.Technology)
+	m.SetName(i.Name)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.MinTermMonths; v != nil {
+		m.SetMinTermMonths(*v)
+	}
+	if v := i.CancelNoticeDays; v != nil {
+		m.SetCancelNoticeDays(*v)
+	}
+	m.SetValidFrom(i.ValidFrom)
+	if v := i.ValidTo; v != nil {
+		m.SetValidTo(*v)
+	}
+	m.SetSourceURL(i.SourceURL)
+	m.SetVersionTag(i.VersionTag)
+	m.SetProviderID(i.ProviderID)
+	if v := i.BandwidthID; v != nil {
+		m.SetBandwidthID(*v)
+	}
+	if v := i.PriceTierIDs; len(v) > 0 {
+		m.AddPriceTierIDs(v...)
+	}
+	if v := i.OneTimeFeeIDs; len(v) > 0 {
+		m.AddOneTimeFeeIDs(v...)
+	}
+	if v := i.PromoIDs; len(v) > 0 {
+		m.AddPromoIDs(v...)
+	}
+	if v := i.AddonIDs; len(v) > 0 {
+		m.AddAddonIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreatePlanInput on the PlanCreate builder.
+func (c *PlanCreate) SetInput(i CreatePlanInput) *PlanCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdatePlanInput represents a mutation input for updating plans.
+type UpdatePlanInput struct {
+	Technology            *plan.Technology
+	Name                  *string
+	ClearDescription      bool
+	Description           *string
+	MinTermMonths         *int
+	ClearCancelNoticeDays bool
+	CancelNoticeDays      *int
+	ValidFrom             *time.Time
+	ClearValidTo          bool
+	ValidTo               *time.Time
+	SourceURL             *string
+	VersionTag            *string
+	ProviderID            *xid.ID
+	ClearBandwidth        bool
+	BandwidthID           *xid.ID
+	ClearPriceTiers       bool
+	AddPriceTierIDs       []xid.ID
+	RemovePriceTierIDs    []xid.ID
+	ClearOneTimeFees      bool
+	AddOneTimeFeeIDs      []xid.ID
+	RemoveOneTimeFeeIDs   []xid.ID
+	ClearPromos           bool
+	AddPromoIDs           []xid.ID
+	RemovePromoIDs        []xid.ID
+	ClearAddon            bool
+	AddAddonIDs           []xid.ID
+	RemoveAddonIDs        []xid.ID
+}
+
+// Mutate applies the UpdatePlanInput on the PlanMutation builder.
+func (i *UpdatePlanInput) Mutate(m *PlanMutation) {
+	if v := i.Technology; v != nil {
+		m.SetTechnology(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearDescription {
+		m.ClearDescription()
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.MinTermMonths; v != nil {
+		m.SetMinTermMonths(*v)
+	}
+	if i.ClearCancelNoticeDays {
+		m.ClearCancelNoticeDays()
+	}
+	if v := i.CancelNoticeDays; v != nil {
+		m.SetCancelNoticeDays(*v)
+	}
+	if v := i.ValidFrom; v != nil {
+		m.SetValidFrom(*v)
+	}
+	if i.ClearValidTo {
+		m.ClearValidTo()
+	}
+	if v := i.ValidTo; v != nil {
+		m.SetValidTo(*v)
+	}
+	if v := i.SourceURL; v != nil {
+		m.SetSourceURL(*v)
+	}
+	if v := i.VersionTag; v != nil {
+		m.SetVersionTag(*v)
+	}
+	if v := i.ProviderID; v != nil {
+		m.SetProviderID(*v)
+	}
+	if i.ClearBandwidth {
+		m.ClearBandwidth()
+	}
+	if v := i.BandwidthID; v != nil {
+		m.SetBandwidthID(*v)
+	}
+	if i.ClearPriceTiers {
+		m.ClearPriceTiers()
+	}
+	if v := i.AddPriceTierIDs; len(v) > 0 {
+		m.AddPriceTierIDs(v...)
+	}
+	if v := i.RemovePriceTierIDs; len(v) > 0 {
+		m.RemovePriceTierIDs(v...)
+	}
+	if i.ClearOneTimeFees {
+		m.ClearOneTimeFees()
+	}
+	if v := i.AddOneTimeFeeIDs; len(v) > 0 {
+		m.AddOneTimeFeeIDs(v...)
+	}
+	if v := i.RemoveOneTimeFeeIDs; len(v) > 0 {
+		m.RemoveOneTimeFeeIDs(v...)
+	}
+	if i.ClearPromos {
+		m.ClearPromos()
+	}
+	if v := i.AddPromoIDs; len(v) > 0 {
+		m.AddPromoIDs(v...)
+	}
+	if v := i.RemovePromoIDs; len(v) > 0 {
+		m.RemovePromoIDs(v...)
+	}
+	if i.ClearAddon {
+		m.ClearAddon()
+	}
+	if v := i.AddAddonIDs; len(v) > 0 {
+		m.AddAddonIDs(v...)
+	}
+	if v := i.RemoveAddonIDs; len(v) > 0 {
+		m.RemoveAddonIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdatePlanInput on the PlanUpdate builder.
+func (c *PlanUpdate) SetInput(i UpdatePlanInput) *PlanUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdatePlanInput on the PlanUpdateOne builder.
+func (c *PlanUpdateOne) SetInput(i UpdatePlanInput) *PlanUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreatePriceTierInput represents a mutation input for creating pricetiers.
+type CreatePriceTierInput struct {
+	StartMonth      int
+	EndMonth        int
+	MonthlyFeeCents int
+	PlanID          xid.ID
+}
+
+// Mutate applies the CreatePriceTierInput on the PriceTierMutation builder.
+func (i *CreatePriceTierInput) Mutate(m *PriceTierMutation) {
+	m.SetStartMonth(i.StartMonth)
+	m.SetEndMonth(i.EndMonth)
+	m.SetMonthlyFeeCents(i.MonthlyFeeCents)
+	m.SetPlanID(i.PlanID)
+}
+
+// SetInput applies the change-set in the CreatePriceTierInput on the PriceTierCreate builder.
+func (c *PriceTierCreate) SetInput(i CreatePriceTierInput) *PriceTierCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdatePriceTierInput represents a mutation input for updating pricetiers.
+type UpdatePriceTierInput struct {
+	StartMonth      *int
+	EndMonth        *int
+	MonthlyFeeCents *int
+	PlanID          *xid.ID
+}
+
+// Mutate applies the UpdatePriceTierInput on the PriceTierMutation builder.
+func (i *UpdatePriceTierInput) Mutate(m *PriceTierMutation) {
+	if v := i.StartMonth; v != nil {
+		m.SetStartMonth(*v)
+	}
+	if v := i.EndMonth; v != nil {
+		m.SetEndMonth(*v)
+	}
+	if v := i.MonthlyFeeCents; v != nil {
+		m.SetMonthlyFeeCents(*v)
+	}
+	if v := i.PlanID; v != nil {
+		m.SetPlanID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdatePriceTierInput on the PriceTierUpdate builder.
+func (c *PriceTierUpdate) SetInput(i UpdatePriceTierInput) *PriceTierUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdatePriceTierInput on the PriceTierUpdateOne builder.
+func (c *PriceTierUpdateOne) SetInput(i UpdatePriceTierInput) *PriceTierUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreatePromoInput represents a mutation input for creating promos.
+type CreatePromoInput struct {
+	Description   string
+	DiscountCents int
+	MonthsApplies *int
+	StartsAt      *time.Time
+	EndsAt        *time.Time
+	Conditions    *string
+	PlanID        xid.ID
+}
+
+// Mutate applies the CreatePromoInput on the PromoMutation builder.
+func (i *CreatePromoInput) Mutate(m *PromoMutation) {
+	m.SetDescription(i.Description)
+	m.SetDiscountCents(i.DiscountCents)
+	if v := i.MonthsApplies; v != nil {
+		m.SetMonthsApplies(*v)
+	}
+	if v := i.StartsAt; v != nil {
+		m.SetStartsAt(*v)
+	}
+	if v := i.EndsAt; v != nil {
+		m.SetEndsAt(*v)
+	}
+	if v := i.Conditions; v != nil {
+		m.SetConditions(*v)
+	}
+	m.SetPlanID(i.PlanID)
+}
+
+// SetInput applies the change-set in the CreatePromoInput on the PromoCreate builder.
+func (c *PromoCreate) SetInput(i CreatePromoInput) *PromoCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdatePromoInput represents a mutation input for updating promos.
+type UpdatePromoInput struct {
+	Description        *string
+	DiscountCents      *int
+	ClearMonthsApplies bool
+	MonthsApplies      *int
+	ClearStartsAt      bool
+	StartsAt           *time.Time
+	ClearEndsAt        bool
+	EndsAt             *time.Time
+	ClearConditions    bool
+	Conditions         *string
+	PlanID             *xid.ID
+}
+
+// Mutate applies the UpdatePromoInput on the PromoMutation builder.
+func (i *UpdatePromoInput) Mutate(m *PromoMutation) {
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.DiscountCents; v != nil {
+		m.SetDiscountCents(*v)
+	}
+	if i.ClearMonthsApplies {
+		m.ClearMonthsApplies()
+	}
+	if v := i.MonthsApplies; v != nil {
+		m.SetMonthsApplies(*v)
+	}
+	if i.ClearStartsAt {
+		m.ClearStartsAt()
+	}
+	if v := i.StartsAt; v != nil {
+		m.SetStartsAt(*v)
+	}
+	if i.ClearEndsAt {
+		m.ClearEndsAt()
+	}
+	if v := i.EndsAt; v != nil {
+		m.SetEndsAt(*v)
+	}
+	if i.ClearConditions {
+		m.ClearConditions()
+	}
+	if v := i.Conditions; v != nil {
+		m.SetConditions(*v)
+	}
+	if v := i.PlanID; v != nil {
+		m.SetPlanID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdatePromoInput on the PromoUpdate builder.
+func (c *PromoUpdate) SetInput(i UpdatePromoInput) *PromoUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdatePromoInput on the PromoUpdateOne builder.
+func (c *PromoUpdateOne) SetInput(i UpdatePromoInput) *PromoUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateProviderInput represents a mutation input for creating providers.
+type CreateProviderInput struct {
+	Name    string
+	Website string
+	PlanIDs []xid.ID
+}
+
+// Mutate applies the CreateProviderInput on the ProviderMutation builder.
+func (i *CreateProviderInput) Mutate(m *ProviderMutation) {
+	m.SetName(i.Name)
+	m.SetWebsite(i.Website)
+	if v := i.PlanIDs; len(v) > 0 {
+		m.AddPlanIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateProviderInput on the ProviderCreate builder.
+func (c *ProviderCreate) SetInput(i CreateProviderInput) *ProviderCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateProviderInput represents a mutation input for updating providers.
+type UpdateProviderInput struct {
+	Name          *string
+	Website       *string
+	ClearPlans    bool
+	AddPlanIDs    []xid.ID
+	RemovePlanIDs []xid.ID
+}
+
+// Mutate applies the UpdateProviderInput on the ProviderMutation builder.
+func (i *UpdateProviderInput) Mutate(m *ProviderMutation) {
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Website; v != nil {
+		m.SetWebsite(*v)
+	}
+	if i.ClearPlans {
+		m.ClearPlans()
+	}
+	if v := i.AddPlanIDs; len(v) > 0 {
+		m.AddPlanIDs(v...)
+	}
+	if v := i.RemovePlanIDs; len(v) > 0 {
+		m.RemovePlanIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateProviderInput on the ProviderUpdate builder.
+func (c *ProviderUpdate) SetInput(i UpdateProviderInput) *ProviderUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateProviderInput on the ProviderUpdateOne builder.
+func (c *ProviderUpdateOne) SetInput(i UpdateProviderInput) *ProviderUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateSnapshotInput represents a mutation input for creating snapshots.
+type CreateSnapshotInput struct {
+	Month     time.Time
+	CreatedAt *time.Time
+}
+
+// Mutate applies the CreateSnapshotInput on the SnapshotMutation builder.
+func (i *CreateSnapshotInput) Mutate(m *SnapshotMutation) {
+	m.SetMonth(i.Month)
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateSnapshotInput on the SnapshotCreate builder.
+func (c *SnapshotCreate) SetInput(i CreateSnapshotInput) *SnapshotCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateSnapshotInput represents a mutation input for updating snapshots.
+type UpdateSnapshotInput struct {
+	Month     *time.Time
+	CreatedAt *time.Time
+}
+
+// Mutate applies the UpdateSnapshotInput on the SnapshotMutation builder.
+func (i *UpdateSnapshotInput) Mutate(m *SnapshotMutation) {
+	if v := i.Month; v != nil {
+		m.SetMonth(*v)
+	}
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateSnapshotInput on the SnapshotUpdate builder.
+func (c *SnapshotUpdate) SetInput(i UpdateSnapshotInput) *SnapshotUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateSnapshotInput on the SnapshotUpdateOne builder.
+func (c *SnapshotUpdateOne) SetInput(i UpdateSnapshotInput) *SnapshotUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

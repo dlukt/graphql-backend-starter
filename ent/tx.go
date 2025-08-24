@@ -12,8 +12,22 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
-	// Profile is the client for interacting with the Profile builders.
-	Profile *ProfileClient
+	// Addon is the client for interacting with the Addon builders.
+	Addon *AddonClient
+	// Bandwidth is the client for interacting with the Bandwidth builders.
+	Bandwidth *BandwidthClient
+	// OneTimeFee is the client for interacting with the OneTimeFee builders.
+	OneTimeFee *OneTimeFeeClient
+	// Plan is the client for interacting with the Plan builders.
+	Plan *PlanClient
+	// PriceTier is the client for interacting with the PriceTier builders.
+	PriceTier *PriceTierClient
+	// Promo is the client for interacting with the Promo builders.
+	Promo *PromoClient
+	// Provider is the client for interacting with the Provider builders.
+	Provider *ProviderClient
+	// Snapshot is the client for interacting with the Snapshot builders.
+	Snapshot *SnapshotClient
 
 	// lazily loaded.
 	client     *Client
@@ -145,7 +159,14 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
-	tx.Profile = NewProfileClient(tx.config)
+	tx.Addon = NewAddonClient(tx.config)
+	tx.Bandwidth = NewBandwidthClient(tx.config)
+	tx.OneTimeFee = NewOneTimeFeeClient(tx.config)
+	tx.Plan = NewPlanClient(tx.config)
+	tx.PriceTier = NewPriceTierClient(tx.config)
+	tx.Promo = NewPromoClient(tx.config)
+	tx.Provider = NewProviderClient(tx.config)
+	tx.Snapshot = NewSnapshotClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -155,7 +176,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Profile.QueryXXX(), the query will be executed
+// applies a query, for example: Addon.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

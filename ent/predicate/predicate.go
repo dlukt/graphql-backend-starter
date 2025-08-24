@@ -6,5 +6,26 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// Profile is the predicate function for profile builders.
-type Profile func(*sql.Selector)
+// Addon is the predicate function for addon builders.
+type Addon func(*sql.Selector)
+
+// Bandwidth is the predicate function for bandwidth builders.
+type Bandwidth func(*sql.Selector)
+
+// OneTimeFee is the predicate function for onetimefee builders.
+type OneTimeFee func(*sql.Selector)
+
+// Plan is the predicate function for plan builders.
+type Plan func(*sql.Selector)
+
+// PriceTier is the predicate function for pricetier builders.
+type PriceTier func(*sql.Selector)
+
+// Promo is the predicate function for promo builders.
+type Promo func(*sql.Selector)
+
+// Provider is the predicate function for provider builders.
+type Provider func(*sql.Selector)
+
+// Snapshot is the predicate function for snapshot builders.
+type Snapshot func(*sql.Selector)
