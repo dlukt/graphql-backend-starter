@@ -6,19 +6,103 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/dlukt/graphql-backend-starter/ent"
+	"github.com/deicod/tarife/ent"
 )
 
-// The ProfileFunc type is an adapter to allow the use of ordinary
-// function as Profile mutator.
-type ProfileFunc func(context.Context, *ent.ProfileMutation) (ent.Value, error)
+// The AddonFunc type is an adapter to allow the use of ordinary
+// function as Addon mutator.
+type AddonFunc func(context.Context, *ent.AddonMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f ProfileFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.ProfileMutation); ok {
+func (f AddonFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AddonMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProfileMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AddonMutation", m)
+}
+
+// The BandwidthFunc type is an adapter to allow the use of ordinary
+// function as Bandwidth mutator.
+type BandwidthFunc func(context.Context, *ent.BandwidthMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BandwidthFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BandwidthMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BandwidthMutation", m)
+}
+
+// The OneTimeFeeFunc type is an adapter to allow the use of ordinary
+// function as OneTimeFee mutator.
+type OneTimeFeeFunc func(context.Context, *ent.OneTimeFeeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OneTimeFeeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.OneTimeFeeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OneTimeFeeMutation", m)
+}
+
+// The PlanFunc type is an adapter to allow the use of ordinary
+// function as Plan mutator.
+type PlanFunc func(context.Context, *ent.PlanMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PlanFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PlanMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PlanMutation", m)
+}
+
+// The PriceTierFunc type is an adapter to allow the use of ordinary
+// function as PriceTier mutator.
+type PriceTierFunc func(context.Context, *ent.PriceTierMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PriceTierFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PriceTierMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PriceTierMutation", m)
+}
+
+// The PromoFunc type is an adapter to allow the use of ordinary
+// function as Promo mutator.
+type PromoFunc func(context.Context, *ent.PromoMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PromoFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PromoMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PromoMutation", m)
+}
+
+// The ProviderFunc type is an adapter to allow the use of ordinary
+// function as Provider mutator.
+type ProviderFunc func(context.Context, *ent.ProviderMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ProviderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ProviderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProviderMutation", m)
+}
+
+// The SnapshotFunc type is an adapter to allow the use of ordinary
+// function as Snapshot mutator.
+type SnapshotFunc func(context.Context, *ent.SnapshotMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SnapshotFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SnapshotMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SnapshotMutation", m)
 }
 
 // Condition is a hook condition function.

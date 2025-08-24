@@ -7,17 +7,24 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dlukt/graphql-backend-starter/ent/predicate"
-	"github.com/dlukt/graphql-backend-starter/ent/profile"
+	"github.com/deicod/tarife/ent/addon"
+	"github.com/deicod/tarife/ent/bandwidth"
+	"github.com/deicod/tarife/ent/onetimefee"
+	"github.com/deicod/tarife/ent/plan"
+	"github.com/deicod/tarife/ent/predicate"
+	"github.com/deicod/tarife/ent/pricetier"
+	"github.com/deicod/tarife/ent/promo"
+	"github.com/deicod/tarife/ent/provider"
+	"github.com/deicod/tarife/ent/snapshot"
 	"github.com/rs/xid"
 )
 
-// ProfileWhereInput represents a where input for filtering Profile queries.
-type ProfileWhereInput struct {
-	Predicates []predicate.Profile  `json:"-"`
-	Not        *ProfileWhereInput   `json:"not,omitempty"`
-	Or         []*ProfileWhereInput `json:"or,omitempty"`
-	And        []*ProfileWhereInput `json:"and,omitempty"`
+// AddonWhereInput represents a where input for filtering Addon queries.
+type AddonWhereInput struct {
+	Predicates []predicate.Addon  `json:"-"`
+	Not        *AddonWhereInput   `json:"not,omitempty"`
+	Or         []*AddonWhereInput `json:"or,omitempty"`
+	And        []*AddonWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
 	ID      *xid.ID  `json:"id,omitempty"`
@@ -28,43 +35,6 @@ type ProfileWhereInput struct {
 	IDGTE   *xid.ID  `json:"idGTE,omitempty"`
 	IDLT    *xid.ID  `json:"idLT,omitempty"`
 	IDLTE   *xid.ID  `json:"idLTE,omitempty"`
-
-	// "create_time" field predicates.
-	CreateTime      *time.Time  `json:"createTime,omitempty"`
-	CreateTimeNEQ   *time.Time  `json:"createTimeNEQ,omitempty"`
-	CreateTimeIn    []time.Time `json:"createTimeIn,omitempty"`
-	CreateTimeNotIn []time.Time `json:"createTimeNotIn,omitempty"`
-	CreateTimeGT    *time.Time  `json:"createTimeGT,omitempty"`
-	CreateTimeGTE   *time.Time  `json:"createTimeGTE,omitempty"`
-	CreateTimeLT    *time.Time  `json:"createTimeLT,omitempty"`
-	CreateTimeLTE   *time.Time  `json:"createTimeLTE,omitempty"`
-
-	// "update_time" field predicates.
-	UpdateTime       *time.Time  `json:"updateTime,omitempty"`
-	UpdateTimeNEQ    *time.Time  `json:"updateTimeNEQ,omitempty"`
-	UpdateTimeIn     []time.Time `json:"updateTimeIn,omitempty"`
-	UpdateTimeNotIn  []time.Time `json:"updateTimeNotIn,omitempty"`
-	UpdateTimeGT     *time.Time  `json:"updateTimeGT,omitempty"`
-	UpdateTimeGTE    *time.Time  `json:"updateTimeGTE,omitempty"`
-	UpdateTimeLT     *time.Time  `json:"updateTimeLT,omitempty"`
-	UpdateTimeLTE    *time.Time  `json:"updateTimeLTE,omitempty"`
-	UpdateTimeIsNil  bool        `json:"updateTimeIsNil,omitempty"`
-	UpdateTimeNotNil bool        `json:"updateTimeNotNil,omitempty"`
-
-	// "sub" field predicates.
-	Sub             *string  `json:"sub,omitempty"`
-	SubNEQ          *string  `json:"subNEQ,omitempty"`
-	SubIn           []string `json:"subIn,omitempty"`
-	SubNotIn        []string `json:"subNotIn,omitempty"`
-	SubGT           *string  `json:"subGT,omitempty"`
-	SubGTE          *string  `json:"subGTE,omitempty"`
-	SubLT           *string  `json:"subLT,omitempty"`
-	SubLTE          *string  `json:"subLTE,omitempty"`
-	SubContains     *string  `json:"subContains,omitempty"`
-	SubHasPrefix    *string  `json:"subHasPrefix,omitempty"`
-	SubHasSuffix    *string  `json:"subHasSuffix,omitempty"`
-	SubEqualFold    *string  `json:"subEqualFold,omitempty"`
-	SubContainsFold *string  `json:"subContainsFold,omitempty"`
 
 	// "name" field predicates.
 	Name             *string  `json:"name,omitempty"`
@@ -78,42 +48,37 @@ type ProfileWhereInput struct {
 	NameContains     *string  `json:"nameContains,omitempty"`
 	NameHasPrefix    *string  `json:"nameHasPrefix,omitempty"`
 	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
-	NameIsNil        bool     `json:"nameIsNil,omitempty"`
-	NameNotNil       bool     `json:"nameNotNil,omitempty"`
 	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
 
-	// "gender" field predicates.
-	Gender             *string  `json:"gender,omitempty"`
-	GenderNEQ          *string  `json:"genderNEQ,omitempty"`
-	GenderIn           []string `json:"genderIn,omitempty"`
-	GenderNotIn        []string `json:"genderNotIn,omitempty"`
-	GenderGT           *string  `json:"genderGT,omitempty"`
-	GenderGTE          *string  `json:"genderGTE,omitempty"`
-	GenderLT           *string  `json:"genderLT,omitempty"`
-	GenderLTE          *string  `json:"genderLTE,omitempty"`
-	GenderContains     *string  `json:"genderContains,omitempty"`
-	GenderHasPrefix    *string  `json:"genderHasPrefix,omitempty"`
-	GenderHasSuffix    *string  `json:"genderHasSuffix,omitempty"`
-	GenderIsNil        bool     `json:"genderIsNil,omitempty"`
-	GenderNotNil       bool     `json:"genderNotNil,omitempty"`
-	GenderEqualFold    *string  `json:"genderEqualFold,omitempty"`
-	GenderContainsFold *string  `json:"genderContainsFold,omitempty"`
+	// "monthly_fee_cents" field predicates.
+	MonthlyFeeCents      *int  `json:"monthlyFeeCents,omitempty"`
+	MonthlyFeeCentsNEQ   *int  `json:"monthlyFeeCentsNEQ,omitempty"`
+	MonthlyFeeCentsIn    []int `json:"monthlyFeeCentsIn,omitempty"`
+	MonthlyFeeCentsNotIn []int `json:"monthlyFeeCentsNotIn,omitempty"`
+	MonthlyFeeCentsGT    *int  `json:"monthlyFeeCentsGT,omitempty"`
+	MonthlyFeeCentsGTE   *int  `json:"monthlyFeeCentsGTE,omitempty"`
+	MonthlyFeeCentsLT    *int  `json:"monthlyFeeCentsLT,omitempty"`
+	MonthlyFeeCentsLTE   *int  `json:"monthlyFeeCentsLTE,omitempty"`
+
+	// "plans" edge predicates.
+	HasPlans     *bool             `json:"hasPlans,omitempty"`
+	HasPlansWith []*PlanWhereInput `json:"hasPlansWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
-func (i *ProfileWhereInput) AddPredicates(predicates ...predicate.Profile) {
+func (i *AddonWhereInput) AddPredicates(predicates ...predicate.Addon) {
 	i.Predicates = append(i.Predicates, predicates...)
 }
 
-// Filter applies the ProfileWhereInput filter on the ProfileQuery builder.
-func (i *ProfileWhereInput) Filter(q *ProfileQuery) (*ProfileQuery, error) {
+// Filter applies the AddonWhereInput filter on the AddonQuery builder.
+func (i *AddonWhereInput) Filter(q *AddonQuery) (*AddonQuery, error) {
 	if i == nil {
 		return q, nil
 	}
 	p, err := i.P()
 	if err != nil {
-		if err == ErrEmptyProfileWhereInput {
+		if err == ErrEmptyAddonWhereInput {
 			return q, nil
 		}
 		return nil, err
@@ -121,19 +86,19 @@ func (i *ProfileWhereInput) Filter(q *ProfileQuery) (*ProfileQuery, error) {
 	return q.Where(p), nil
 }
 
-// ErrEmptyProfileWhereInput is returned in case the ProfileWhereInput is empty.
-var ErrEmptyProfileWhereInput = errors.New("ent: empty predicate ProfileWhereInput")
+// ErrEmptyAddonWhereInput is returned in case the AddonWhereInput is empty.
+var ErrEmptyAddonWhereInput = errors.New("ent: empty predicate AddonWhereInput")
 
-// P returns a predicate for filtering profiles.
+// P returns a predicate for filtering addons.
 // An error is returned if the input is empty or invalid.
-func (i *ProfileWhereInput) P() (predicate.Profile, error) {
-	var predicates []predicate.Profile
+func (i *AddonWhereInput) P() (predicate.Addon, error) {
+	var predicates []predicate.Addon
 	if i.Not != nil {
 		p, err := i.Not.P()
 		if err != nil {
 			return nil, fmt.Errorf("%w: field 'not'", err)
 		}
-		predicates = append(predicates, profile.Not(p))
+		predicates = append(predicates, addon.Not(p))
 	}
 	switch n := len(i.Or); {
 	case n == 1:
@@ -143,7 +108,7 @@ func (i *ProfileWhereInput) P() (predicate.Profile, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		or := make([]predicate.Profile, 0, n)
+		or := make([]predicate.Addon, 0, n)
 		for _, w := range i.Or {
 			p, err := w.P()
 			if err != nil {
@@ -151,7 +116,7 @@ func (i *ProfileWhereInput) P() (predicate.Profile, error) {
 			}
 			or = append(or, p)
 		}
-		predicates = append(predicates, profile.Or(or...))
+		predicates = append(predicates, addon.Or(or...))
 	}
 	switch n := len(i.And); {
 	case n == 1:
@@ -161,7 +126,7 @@ func (i *ProfileWhereInput) P() (predicate.Profile, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		and := make([]predicate.Profile, 0, n)
+		and := make([]predicate.Addon, 0, n)
 		for _, w := range i.And {
 			p, err := w.P()
 			if err != nil {
@@ -169,223 +134,2299 @@ func (i *ProfileWhereInput) P() (predicate.Profile, error) {
 			}
 			and = append(and, p)
 		}
-		predicates = append(predicates, profile.And(and...))
+		predicates = append(predicates, addon.And(and...))
 	}
 	predicates = append(predicates, i.Predicates...)
 	if i.ID != nil {
-		predicates = append(predicates, profile.IDEQ(*i.ID))
+		predicates = append(predicates, addon.IDEQ(*i.ID))
 	}
 	if i.IDNEQ != nil {
-		predicates = append(predicates, profile.IDNEQ(*i.IDNEQ))
+		predicates = append(predicates, addon.IDNEQ(*i.IDNEQ))
 	}
 	if len(i.IDIn) > 0 {
-		predicates = append(predicates, profile.IDIn(i.IDIn...))
+		predicates = append(predicates, addon.IDIn(i.IDIn...))
 	}
 	if len(i.IDNotIn) > 0 {
-		predicates = append(predicates, profile.IDNotIn(i.IDNotIn...))
+		predicates = append(predicates, addon.IDNotIn(i.IDNotIn...))
 	}
 	if i.IDGT != nil {
-		predicates = append(predicates, profile.IDGT(*i.IDGT))
+		predicates = append(predicates, addon.IDGT(*i.IDGT))
 	}
 	if i.IDGTE != nil {
-		predicates = append(predicates, profile.IDGTE(*i.IDGTE))
+		predicates = append(predicates, addon.IDGTE(*i.IDGTE))
 	}
 	if i.IDLT != nil {
-		predicates = append(predicates, profile.IDLT(*i.IDLT))
+		predicates = append(predicates, addon.IDLT(*i.IDLT))
 	}
 	if i.IDLTE != nil {
-		predicates = append(predicates, profile.IDLTE(*i.IDLTE))
-	}
-	if i.CreateTime != nil {
-		predicates = append(predicates, profile.CreateTimeEQ(*i.CreateTime))
-	}
-	if i.CreateTimeNEQ != nil {
-		predicates = append(predicates, profile.CreateTimeNEQ(*i.CreateTimeNEQ))
-	}
-	if len(i.CreateTimeIn) > 0 {
-		predicates = append(predicates, profile.CreateTimeIn(i.CreateTimeIn...))
-	}
-	if len(i.CreateTimeNotIn) > 0 {
-		predicates = append(predicates, profile.CreateTimeNotIn(i.CreateTimeNotIn...))
-	}
-	if i.CreateTimeGT != nil {
-		predicates = append(predicates, profile.CreateTimeGT(*i.CreateTimeGT))
-	}
-	if i.CreateTimeGTE != nil {
-		predicates = append(predicates, profile.CreateTimeGTE(*i.CreateTimeGTE))
-	}
-	if i.CreateTimeLT != nil {
-		predicates = append(predicates, profile.CreateTimeLT(*i.CreateTimeLT))
-	}
-	if i.CreateTimeLTE != nil {
-		predicates = append(predicates, profile.CreateTimeLTE(*i.CreateTimeLTE))
-	}
-	if i.UpdateTime != nil {
-		predicates = append(predicates, profile.UpdateTimeEQ(*i.UpdateTime))
-	}
-	if i.UpdateTimeNEQ != nil {
-		predicates = append(predicates, profile.UpdateTimeNEQ(*i.UpdateTimeNEQ))
-	}
-	if len(i.UpdateTimeIn) > 0 {
-		predicates = append(predicates, profile.UpdateTimeIn(i.UpdateTimeIn...))
-	}
-	if len(i.UpdateTimeNotIn) > 0 {
-		predicates = append(predicates, profile.UpdateTimeNotIn(i.UpdateTimeNotIn...))
-	}
-	if i.UpdateTimeGT != nil {
-		predicates = append(predicates, profile.UpdateTimeGT(*i.UpdateTimeGT))
-	}
-	if i.UpdateTimeGTE != nil {
-		predicates = append(predicates, profile.UpdateTimeGTE(*i.UpdateTimeGTE))
-	}
-	if i.UpdateTimeLT != nil {
-		predicates = append(predicates, profile.UpdateTimeLT(*i.UpdateTimeLT))
-	}
-	if i.UpdateTimeLTE != nil {
-		predicates = append(predicates, profile.UpdateTimeLTE(*i.UpdateTimeLTE))
-	}
-	if i.UpdateTimeIsNil {
-		predicates = append(predicates, profile.UpdateTimeIsNil())
-	}
-	if i.UpdateTimeNotNil {
-		predicates = append(predicates, profile.UpdateTimeNotNil())
-	}
-	if i.Sub != nil {
-		predicates = append(predicates, profile.SubEQ(*i.Sub))
-	}
-	if i.SubNEQ != nil {
-		predicates = append(predicates, profile.SubNEQ(*i.SubNEQ))
-	}
-	if len(i.SubIn) > 0 {
-		predicates = append(predicates, profile.SubIn(i.SubIn...))
-	}
-	if len(i.SubNotIn) > 0 {
-		predicates = append(predicates, profile.SubNotIn(i.SubNotIn...))
-	}
-	if i.SubGT != nil {
-		predicates = append(predicates, profile.SubGT(*i.SubGT))
-	}
-	if i.SubGTE != nil {
-		predicates = append(predicates, profile.SubGTE(*i.SubGTE))
-	}
-	if i.SubLT != nil {
-		predicates = append(predicates, profile.SubLT(*i.SubLT))
-	}
-	if i.SubLTE != nil {
-		predicates = append(predicates, profile.SubLTE(*i.SubLTE))
-	}
-	if i.SubContains != nil {
-		predicates = append(predicates, profile.SubContains(*i.SubContains))
-	}
-	if i.SubHasPrefix != nil {
-		predicates = append(predicates, profile.SubHasPrefix(*i.SubHasPrefix))
-	}
-	if i.SubHasSuffix != nil {
-		predicates = append(predicates, profile.SubHasSuffix(*i.SubHasSuffix))
-	}
-	if i.SubEqualFold != nil {
-		predicates = append(predicates, profile.SubEqualFold(*i.SubEqualFold))
-	}
-	if i.SubContainsFold != nil {
-		predicates = append(predicates, profile.SubContainsFold(*i.SubContainsFold))
+		predicates = append(predicates, addon.IDLTE(*i.IDLTE))
 	}
 	if i.Name != nil {
-		predicates = append(predicates, profile.NameEQ(*i.Name))
+		predicates = append(predicates, addon.NameEQ(*i.Name))
 	}
 	if i.NameNEQ != nil {
-		predicates = append(predicates, profile.NameNEQ(*i.NameNEQ))
+		predicates = append(predicates, addon.NameNEQ(*i.NameNEQ))
 	}
 	if len(i.NameIn) > 0 {
-		predicates = append(predicates, profile.NameIn(i.NameIn...))
+		predicates = append(predicates, addon.NameIn(i.NameIn...))
 	}
 	if len(i.NameNotIn) > 0 {
-		predicates = append(predicates, profile.NameNotIn(i.NameNotIn...))
+		predicates = append(predicates, addon.NameNotIn(i.NameNotIn...))
 	}
 	if i.NameGT != nil {
-		predicates = append(predicates, profile.NameGT(*i.NameGT))
+		predicates = append(predicates, addon.NameGT(*i.NameGT))
 	}
 	if i.NameGTE != nil {
-		predicates = append(predicates, profile.NameGTE(*i.NameGTE))
+		predicates = append(predicates, addon.NameGTE(*i.NameGTE))
 	}
 	if i.NameLT != nil {
-		predicates = append(predicates, profile.NameLT(*i.NameLT))
+		predicates = append(predicates, addon.NameLT(*i.NameLT))
 	}
 	if i.NameLTE != nil {
-		predicates = append(predicates, profile.NameLTE(*i.NameLTE))
+		predicates = append(predicates, addon.NameLTE(*i.NameLTE))
 	}
 	if i.NameContains != nil {
-		predicates = append(predicates, profile.NameContains(*i.NameContains))
+		predicates = append(predicates, addon.NameContains(*i.NameContains))
 	}
 	if i.NameHasPrefix != nil {
-		predicates = append(predicates, profile.NameHasPrefix(*i.NameHasPrefix))
+		predicates = append(predicates, addon.NameHasPrefix(*i.NameHasPrefix))
 	}
 	if i.NameHasSuffix != nil {
-		predicates = append(predicates, profile.NameHasSuffix(*i.NameHasSuffix))
-	}
-	if i.NameIsNil {
-		predicates = append(predicates, profile.NameIsNil())
-	}
-	if i.NameNotNil {
-		predicates = append(predicates, profile.NameNotNil())
+		predicates = append(predicates, addon.NameHasSuffix(*i.NameHasSuffix))
 	}
 	if i.NameEqualFold != nil {
-		predicates = append(predicates, profile.NameEqualFold(*i.NameEqualFold))
+		predicates = append(predicates, addon.NameEqualFold(*i.NameEqualFold))
 	}
 	if i.NameContainsFold != nil {
-		predicates = append(predicates, profile.NameContainsFold(*i.NameContainsFold))
+		predicates = append(predicates, addon.NameContainsFold(*i.NameContainsFold))
 	}
-	if i.Gender != nil {
-		predicates = append(predicates, profile.GenderEQ(*i.Gender))
+	if i.MonthlyFeeCents != nil {
+		predicates = append(predicates, addon.MonthlyFeeCentsEQ(*i.MonthlyFeeCents))
 	}
-	if i.GenderNEQ != nil {
-		predicates = append(predicates, profile.GenderNEQ(*i.GenderNEQ))
+	if i.MonthlyFeeCentsNEQ != nil {
+		predicates = append(predicates, addon.MonthlyFeeCentsNEQ(*i.MonthlyFeeCentsNEQ))
 	}
-	if len(i.GenderIn) > 0 {
-		predicates = append(predicates, profile.GenderIn(i.GenderIn...))
+	if len(i.MonthlyFeeCentsIn) > 0 {
+		predicates = append(predicates, addon.MonthlyFeeCentsIn(i.MonthlyFeeCentsIn...))
 	}
-	if len(i.GenderNotIn) > 0 {
-		predicates = append(predicates, profile.GenderNotIn(i.GenderNotIn...))
+	if len(i.MonthlyFeeCentsNotIn) > 0 {
+		predicates = append(predicates, addon.MonthlyFeeCentsNotIn(i.MonthlyFeeCentsNotIn...))
 	}
-	if i.GenderGT != nil {
-		predicates = append(predicates, profile.GenderGT(*i.GenderGT))
+	if i.MonthlyFeeCentsGT != nil {
+		predicates = append(predicates, addon.MonthlyFeeCentsGT(*i.MonthlyFeeCentsGT))
 	}
-	if i.GenderGTE != nil {
-		predicates = append(predicates, profile.GenderGTE(*i.GenderGTE))
+	if i.MonthlyFeeCentsGTE != nil {
+		predicates = append(predicates, addon.MonthlyFeeCentsGTE(*i.MonthlyFeeCentsGTE))
 	}
-	if i.GenderLT != nil {
-		predicates = append(predicates, profile.GenderLT(*i.GenderLT))
+	if i.MonthlyFeeCentsLT != nil {
+		predicates = append(predicates, addon.MonthlyFeeCentsLT(*i.MonthlyFeeCentsLT))
 	}
-	if i.GenderLTE != nil {
-		predicates = append(predicates, profile.GenderLTE(*i.GenderLTE))
+	if i.MonthlyFeeCentsLTE != nil {
+		predicates = append(predicates, addon.MonthlyFeeCentsLTE(*i.MonthlyFeeCentsLTE))
 	}
-	if i.GenderContains != nil {
-		predicates = append(predicates, profile.GenderContains(*i.GenderContains))
+
+	if i.HasPlans != nil {
+		p := addon.HasPlans()
+		if !*i.HasPlans {
+			p = addon.Not(p)
+		}
+		predicates = append(predicates, p)
 	}
-	if i.GenderHasPrefix != nil {
-		predicates = append(predicates, profile.GenderHasPrefix(*i.GenderHasPrefix))
+	if len(i.HasPlansWith) > 0 {
+		with := make([]predicate.Plan, 0, len(i.HasPlansWith))
+		for _, w := range i.HasPlansWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasPlansWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, addon.HasPlansWith(with...))
 	}
-	if i.GenderHasSuffix != nil {
-		predicates = append(predicates, profile.GenderHasSuffix(*i.GenderHasSuffix))
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyAddonWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return addon.And(predicates...), nil
 	}
-	if i.GenderIsNil {
-		predicates = append(predicates, profile.GenderIsNil())
+}
+
+// BandwidthWhereInput represents a where input for filtering Bandwidth queries.
+type BandwidthWhereInput struct {
+	Predicates []predicate.Bandwidth  `json:"-"`
+	Not        *BandwidthWhereInput   `json:"not,omitempty"`
+	Or         []*BandwidthWhereInput `json:"or,omitempty"`
+	And        []*BandwidthWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *xid.ID  `json:"id,omitempty"`
+	IDNEQ   *xid.ID  `json:"idNEQ,omitempty"`
+	IDIn    []xid.ID `json:"idIn,omitempty"`
+	IDNotIn []xid.ID `json:"idNotIn,omitempty"`
+	IDGT    *xid.ID  `json:"idGT,omitempty"`
+	IDGTE   *xid.ID  `json:"idGTE,omitempty"`
+	IDLT    *xid.ID  `json:"idLT,omitempty"`
+	IDLTE   *xid.ID  `json:"idLTE,omitempty"`
+
+	// "down_mbps" field predicates.
+	DownMbps      *int  `json:"downMbps,omitempty"`
+	DownMbpsNEQ   *int  `json:"downMbpsNEQ,omitempty"`
+	DownMbpsIn    []int `json:"downMbpsIn,omitempty"`
+	DownMbpsNotIn []int `json:"downMbpsNotIn,omitempty"`
+	DownMbpsGT    *int  `json:"downMbpsGT,omitempty"`
+	DownMbpsGTE   *int  `json:"downMbpsGTE,omitempty"`
+	DownMbpsLT    *int  `json:"downMbpsLT,omitempty"`
+	DownMbpsLTE   *int  `json:"downMbpsLTE,omitempty"`
+
+	// "up_mbps" field predicates.
+	UpMbps      *int  `json:"upMbps,omitempty"`
+	UpMbpsNEQ   *int  `json:"upMbpsNEQ,omitempty"`
+	UpMbpsIn    []int `json:"upMbpsIn,omitempty"`
+	UpMbpsNotIn []int `json:"upMbpsNotIn,omitempty"`
+	UpMbpsGT    *int  `json:"upMbpsGT,omitempty"`
+	UpMbpsGTE   *int  `json:"upMbpsGTE,omitempty"`
+	UpMbpsLT    *int  `json:"upMbpsLT,omitempty"`
+	UpMbpsLTE   *int  `json:"upMbpsLTE,omitempty"`
+
+	// "plan" edge predicates.
+	HasPlan     *bool             `json:"hasPlan,omitempty"`
+	HasPlanWith []*PlanWhereInput `json:"hasPlanWith,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *BandwidthWhereInput) AddPredicates(predicates ...predicate.Bandwidth) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the BandwidthWhereInput filter on the BandwidthQuery builder.
+func (i *BandwidthWhereInput) Filter(q *BandwidthQuery) (*BandwidthQuery, error) {
+	if i == nil {
+		return q, nil
 	}
-	if i.GenderNotNil {
-		predicates = append(predicates, profile.GenderNotNil())
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyBandwidthWhereInput {
+			return q, nil
+		}
+		return nil, err
 	}
-	if i.GenderEqualFold != nil {
-		predicates = append(predicates, profile.GenderEqualFold(*i.GenderEqualFold))
+	return q.Where(p), nil
+}
+
+// ErrEmptyBandwidthWhereInput is returned in case the BandwidthWhereInput is empty.
+var ErrEmptyBandwidthWhereInput = errors.New("ent: empty predicate BandwidthWhereInput")
+
+// P returns a predicate for filtering bandwidths.
+// An error is returned if the input is empty or invalid.
+func (i *BandwidthWhereInput) P() (predicate.Bandwidth, error) {
+	var predicates []predicate.Bandwidth
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, bandwidth.Not(p))
 	}
-	if i.GenderContainsFold != nil {
-		predicates = append(predicates, profile.GenderContainsFold(*i.GenderContainsFold))
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.Bandwidth, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, bandwidth.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.Bandwidth, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, bandwidth.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, bandwidth.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, bandwidth.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, bandwidth.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, bandwidth.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, bandwidth.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, bandwidth.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, bandwidth.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, bandwidth.IDLTE(*i.IDLTE))
+	}
+	if i.DownMbps != nil {
+		predicates = append(predicates, bandwidth.DownMbpsEQ(*i.DownMbps))
+	}
+	if i.DownMbpsNEQ != nil {
+		predicates = append(predicates, bandwidth.DownMbpsNEQ(*i.DownMbpsNEQ))
+	}
+	if len(i.DownMbpsIn) > 0 {
+		predicates = append(predicates, bandwidth.DownMbpsIn(i.DownMbpsIn...))
+	}
+	if len(i.DownMbpsNotIn) > 0 {
+		predicates = append(predicates, bandwidth.DownMbpsNotIn(i.DownMbpsNotIn...))
+	}
+	if i.DownMbpsGT != nil {
+		predicates = append(predicates, bandwidth.DownMbpsGT(*i.DownMbpsGT))
+	}
+	if i.DownMbpsGTE != nil {
+		predicates = append(predicates, bandwidth.DownMbpsGTE(*i.DownMbpsGTE))
+	}
+	if i.DownMbpsLT != nil {
+		predicates = append(predicates, bandwidth.DownMbpsLT(*i.DownMbpsLT))
+	}
+	if i.DownMbpsLTE != nil {
+		predicates = append(predicates, bandwidth.DownMbpsLTE(*i.DownMbpsLTE))
+	}
+	if i.UpMbps != nil {
+		predicates = append(predicates, bandwidth.UpMbpsEQ(*i.UpMbps))
+	}
+	if i.UpMbpsNEQ != nil {
+		predicates = append(predicates, bandwidth.UpMbpsNEQ(*i.UpMbpsNEQ))
+	}
+	if len(i.UpMbpsIn) > 0 {
+		predicates = append(predicates, bandwidth.UpMbpsIn(i.UpMbpsIn...))
+	}
+	if len(i.UpMbpsNotIn) > 0 {
+		predicates = append(predicates, bandwidth.UpMbpsNotIn(i.UpMbpsNotIn...))
+	}
+	if i.UpMbpsGT != nil {
+		predicates = append(predicates, bandwidth.UpMbpsGT(*i.UpMbpsGT))
+	}
+	if i.UpMbpsGTE != nil {
+		predicates = append(predicates, bandwidth.UpMbpsGTE(*i.UpMbpsGTE))
+	}
+	if i.UpMbpsLT != nil {
+		predicates = append(predicates, bandwidth.UpMbpsLT(*i.UpMbpsLT))
+	}
+	if i.UpMbpsLTE != nil {
+		predicates = append(predicates, bandwidth.UpMbpsLTE(*i.UpMbpsLTE))
+	}
+
+	if i.HasPlan != nil {
+		p := bandwidth.HasPlan()
+		if !*i.HasPlan {
+			p = bandwidth.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasPlanWith) > 0 {
+		with := make([]predicate.Plan, 0, len(i.HasPlanWith))
+		for _, w := range i.HasPlanWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasPlanWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, bandwidth.HasPlanWith(with...))
+	}
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyBandwidthWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return bandwidth.And(predicates...), nil
+	}
+}
+
+// OneTimeFeeWhereInput represents a where input for filtering OneTimeFee queries.
+type OneTimeFeeWhereInput struct {
+	Predicates []predicate.OneTimeFee  `json:"-"`
+	Not        *OneTimeFeeWhereInput   `json:"not,omitempty"`
+	Or         []*OneTimeFeeWhereInput `json:"or,omitempty"`
+	And        []*OneTimeFeeWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *xid.ID  `json:"id,omitempty"`
+	IDNEQ   *xid.ID  `json:"idNEQ,omitempty"`
+	IDIn    []xid.ID `json:"idIn,omitempty"`
+	IDNotIn []xid.ID `json:"idNotIn,omitempty"`
+	IDGT    *xid.ID  `json:"idGT,omitempty"`
+	IDGTE   *xid.ID  `json:"idGTE,omitempty"`
+	IDLT    *xid.ID  `json:"idLT,omitempty"`
+	IDLTE   *xid.ID  `json:"idLTE,omitempty"`
+
+	// "kind" field predicates.
+	Kind      *onetimefee.Kind  `json:"kind,omitempty"`
+	KindNEQ   *onetimefee.Kind  `json:"kindNEQ,omitempty"`
+	KindIn    []onetimefee.Kind `json:"kindIn,omitempty"`
+	KindNotIn []onetimefee.Kind `json:"kindNotIn,omitempty"`
+
+	// "amount_cents" field predicates.
+	AmountCents      *int  `json:"amountCents,omitempty"`
+	AmountCentsNEQ   *int  `json:"amountCentsNEQ,omitempty"`
+	AmountCentsIn    []int `json:"amountCentsIn,omitempty"`
+	AmountCentsNotIn []int `json:"amountCentsNotIn,omitempty"`
+	AmountCentsGT    *int  `json:"amountCentsGT,omitempty"`
+	AmountCentsGTE   *int  `json:"amountCentsGTE,omitempty"`
+	AmountCentsLT    *int  `json:"amountCentsLT,omitempty"`
+	AmountCentsLTE   *int  `json:"amountCentsLTE,omitempty"`
+
+	// "plan" edge predicates.
+	HasPlan     *bool             `json:"hasPlan,omitempty"`
+	HasPlanWith []*PlanWhereInput `json:"hasPlanWith,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *OneTimeFeeWhereInput) AddPredicates(predicates ...predicate.OneTimeFee) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the OneTimeFeeWhereInput filter on the OneTimeFeeQuery builder.
+func (i *OneTimeFeeWhereInput) Filter(q *OneTimeFeeQuery) (*OneTimeFeeQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyOneTimeFeeWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyOneTimeFeeWhereInput is returned in case the OneTimeFeeWhereInput is empty.
+var ErrEmptyOneTimeFeeWhereInput = errors.New("ent: empty predicate OneTimeFeeWhereInput")
+
+// P returns a predicate for filtering onetimefees.
+// An error is returned if the input is empty or invalid.
+func (i *OneTimeFeeWhereInput) P() (predicate.OneTimeFee, error) {
+	var predicates []predicate.OneTimeFee
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, onetimefee.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.OneTimeFee, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, onetimefee.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.OneTimeFee, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, onetimefee.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, onetimefee.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, onetimefee.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, onetimefee.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, onetimefee.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, onetimefee.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, onetimefee.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, onetimefee.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, onetimefee.IDLTE(*i.IDLTE))
+	}
+	if i.Kind != nil {
+		predicates = append(predicates, onetimefee.KindEQ(*i.Kind))
+	}
+	if i.KindNEQ != nil {
+		predicates = append(predicates, onetimefee.KindNEQ(*i.KindNEQ))
+	}
+	if len(i.KindIn) > 0 {
+		predicates = append(predicates, onetimefee.KindIn(i.KindIn...))
+	}
+	if len(i.KindNotIn) > 0 {
+		predicates = append(predicates, onetimefee.KindNotIn(i.KindNotIn...))
+	}
+	if i.AmountCents != nil {
+		predicates = append(predicates, onetimefee.AmountCentsEQ(*i.AmountCents))
+	}
+	if i.AmountCentsNEQ != nil {
+		predicates = append(predicates, onetimefee.AmountCentsNEQ(*i.AmountCentsNEQ))
+	}
+	if len(i.AmountCentsIn) > 0 {
+		predicates = append(predicates, onetimefee.AmountCentsIn(i.AmountCentsIn...))
+	}
+	if len(i.AmountCentsNotIn) > 0 {
+		predicates = append(predicates, onetimefee.AmountCentsNotIn(i.AmountCentsNotIn...))
+	}
+	if i.AmountCentsGT != nil {
+		predicates = append(predicates, onetimefee.AmountCentsGT(*i.AmountCentsGT))
+	}
+	if i.AmountCentsGTE != nil {
+		predicates = append(predicates, onetimefee.AmountCentsGTE(*i.AmountCentsGTE))
+	}
+	if i.AmountCentsLT != nil {
+		predicates = append(predicates, onetimefee.AmountCentsLT(*i.AmountCentsLT))
+	}
+	if i.AmountCentsLTE != nil {
+		predicates = append(predicates, onetimefee.AmountCentsLTE(*i.AmountCentsLTE))
+	}
+
+	if i.HasPlan != nil {
+		p := onetimefee.HasPlan()
+		if !*i.HasPlan {
+			p = onetimefee.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasPlanWith) > 0 {
+		with := make([]predicate.Plan, 0, len(i.HasPlanWith))
+		for _, w := range i.HasPlanWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasPlanWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, onetimefee.HasPlanWith(with...))
+	}
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyOneTimeFeeWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return onetimefee.And(predicates...), nil
+	}
+}
+
+// PlanWhereInput represents a where input for filtering Plan queries.
+type PlanWhereInput struct {
+	Predicates []predicate.Plan  `json:"-"`
+	Not        *PlanWhereInput   `json:"not,omitempty"`
+	Or         []*PlanWhereInput `json:"or,omitempty"`
+	And        []*PlanWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *xid.ID  `json:"id,omitempty"`
+	IDNEQ   *xid.ID  `json:"idNEQ,omitempty"`
+	IDIn    []xid.ID `json:"idIn,omitempty"`
+	IDNotIn []xid.ID `json:"idNotIn,omitempty"`
+	IDGT    *xid.ID  `json:"idGT,omitempty"`
+	IDGTE   *xid.ID  `json:"idGTE,omitempty"`
+	IDLT    *xid.ID  `json:"idLT,omitempty"`
+	IDLTE   *xid.ID  `json:"idLTE,omitempty"`
+
+	// "technology" field predicates.
+	Technology      *plan.Technology  `json:"technology,omitempty"`
+	TechnologyNEQ   *plan.Technology  `json:"technologyNEQ,omitempty"`
+	TechnologyIn    []plan.Technology `json:"technologyIn,omitempty"`
+	TechnologyNotIn []plan.Technology `json:"technologyNotIn,omitempty"`
+
+	// "name" field predicates.
+	Name             *string  `json:"name,omitempty"`
+	NameNEQ          *string  `json:"nameNEQ,omitempty"`
+	NameIn           []string `json:"nameIn,omitempty"`
+	NameNotIn        []string `json:"nameNotIn,omitempty"`
+	NameGT           *string  `json:"nameGT,omitempty"`
+	NameGTE          *string  `json:"nameGTE,omitempty"`
+	NameLT           *string  `json:"nameLT,omitempty"`
+	NameLTE          *string  `json:"nameLTE,omitempty"`
+	NameContains     *string  `json:"nameContains,omitempty"`
+	NameHasPrefix    *string  `json:"nameHasPrefix,omitempty"`
+	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
+	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
+	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
+
+	// "description" field predicates.
+	Description             *string  `json:"description,omitempty"`
+	DescriptionNEQ          *string  `json:"descriptionNEQ,omitempty"`
+	DescriptionIn           []string `json:"descriptionIn,omitempty"`
+	DescriptionNotIn        []string `json:"descriptionNotIn,omitempty"`
+	DescriptionGT           *string  `json:"descriptionGT,omitempty"`
+	DescriptionGTE          *string  `json:"descriptionGTE,omitempty"`
+	DescriptionLT           *string  `json:"descriptionLT,omitempty"`
+	DescriptionLTE          *string  `json:"descriptionLTE,omitempty"`
+	DescriptionContains     *string  `json:"descriptionContains,omitempty"`
+	DescriptionHasPrefix    *string  `json:"descriptionHasPrefix,omitempty"`
+	DescriptionHasSuffix    *string  `json:"descriptionHasSuffix,omitempty"`
+	DescriptionIsNil        bool     `json:"descriptionIsNil,omitempty"`
+	DescriptionNotNil       bool     `json:"descriptionNotNil,omitempty"`
+	DescriptionEqualFold    *string  `json:"descriptionEqualFold,omitempty"`
+	DescriptionContainsFold *string  `json:"descriptionContainsFold,omitempty"`
+
+	// "min_term_months" field predicates.
+	MinTermMonths      *int  `json:"minTermMonths,omitempty"`
+	MinTermMonthsNEQ   *int  `json:"minTermMonthsNEQ,omitempty"`
+	MinTermMonthsIn    []int `json:"minTermMonthsIn,omitempty"`
+	MinTermMonthsNotIn []int `json:"minTermMonthsNotIn,omitempty"`
+	MinTermMonthsGT    *int  `json:"minTermMonthsGT,omitempty"`
+	MinTermMonthsGTE   *int  `json:"minTermMonthsGTE,omitempty"`
+	MinTermMonthsLT    *int  `json:"minTermMonthsLT,omitempty"`
+	MinTermMonthsLTE   *int  `json:"minTermMonthsLTE,omitempty"`
+
+	// "cancel_notice_days" field predicates.
+	CancelNoticeDays       *int  `json:"cancelNoticeDays,omitempty"`
+	CancelNoticeDaysNEQ    *int  `json:"cancelNoticeDaysNEQ,omitempty"`
+	CancelNoticeDaysIn     []int `json:"cancelNoticeDaysIn,omitempty"`
+	CancelNoticeDaysNotIn  []int `json:"cancelNoticeDaysNotIn,omitempty"`
+	CancelNoticeDaysGT     *int  `json:"cancelNoticeDaysGT,omitempty"`
+	CancelNoticeDaysGTE    *int  `json:"cancelNoticeDaysGTE,omitempty"`
+	CancelNoticeDaysLT     *int  `json:"cancelNoticeDaysLT,omitempty"`
+	CancelNoticeDaysLTE    *int  `json:"cancelNoticeDaysLTE,omitempty"`
+	CancelNoticeDaysIsNil  bool  `json:"cancelNoticeDaysIsNil,omitempty"`
+	CancelNoticeDaysNotNil bool  `json:"cancelNoticeDaysNotNil,omitempty"`
+
+	// "valid_from" field predicates.
+	ValidFrom      *time.Time  `json:"validFrom,omitempty"`
+	ValidFromNEQ   *time.Time  `json:"validFromNEQ,omitempty"`
+	ValidFromIn    []time.Time `json:"validFromIn,omitempty"`
+	ValidFromNotIn []time.Time `json:"validFromNotIn,omitempty"`
+	ValidFromGT    *time.Time  `json:"validFromGT,omitempty"`
+	ValidFromGTE   *time.Time  `json:"validFromGTE,omitempty"`
+	ValidFromLT    *time.Time  `json:"validFromLT,omitempty"`
+	ValidFromLTE   *time.Time  `json:"validFromLTE,omitempty"`
+
+	// "valid_to" field predicates.
+	ValidTo       *time.Time  `json:"validTo,omitempty"`
+	ValidToNEQ    *time.Time  `json:"validToNEQ,omitempty"`
+	ValidToIn     []time.Time `json:"validToIn,omitempty"`
+	ValidToNotIn  []time.Time `json:"validToNotIn,omitempty"`
+	ValidToGT     *time.Time  `json:"validToGT,omitempty"`
+	ValidToGTE    *time.Time  `json:"validToGTE,omitempty"`
+	ValidToLT     *time.Time  `json:"validToLT,omitempty"`
+	ValidToLTE    *time.Time  `json:"validToLTE,omitempty"`
+	ValidToIsNil  bool        `json:"validToIsNil,omitempty"`
+	ValidToNotNil bool        `json:"validToNotNil,omitempty"`
+
+	// "source_url" field predicates.
+	SourceURL             *string  `json:"sourceURL,omitempty"`
+	SourceURLNEQ          *string  `json:"sourceURLNEQ,omitempty"`
+	SourceURLIn           []string `json:"sourceURLIn,omitempty"`
+	SourceURLNotIn        []string `json:"sourceURLNotIn,omitempty"`
+	SourceURLGT           *string  `json:"sourceURLGT,omitempty"`
+	SourceURLGTE          *string  `json:"sourceURLGTE,omitempty"`
+	SourceURLLT           *string  `json:"sourceURLLT,omitempty"`
+	SourceURLLTE          *string  `json:"sourceURLLTE,omitempty"`
+	SourceURLContains     *string  `json:"sourceURLContains,omitempty"`
+	SourceURLHasPrefix    *string  `json:"sourceURLHasPrefix,omitempty"`
+	SourceURLHasSuffix    *string  `json:"sourceURLHasSuffix,omitempty"`
+	SourceURLEqualFold    *string  `json:"sourceURLEqualFold,omitempty"`
+	SourceURLContainsFold *string  `json:"sourceURLContainsFold,omitempty"`
+
+	// "version_tag" field predicates.
+	VersionTag             *string  `json:"versionTag,omitempty"`
+	VersionTagNEQ          *string  `json:"versionTagNEQ,omitempty"`
+	VersionTagIn           []string `json:"versionTagIn,omitempty"`
+	VersionTagNotIn        []string `json:"versionTagNotIn,omitempty"`
+	VersionTagGT           *string  `json:"versionTagGT,omitempty"`
+	VersionTagGTE          *string  `json:"versionTagGTE,omitempty"`
+	VersionTagLT           *string  `json:"versionTagLT,omitempty"`
+	VersionTagLTE          *string  `json:"versionTagLTE,omitempty"`
+	VersionTagContains     *string  `json:"versionTagContains,omitempty"`
+	VersionTagHasPrefix    *string  `json:"versionTagHasPrefix,omitempty"`
+	VersionTagHasSuffix    *string  `json:"versionTagHasSuffix,omitempty"`
+	VersionTagEqualFold    *string  `json:"versionTagEqualFold,omitempty"`
+	VersionTagContainsFold *string  `json:"versionTagContainsFold,omitempty"`
+
+	// "provider" edge predicates.
+	HasProvider     *bool                 `json:"hasProvider,omitempty"`
+	HasProviderWith []*ProviderWhereInput `json:"hasProviderWith,omitempty"`
+
+	// "bandwidth" edge predicates.
+	HasBandwidth     *bool                  `json:"hasBandwidth,omitempty"`
+	HasBandwidthWith []*BandwidthWhereInput `json:"hasBandwidthWith,omitempty"`
+
+	// "price_tiers" edge predicates.
+	HasPriceTiers     *bool                  `json:"hasPriceTiers,omitempty"`
+	HasPriceTiersWith []*PriceTierWhereInput `json:"hasPriceTiersWith,omitempty"`
+
+	// "one_time_fees" edge predicates.
+	HasOneTimeFees     *bool                   `json:"hasOneTimeFees,omitempty"`
+	HasOneTimeFeesWith []*OneTimeFeeWhereInput `json:"hasOneTimeFeesWith,omitempty"`
+
+	// "promos" edge predicates.
+	HasPromos     *bool              `json:"hasPromos,omitempty"`
+	HasPromosWith []*PromoWhereInput `json:"hasPromosWith,omitempty"`
+
+	// "addon" edge predicates.
+	HasAddon     *bool              `json:"hasAddon,omitempty"`
+	HasAddonWith []*AddonWhereInput `json:"hasAddonWith,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *PlanWhereInput) AddPredicates(predicates ...predicate.Plan) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the PlanWhereInput filter on the PlanQuery builder.
+func (i *PlanWhereInput) Filter(q *PlanQuery) (*PlanQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyPlanWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyPlanWhereInput is returned in case the PlanWhereInput is empty.
+var ErrEmptyPlanWhereInput = errors.New("ent: empty predicate PlanWhereInput")
+
+// P returns a predicate for filtering plans.
+// An error is returned if the input is empty or invalid.
+func (i *PlanWhereInput) P() (predicate.Plan, error) {
+	var predicates []predicate.Plan
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, plan.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.Plan, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, plan.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.Plan, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, plan.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, plan.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, plan.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, plan.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, plan.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, plan.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, plan.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, plan.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, plan.IDLTE(*i.IDLTE))
+	}
+	if i.Technology != nil {
+		predicates = append(predicates, plan.TechnologyEQ(*i.Technology))
+	}
+	if i.TechnologyNEQ != nil {
+		predicates = append(predicates, plan.TechnologyNEQ(*i.TechnologyNEQ))
+	}
+	if len(i.TechnologyIn) > 0 {
+		predicates = append(predicates, plan.TechnologyIn(i.TechnologyIn...))
+	}
+	if len(i.TechnologyNotIn) > 0 {
+		predicates = append(predicates, plan.TechnologyNotIn(i.TechnologyNotIn...))
+	}
+	if i.Name != nil {
+		predicates = append(predicates, plan.NameEQ(*i.Name))
+	}
+	if i.NameNEQ != nil {
+		predicates = append(predicates, plan.NameNEQ(*i.NameNEQ))
+	}
+	if len(i.NameIn) > 0 {
+		predicates = append(predicates, plan.NameIn(i.NameIn...))
+	}
+	if len(i.NameNotIn) > 0 {
+		predicates = append(predicates, plan.NameNotIn(i.NameNotIn...))
+	}
+	if i.NameGT != nil {
+		predicates = append(predicates, plan.NameGT(*i.NameGT))
+	}
+	if i.NameGTE != nil {
+		predicates = append(predicates, plan.NameGTE(*i.NameGTE))
+	}
+	if i.NameLT != nil {
+		predicates = append(predicates, plan.NameLT(*i.NameLT))
+	}
+	if i.NameLTE != nil {
+		predicates = append(predicates, plan.NameLTE(*i.NameLTE))
+	}
+	if i.NameContains != nil {
+		predicates = append(predicates, plan.NameContains(*i.NameContains))
+	}
+	if i.NameHasPrefix != nil {
+		predicates = append(predicates, plan.NameHasPrefix(*i.NameHasPrefix))
+	}
+	if i.NameHasSuffix != nil {
+		predicates = append(predicates, plan.NameHasSuffix(*i.NameHasSuffix))
+	}
+	if i.NameEqualFold != nil {
+		predicates = append(predicates, plan.NameEqualFold(*i.NameEqualFold))
+	}
+	if i.NameContainsFold != nil {
+		predicates = append(predicates, plan.NameContainsFold(*i.NameContainsFold))
+	}
+	if i.Description != nil {
+		predicates = append(predicates, plan.DescriptionEQ(*i.Description))
+	}
+	if i.DescriptionNEQ != nil {
+		predicates = append(predicates, plan.DescriptionNEQ(*i.DescriptionNEQ))
+	}
+	if len(i.DescriptionIn) > 0 {
+		predicates = append(predicates, plan.DescriptionIn(i.DescriptionIn...))
+	}
+	if len(i.DescriptionNotIn) > 0 {
+		predicates = append(predicates, plan.DescriptionNotIn(i.DescriptionNotIn...))
+	}
+	if i.DescriptionGT != nil {
+		predicates = append(predicates, plan.DescriptionGT(*i.DescriptionGT))
+	}
+	if i.DescriptionGTE != nil {
+		predicates = append(predicates, plan.DescriptionGTE(*i.DescriptionGTE))
+	}
+	if i.DescriptionLT != nil {
+		predicates = append(predicates, plan.DescriptionLT(*i.DescriptionLT))
+	}
+	if i.DescriptionLTE != nil {
+		predicates = append(predicates, plan.DescriptionLTE(*i.DescriptionLTE))
+	}
+	if i.DescriptionContains != nil {
+		predicates = append(predicates, plan.DescriptionContains(*i.DescriptionContains))
+	}
+	if i.DescriptionHasPrefix != nil {
+		predicates = append(predicates, plan.DescriptionHasPrefix(*i.DescriptionHasPrefix))
+	}
+	if i.DescriptionHasSuffix != nil {
+		predicates = append(predicates, plan.DescriptionHasSuffix(*i.DescriptionHasSuffix))
+	}
+	if i.DescriptionIsNil {
+		predicates = append(predicates, plan.DescriptionIsNil())
+	}
+	if i.DescriptionNotNil {
+		predicates = append(predicates, plan.DescriptionNotNil())
+	}
+	if i.DescriptionEqualFold != nil {
+		predicates = append(predicates, plan.DescriptionEqualFold(*i.DescriptionEqualFold))
+	}
+	if i.DescriptionContainsFold != nil {
+		predicates = append(predicates, plan.DescriptionContainsFold(*i.DescriptionContainsFold))
+	}
+	if i.MinTermMonths != nil {
+		predicates = append(predicates, plan.MinTermMonthsEQ(*i.MinTermMonths))
+	}
+	if i.MinTermMonthsNEQ != nil {
+		predicates = append(predicates, plan.MinTermMonthsNEQ(*i.MinTermMonthsNEQ))
+	}
+	if len(i.MinTermMonthsIn) > 0 {
+		predicates = append(predicates, plan.MinTermMonthsIn(i.MinTermMonthsIn...))
+	}
+	if len(i.MinTermMonthsNotIn) > 0 {
+		predicates = append(predicates, plan.MinTermMonthsNotIn(i.MinTermMonthsNotIn...))
+	}
+	if i.MinTermMonthsGT != nil {
+		predicates = append(predicates, plan.MinTermMonthsGT(*i.MinTermMonthsGT))
+	}
+	if i.MinTermMonthsGTE != nil {
+		predicates = append(predicates, plan.MinTermMonthsGTE(*i.MinTermMonthsGTE))
+	}
+	if i.MinTermMonthsLT != nil {
+		predicates = append(predicates, plan.MinTermMonthsLT(*i.MinTermMonthsLT))
+	}
+	if i.MinTermMonthsLTE != nil {
+		predicates = append(predicates, plan.MinTermMonthsLTE(*i.MinTermMonthsLTE))
+	}
+	if i.CancelNoticeDays != nil {
+		predicates = append(predicates, plan.CancelNoticeDaysEQ(*i.CancelNoticeDays))
+	}
+	if i.CancelNoticeDaysNEQ != nil {
+		predicates = append(predicates, plan.CancelNoticeDaysNEQ(*i.CancelNoticeDaysNEQ))
+	}
+	if len(i.CancelNoticeDaysIn) > 0 {
+		predicates = append(predicates, plan.CancelNoticeDaysIn(i.CancelNoticeDaysIn...))
+	}
+	if len(i.CancelNoticeDaysNotIn) > 0 {
+		predicates = append(predicates, plan.CancelNoticeDaysNotIn(i.CancelNoticeDaysNotIn...))
+	}
+	if i.CancelNoticeDaysGT != nil {
+		predicates = append(predicates, plan.CancelNoticeDaysGT(*i.CancelNoticeDaysGT))
+	}
+	if i.CancelNoticeDaysGTE != nil {
+		predicates = append(predicates, plan.CancelNoticeDaysGTE(*i.CancelNoticeDaysGTE))
+	}
+	if i.CancelNoticeDaysLT != nil {
+		predicates = append(predicates, plan.CancelNoticeDaysLT(*i.CancelNoticeDaysLT))
+	}
+	if i.CancelNoticeDaysLTE != nil {
+		predicates = append(predicates, plan.CancelNoticeDaysLTE(*i.CancelNoticeDaysLTE))
+	}
+	if i.CancelNoticeDaysIsNil {
+		predicates = append(predicates, plan.CancelNoticeDaysIsNil())
+	}
+	if i.CancelNoticeDaysNotNil {
+		predicates = append(predicates, plan.CancelNoticeDaysNotNil())
+	}
+	if i.ValidFrom != nil {
+		predicates = append(predicates, plan.ValidFromEQ(*i.ValidFrom))
+	}
+	if i.ValidFromNEQ != nil {
+		predicates = append(predicates, plan.ValidFromNEQ(*i.ValidFromNEQ))
+	}
+	if len(i.ValidFromIn) > 0 {
+		predicates = append(predicates, plan.ValidFromIn(i.ValidFromIn...))
+	}
+	if len(i.ValidFromNotIn) > 0 {
+		predicates = append(predicates, plan.ValidFromNotIn(i.ValidFromNotIn...))
+	}
+	if i.ValidFromGT != nil {
+		predicates = append(predicates, plan.ValidFromGT(*i.ValidFromGT))
+	}
+	if i.ValidFromGTE != nil {
+		predicates = append(predicates, plan.ValidFromGTE(*i.ValidFromGTE))
+	}
+	if i.ValidFromLT != nil {
+		predicates = append(predicates, plan.ValidFromLT(*i.ValidFromLT))
+	}
+	if i.ValidFromLTE != nil {
+		predicates = append(predicates, plan.ValidFromLTE(*i.ValidFromLTE))
+	}
+	if i.ValidTo != nil {
+		predicates = append(predicates, plan.ValidToEQ(*i.ValidTo))
+	}
+	if i.ValidToNEQ != nil {
+		predicates = append(predicates, plan.ValidToNEQ(*i.ValidToNEQ))
+	}
+	if len(i.ValidToIn) > 0 {
+		predicates = append(predicates, plan.ValidToIn(i.ValidToIn...))
+	}
+	if len(i.ValidToNotIn) > 0 {
+		predicates = append(predicates, plan.ValidToNotIn(i.ValidToNotIn...))
+	}
+	if i.ValidToGT != nil {
+		predicates = append(predicates, plan.ValidToGT(*i.ValidToGT))
+	}
+	if i.ValidToGTE != nil {
+		predicates = append(predicates, plan.ValidToGTE(*i.ValidToGTE))
+	}
+	if i.ValidToLT != nil {
+		predicates = append(predicates, plan.ValidToLT(*i.ValidToLT))
+	}
+	if i.ValidToLTE != nil {
+		predicates = append(predicates, plan.ValidToLTE(*i.ValidToLTE))
+	}
+	if i.ValidToIsNil {
+		predicates = append(predicates, plan.ValidToIsNil())
+	}
+	if i.ValidToNotNil {
+		predicates = append(predicates, plan.ValidToNotNil())
+	}
+	if i.SourceURL != nil {
+		predicates = append(predicates, plan.SourceURLEQ(*i.SourceURL))
+	}
+	if i.SourceURLNEQ != nil {
+		predicates = append(predicates, plan.SourceURLNEQ(*i.SourceURLNEQ))
+	}
+	if len(i.SourceURLIn) > 0 {
+		predicates = append(predicates, plan.SourceURLIn(i.SourceURLIn...))
+	}
+	if len(i.SourceURLNotIn) > 0 {
+		predicates = append(predicates, plan.SourceURLNotIn(i.SourceURLNotIn...))
+	}
+	if i.SourceURLGT != nil {
+		predicates = append(predicates, plan.SourceURLGT(*i.SourceURLGT))
+	}
+	if i.SourceURLGTE != nil {
+		predicates = append(predicates, plan.SourceURLGTE(*i.SourceURLGTE))
+	}
+	if i.SourceURLLT != nil {
+		predicates = append(predicates, plan.SourceURLLT(*i.SourceURLLT))
+	}
+	if i.SourceURLLTE != nil {
+		predicates = append(predicates, plan.SourceURLLTE(*i.SourceURLLTE))
+	}
+	if i.SourceURLContains != nil {
+		predicates = append(predicates, plan.SourceURLContains(*i.SourceURLContains))
+	}
+	if i.SourceURLHasPrefix != nil {
+		predicates = append(predicates, plan.SourceURLHasPrefix(*i.SourceURLHasPrefix))
+	}
+	if i.SourceURLHasSuffix != nil {
+		predicates = append(predicates, plan.SourceURLHasSuffix(*i.SourceURLHasSuffix))
+	}
+	if i.SourceURLEqualFold != nil {
+		predicates = append(predicates, plan.SourceURLEqualFold(*i.SourceURLEqualFold))
+	}
+	if i.SourceURLContainsFold != nil {
+		predicates = append(predicates, plan.SourceURLContainsFold(*i.SourceURLContainsFold))
+	}
+	if i.VersionTag != nil {
+		predicates = append(predicates, plan.VersionTagEQ(*i.VersionTag))
+	}
+	if i.VersionTagNEQ != nil {
+		predicates = append(predicates, plan.VersionTagNEQ(*i.VersionTagNEQ))
+	}
+	if len(i.VersionTagIn) > 0 {
+		predicates = append(predicates, plan.VersionTagIn(i.VersionTagIn...))
+	}
+	if len(i.VersionTagNotIn) > 0 {
+		predicates = append(predicates, plan.VersionTagNotIn(i.VersionTagNotIn...))
+	}
+	if i.VersionTagGT != nil {
+		predicates = append(predicates, plan.VersionTagGT(*i.VersionTagGT))
+	}
+	if i.VersionTagGTE != nil {
+		predicates = append(predicates, plan.VersionTagGTE(*i.VersionTagGTE))
+	}
+	if i.VersionTagLT != nil {
+		predicates = append(predicates, plan.VersionTagLT(*i.VersionTagLT))
+	}
+	if i.VersionTagLTE != nil {
+		predicates = append(predicates, plan.VersionTagLTE(*i.VersionTagLTE))
+	}
+	if i.VersionTagContains != nil {
+		predicates = append(predicates, plan.VersionTagContains(*i.VersionTagContains))
+	}
+	if i.VersionTagHasPrefix != nil {
+		predicates = append(predicates, plan.VersionTagHasPrefix(*i.VersionTagHasPrefix))
+	}
+	if i.VersionTagHasSuffix != nil {
+		predicates = append(predicates, plan.VersionTagHasSuffix(*i.VersionTagHasSuffix))
+	}
+	if i.VersionTagEqualFold != nil {
+		predicates = append(predicates, plan.VersionTagEqualFold(*i.VersionTagEqualFold))
+	}
+	if i.VersionTagContainsFold != nil {
+		predicates = append(predicates, plan.VersionTagContainsFold(*i.VersionTagContainsFold))
+	}
+
+	if i.HasProvider != nil {
+		p := plan.HasProvider()
+		if !*i.HasProvider {
+			p = plan.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasProviderWith) > 0 {
+		with := make([]predicate.Provider, 0, len(i.HasProviderWith))
+		for _, w := range i.HasProviderWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasProviderWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, plan.HasProviderWith(with...))
+	}
+	if i.HasBandwidth != nil {
+		p := plan.HasBandwidth()
+		if !*i.HasBandwidth {
+			p = plan.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasBandwidthWith) > 0 {
+		with := make([]predicate.Bandwidth, 0, len(i.HasBandwidthWith))
+		for _, w := range i.HasBandwidthWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasBandwidthWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, plan.HasBandwidthWith(with...))
+	}
+	if i.HasPriceTiers != nil {
+		p := plan.HasPriceTiers()
+		if !*i.HasPriceTiers {
+			p = plan.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasPriceTiersWith) > 0 {
+		with := make([]predicate.PriceTier, 0, len(i.HasPriceTiersWith))
+		for _, w := range i.HasPriceTiersWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasPriceTiersWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, plan.HasPriceTiersWith(with...))
+	}
+	if i.HasOneTimeFees != nil {
+		p := plan.HasOneTimeFees()
+		if !*i.HasOneTimeFees {
+			p = plan.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasOneTimeFeesWith) > 0 {
+		with := make([]predicate.OneTimeFee, 0, len(i.HasOneTimeFeesWith))
+		for _, w := range i.HasOneTimeFeesWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasOneTimeFeesWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, plan.HasOneTimeFeesWith(with...))
+	}
+	if i.HasPromos != nil {
+		p := plan.HasPromos()
+		if !*i.HasPromos {
+			p = plan.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasPromosWith) > 0 {
+		with := make([]predicate.Promo, 0, len(i.HasPromosWith))
+		for _, w := range i.HasPromosWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasPromosWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, plan.HasPromosWith(with...))
+	}
+	if i.HasAddon != nil {
+		p := plan.HasAddon()
+		if !*i.HasAddon {
+			p = plan.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasAddonWith) > 0 {
+		with := make([]predicate.Addon, 0, len(i.HasAddonWith))
+		for _, w := range i.HasAddonWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasAddonWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, plan.HasAddonWith(with...))
+	}
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyPlanWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return plan.And(predicates...), nil
+	}
+}
+
+// PriceTierWhereInput represents a where input for filtering PriceTier queries.
+type PriceTierWhereInput struct {
+	Predicates []predicate.PriceTier  `json:"-"`
+	Not        *PriceTierWhereInput   `json:"not,omitempty"`
+	Or         []*PriceTierWhereInput `json:"or,omitempty"`
+	And        []*PriceTierWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *xid.ID  `json:"id,omitempty"`
+	IDNEQ   *xid.ID  `json:"idNEQ,omitempty"`
+	IDIn    []xid.ID `json:"idIn,omitempty"`
+	IDNotIn []xid.ID `json:"idNotIn,omitempty"`
+	IDGT    *xid.ID  `json:"idGT,omitempty"`
+	IDGTE   *xid.ID  `json:"idGTE,omitempty"`
+	IDLT    *xid.ID  `json:"idLT,omitempty"`
+	IDLTE   *xid.ID  `json:"idLTE,omitempty"`
+
+	// "start_month" field predicates.
+	StartMonth      *int  `json:"startMonth,omitempty"`
+	StartMonthNEQ   *int  `json:"startMonthNEQ,omitempty"`
+	StartMonthIn    []int `json:"startMonthIn,omitempty"`
+	StartMonthNotIn []int `json:"startMonthNotIn,omitempty"`
+	StartMonthGT    *int  `json:"startMonthGT,omitempty"`
+	StartMonthGTE   *int  `json:"startMonthGTE,omitempty"`
+	StartMonthLT    *int  `json:"startMonthLT,omitempty"`
+	StartMonthLTE   *int  `json:"startMonthLTE,omitempty"`
+
+	// "end_month" field predicates.
+	EndMonth      *int  `json:"endMonth,omitempty"`
+	EndMonthNEQ   *int  `json:"endMonthNEQ,omitempty"`
+	EndMonthIn    []int `json:"endMonthIn,omitempty"`
+	EndMonthNotIn []int `json:"endMonthNotIn,omitempty"`
+	EndMonthGT    *int  `json:"endMonthGT,omitempty"`
+	EndMonthGTE   *int  `json:"endMonthGTE,omitempty"`
+	EndMonthLT    *int  `json:"endMonthLT,omitempty"`
+	EndMonthLTE   *int  `json:"endMonthLTE,omitempty"`
+
+	// "monthly_fee_cents" field predicates.
+	MonthlyFeeCents      *int  `json:"monthlyFeeCents,omitempty"`
+	MonthlyFeeCentsNEQ   *int  `json:"monthlyFeeCentsNEQ,omitempty"`
+	MonthlyFeeCentsIn    []int `json:"monthlyFeeCentsIn,omitempty"`
+	MonthlyFeeCentsNotIn []int `json:"monthlyFeeCentsNotIn,omitempty"`
+	MonthlyFeeCentsGT    *int  `json:"monthlyFeeCentsGT,omitempty"`
+	MonthlyFeeCentsGTE   *int  `json:"monthlyFeeCentsGTE,omitempty"`
+	MonthlyFeeCentsLT    *int  `json:"monthlyFeeCentsLT,omitempty"`
+	MonthlyFeeCentsLTE   *int  `json:"monthlyFeeCentsLTE,omitempty"`
+
+	// "plan" edge predicates.
+	HasPlan     *bool             `json:"hasPlan,omitempty"`
+	HasPlanWith []*PlanWhereInput `json:"hasPlanWith,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *PriceTierWhereInput) AddPredicates(predicates ...predicate.PriceTier) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the PriceTierWhereInput filter on the PriceTierQuery builder.
+func (i *PriceTierWhereInput) Filter(q *PriceTierQuery) (*PriceTierQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyPriceTierWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyPriceTierWhereInput is returned in case the PriceTierWhereInput is empty.
+var ErrEmptyPriceTierWhereInput = errors.New("ent: empty predicate PriceTierWhereInput")
+
+// P returns a predicate for filtering pricetiers.
+// An error is returned if the input is empty or invalid.
+func (i *PriceTierWhereInput) P() (predicate.PriceTier, error) {
+	var predicates []predicate.PriceTier
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, pricetier.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.PriceTier, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, pricetier.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.PriceTier, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, pricetier.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, pricetier.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, pricetier.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, pricetier.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, pricetier.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, pricetier.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, pricetier.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, pricetier.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, pricetier.IDLTE(*i.IDLTE))
+	}
+	if i.StartMonth != nil {
+		predicates = append(predicates, pricetier.StartMonthEQ(*i.StartMonth))
+	}
+	if i.StartMonthNEQ != nil {
+		predicates = append(predicates, pricetier.StartMonthNEQ(*i.StartMonthNEQ))
+	}
+	if len(i.StartMonthIn) > 0 {
+		predicates = append(predicates, pricetier.StartMonthIn(i.StartMonthIn...))
+	}
+	if len(i.StartMonthNotIn) > 0 {
+		predicates = append(predicates, pricetier.StartMonthNotIn(i.StartMonthNotIn...))
+	}
+	if i.StartMonthGT != nil {
+		predicates = append(predicates, pricetier.StartMonthGT(*i.StartMonthGT))
+	}
+	if i.StartMonthGTE != nil {
+		predicates = append(predicates, pricetier.StartMonthGTE(*i.StartMonthGTE))
+	}
+	if i.StartMonthLT != nil {
+		predicates = append(predicates, pricetier.StartMonthLT(*i.StartMonthLT))
+	}
+	if i.StartMonthLTE != nil {
+		predicates = append(predicates, pricetier.StartMonthLTE(*i.StartMonthLTE))
+	}
+	if i.EndMonth != nil {
+		predicates = append(predicates, pricetier.EndMonthEQ(*i.EndMonth))
+	}
+	if i.EndMonthNEQ != nil {
+		predicates = append(predicates, pricetier.EndMonthNEQ(*i.EndMonthNEQ))
+	}
+	if len(i.EndMonthIn) > 0 {
+		predicates = append(predicates, pricetier.EndMonthIn(i.EndMonthIn...))
+	}
+	if len(i.EndMonthNotIn) > 0 {
+		predicates = append(predicates, pricetier.EndMonthNotIn(i.EndMonthNotIn...))
+	}
+	if i.EndMonthGT != nil {
+		predicates = append(predicates, pricetier.EndMonthGT(*i.EndMonthGT))
+	}
+	if i.EndMonthGTE != nil {
+		predicates = append(predicates, pricetier.EndMonthGTE(*i.EndMonthGTE))
+	}
+	if i.EndMonthLT != nil {
+		predicates = append(predicates, pricetier.EndMonthLT(*i.EndMonthLT))
+	}
+	if i.EndMonthLTE != nil {
+		predicates = append(predicates, pricetier.EndMonthLTE(*i.EndMonthLTE))
+	}
+	if i.MonthlyFeeCents != nil {
+		predicates = append(predicates, pricetier.MonthlyFeeCentsEQ(*i.MonthlyFeeCents))
+	}
+	if i.MonthlyFeeCentsNEQ != nil {
+		predicates = append(predicates, pricetier.MonthlyFeeCentsNEQ(*i.MonthlyFeeCentsNEQ))
+	}
+	if len(i.MonthlyFeeCentsIn) > 0 {
+		predicates = append(predicates, pricetier.MonthlyFeeCentsIn(i.MonthlyFeeCentsIn...))
+	}
+	if len(i.MonthlyFeeCentsNotIn) > 0 {
+		predicates = append(predicates, pricetier.MonthlyFeeCentsNotIn(i.MonthlyFeeCentsNotIn...))
+	}
+	if i.MonthlyFeeCentsGT != nil {
+		predicates = append(predicates, pricetier.MonthlyFeeCentsGT(*i.MonthlyFeeCentsGT))
+	}
+	if i.MonthlyFeeCentsGTE != nil {
+		predicates = append(predicates, pricetier.MonthlyFeeCentsGTE(*i.MonthlyFeeCentsGTE))
+	}
+	if i.MonthlyFeeCentsLT != nil {
+		predicates = append(predicates, pricetier.MonthlyFeeCentsLT(*i.MonthlyFeeCentsLT))
+	}
+	if i.MonthlyFeeCentsLTE != nil {
+		predicates = append(predicates, pricetier.MonthlyFeeCentsLTE(*i.MonthlyFeeCentsLTE))
+	}
+
+	if i.HasPlan != nil {
+		p := pricetier.HasPlan()
+		if !*i.HasPlan {
+			p = pricetier.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasPlanWith) > 0 {
+		with := make([]predicate.Plan, 0, len(i.HasPlanWith))
+		for _, w := range i.HasPlanWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasPlanWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, pricetier.HasPlanWith(with...))
+	}
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyPriceTierWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return pricetier.And(predicates...), nil
+	}
+}
+
+// PromoWhereInput represents a where input for filtering Promo queries.
+type PromoWhereInput struct {
+	Predicates []predicate.Promo  `json:"-"`
+	Not        *PromoWhereInput   `json:"not,omitempty"`
+	Or         []*PromoWhereInput `json:"or,omitempty"`
+	And        []*PromoWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *xid.ID  `json:"id,omitempty"`
+	IDNEQ   *xid.ID  `json:"idNEQ,omitempty"`
+	IDIn    []xid.ID `json:"idIn,omitempty"`
+	IDNotIn []xid.ID `json:"idNotIn,omitempty"`
+	IDGT    *xid.ID  `json:"idGT,omitempty"`
+	IDGTE   *xid.ID  `json:"idGTE,omitempty"`
+	IDLT    *xid.ID  `json:"idLT,omitempty"`
+	IDLTE   *xid.ID  `json:"idLTE,omitempty"`
+
+	// "description" field predicates.
+	Description             *string  `json:"description,omitempty"`
+	DescriptionNEQ          *string  `json:"descriptionNEQ,omitempty"`
+	DescriptionIn           []string `json:"descriptionIn,omitempty"`
+	DescriptionNotIn        []string `json:"descriptionNotIn,omitempty"`
+	DescriptionGT           *string  `json:"descriptionGT,omitempty"`
+	DescriptionGTE          *string  `json:"descriptionGTE,omitempty"`
+	DescriptionLT           *string  `json:"descriptionLT,omitempty"`
+	DescriptionLTE          *string  `json:"descriptionLTE,omitempty"`
+	DescriptionContains     *string  `json:"descriptionContains,omitempty"`
+	DescriptionHasPrefix    *string  `json:"descriptionHasPrefix,omitempty"`
+	DescriptionHasSuffix    *string  `json:"descriptionHasSuffix,omitempty"`
+	DescriptionEqualFold    *string  `json:"descriptionEqualFold,omitempty"`
+	DescriptionContainsFold *string  `json:"descriptionContainsFold,omitempty"`
+
+	// "discount_cents" field predicates.
+	DiscountCents      *int  `json:"discountCents,omitempty"`
+	DiscountCentsNEQ   *int  `json:"discountCentsNEQ,omitempty"`
+	DiscountCentsIn    []int `json:"discountCentsIn,omitempty"`
+	DiscountCentsNotIn []int `json:"discountCentsNotIn,omitempty"`
+	DiscountCentsGT    *int  `json:"discountCentsGT,omitempty"`
+	DiscountCentsGTE   *int  `json:"discountCentsGTE,omitempty"`
+	DiscountCentsLT    *int  `json:"discountCentsLT,omitempty"`
+	DiscountCentsLTE   *int  `json:"discountCentsLTE,omitempty"`
+
+	// "months_applies" field predicates.
+	MonthsApplies       *int  `json:"monthsApplies,omitempty"`
+	MonthsAppliesNEQ    *int  `json:"monthsAppliesNEQ,omitempty"`
+	MonthsAppliesIn     []int `json:"monthsAppliesIn,omitempty"`
+	MonthsAppliesNotIn  []int `json:"monthsAppliesNotIn,omitempty"`
+	MonthsAppliesGT     *int  `json:"monthsAppliesGT,omitempty"`
+	MonthsAppliesGTE    *int  `json:"monthsAppliesGTE,omitempty"`
+	MonthsAppliesLT     *int  `json:"monthsAppliesLT,omitempty"`
+	MonthsAppliesLTE    *int  `json:"monthsAppliesLTE,omitempty"`
+	MonthsAppliesIsNil  bool  `json:"monthsAppliesIsNil,omitempty"`
+	MonthsAppliesNotNil bool  `json:"monthsAppliesNotNil,omitempty"`
+
+	// "starts_at" field predicates.
+	StartsAt       *time.Time  `json:"startsAt,omitempty"`
+	StartsAtNEQ    *time.Time  `json:"startsAtNEQ,omitempty"`
+	StartsAtIn     []time.Time `json:"startsAtIn,omitempty"`
+	StartsAtNotIn  []time.Time `json:"startsAtNotIn,omitempty"`
+	StartsAtGT     *time.Time  `json:"startsAtGT,omitempty"`
+	StartsAtGTE    *time.Time  `json:"startsAtGTE,omitempty"`
+	StartsAtLT     *time.Time  `json:"startsAtLT,omitempty"`
+	StartsAtLTE    *time.Time  `json:"startsAtLTE,omitempty"`
+	StartsAtIsNil  bool        `json:"startsAtIsNil,omitempty"`
+	StartsAtNotNil bool        `json:"startsAtNotNil,omitempty"`
+
+	// "ends_at" field predicates.
+	EndsAt       *time.Time  `json:"endsAt,omitempty"`
+	EndsAtNEQ    *time.Time  `json:"endsAtNEQ,omitempty"`
+	EndsAtIn     []time.Time `json:"endsAtIn,omitempty"`
+	EndsAtNotIn  []time.Time `json:"endsAtNotIn,omitempty"`
+	EndsAtGT     *time.Time  `json:"endsAtGT,omitempty"`
+	EndsAtGTE    *time.Time  `json:"endsAtGTE,omitempty"`
+	EndsAtLT     *time.Time  `json:"endsAtLT,omitempty"`
+	EndsAtLTE    *time.Time  `json:"endsAtLTE,omitempty"`
+	EndsAtIsNil  bool        `json:"endsAtIsNil,omitempty"`
+	EndsAtNotNil bool        `json:"endsAtNotNil,omitempty"`
+
+	// "conditions" field predicates.
+	Conditions             *string  `json:"conditions,omitempty"`
+	ConditionsNEQ          *string  `json:"conditionsNEQ,omitempty"`
+	ConditionsIn           []string `json:"conditionsIn,omitempty"`
+	ConditionsNotIn        []string `json:"conditionsNotIn,omitempty"`
+	ConditionsGT           *string  `json:"conditionsGT,omitempty"`
+	ConditionsGTE          *string  `json:"conditionsGTE,omitempty"`
+	ConditionsLT           *string  `json:"conditionsLT,omitempty"`
+	ConditionsLTE          *string  `json:"conditionsLTE,omitempty"`
+	ConditionsContains     *string  `json:"conditionsContains,omitempty"`
+	ConditionsHasPrefix    *string  `json:"conditionsHasPrefix,omitempty"`
+	ConditionsHasSuffix    *string  `json:"conditionsHasSuffix,omitempty"`
+	ConditionsIsNil        bool     `json:"conditionsIsNil,omitempty"`
+	ConditionsNotNil       bool     `json:"conditionsNotNil,omitempty"`
+	ConditionsEqualFold    *string  `json:"conditionsEqualFold,omitempty"`
+	ConditionsContainsFold *string  `json:"conditionsContainsFold,omitempty"`
+
+	// "plan" edge predicates.
+	HasPlan     *bool             `json:"hasPlan,omitempty"`
+	HasPlanWith []*PlanWhereInput `json:"hasPlanWith,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *PromoWhereInput) AddPredicates(predicates ...predicate.Promo) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the PromoWhereInput filter on the PromoQuery builder.
+func (i *PromoWhereInput) Filter(q *PromoQuery) (*PromoQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyPromoWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyPromoWhereInput is returned in case the PromoWhereInput is empty.
+var ErrEmptyPromoWhereInput = errors.New("ent: empty predicate PromoWhereInput")
+
+// P returns a predicate for filtering promos.
+// An error is returned if the input is empty or invalid.
+func (i *PromoWhereInput) P() (predicate.Promo, error) {
+	var predicates []predicate.Promo
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, promo.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.Promo, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, promo.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.Promo, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, promo.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, promo.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, promo.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, promo.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, promo.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, promo.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, promo.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, promo.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, promo.IDLTE(*i.IDLTE))
+	}
+	if i.Description != nil {
+		predicates = append(predicates, promo.DescriptionEQ(*i.Description))
+	}
+	if i.DescriptionNEQ != nil {
+		predicates = append(predicates, promo.DescriptionNEQ(*i.DescriptionNEQ))
+	}
+	if len(i.DescriptionIn) > 0 {
+		predicates = append(predicates, promo.DescriptionIn(i.DescriptionIn...))
+	}
+	if len(i.DescriptionNotIn) > 0 {
+		predicates = append(predicates, promo.DescriptionNotIn(i.DescriptionNotIn...))
+	}
+	if i.DescriptionGT != nil {
+		predicates = append(predicates, promo.DescriptionGT(*i.DescriptionGT))
+	}
+	if i.DescriptionGTE != nil {
+		predicates = append(predicates, promo.DescriptionGTE(*i.DescriptionGTE))
+	}
+	if i.DescriptionLT != nil {
+		predicates = append(predicates, promo.DescriptionLT(*i.DescriptionLT))
+	}
+	if i.DescriptionLTE != nil {
+		predicates = append(predicates, promo.DescriptionLTE(*i.DescriptionLTE))
+	}
+	if i.DescriptionContains != nil {
+		predicates = append(predicates, promo.DescriptionContains(*i.DescriptionContains))
+	}
+	if i.DescriptionHasPrefix != nil {
+		predicates = append(predicates, promo.DescriptionHasPrefix(*i.DescriptionHasPrefix))
+	}
+	if i.DescriptionHasSuffix != nil {
+		predicates = append(predicates, promo.DescriptionHasSuffix(*i.DescriptionHasSuffix))
+	}
+	if i.DescriptionEqualFold != nil {
+		predicates = append(predicates, promo.DescriptionEqualFold(*i.DescriptionEqualFold))
+	}
+	if i.DescriptionContainsFold != nil {
+		predicates = append(predicates, promo.DescriptionContainsFold(*i.DescriptionContainsFold))
+	}
+	if i.DiscountCents != nil {
+		predicates = append(predicates, promo.DiscountCentsEQ(*i.DiscountCents))
+	}
+	if i.DiscountCentsNEQ != nil {
+		predicates = append(predicates, promo.DiscountCentsNEQ(*i.DiscountCentsNEQ))
+	}
+	if len(i.DiscountCentsIn) > 0 {
+		predicates = append(predicates, promo.DiscountCentsIn(i.DiscountCentsIn...))
+	}
+	if len(i.DiscountCentsNotIn) > 0 {
+		predicates = append(predicates, promo.DiscountCentsNotIn(i.DiscountCentsNotIn...))
+	}
+	if i.DiscountCentsGT != nil {
+		predicates = append(predicates, promo.DiscountCentsGT(*i.DiscountCentsGT))
+	}
+	if i.DiscountCentsGTE != nil {
+		predicates = append(predicates, promo.DiscountCentsGTE(*i.DiscountCentsGTE))
+	}
+	if i.DiscountCentsLT != nil {
+		predicates = append(predicates, promo.DiscountCentsLT(*i.DiscountCentsLT))
+	}
+	if i.DiscountCentsLTE != nil {
+		predicates = append(predicates, promo.DiscountCentsLTE(*i.DiscountCentsLTE))
+	}
+	if i.MonthsApplies != nil {
+		predicates = append(predicates, promo.MonthsAppliesEQ(*i.MonthsApplies))
+	}
+	if i.MonthsAppliesNEQ != nil {
+		predicates = append(predicates, promo.MonthsAppliesNEQ(*i.MonthsAppliesNEQ))
+	}
+	if len(i.MonthsAppliesIn) > 0 {
+		predicates = append(predicates, promo.MonthsAppliesIn(i.MonthsAppliesIn...))
+	}
+	if len(i.MonthsAppliesNotIn) > 0 {
+		predicates = append(predicates, promo.MonthsAppliesNotIn(i.MonthsAppliesNotIn...))
+	}
+	if i.MonthsAppliesGT != nil {
+		predicates = append(predicates, promo.MonthsAppliesGT(*i.MonthsAppliesGT))
+	}
+	if i.MonthsAppliesGTE != nil {
+		predicates = append(predicates, promo.MonthsAppliesGTE(*i.MonthsAppliesGTE))
+	}
+	if i.MonthsAppliesLT != nil {
+		predicates = append(predicates, promo.MonthsAppliesLT(*i.MonthsAppliesLT))
+	}
+	if i.MonthsAppliesLTE != nil {
+		predicates = append(predicates, promo.MonthsAppliesLTE(*i.MonthsAppliesLTE))
+	}
+	if i.MonthsAppliesIsNil {
+		predicates = append(predicates, promo.MonthsAppliesIsNil())
+	}
+	if i.MonthsAppliesNotNil {
+		predicates = append(predicates, promo.MonthsAppliesNotNil())
+	}
+	if i.StartsAt != nil {
+		predicates = append(predicates, promo.StartsAtEQ(*i.StartsAt))
+	}
+	if i.StartsAtNEQ != nil {
+		predicates = append(predicates, promo.StartsAtNEQ(*i.StartsAtNEQ))
+	}
+	if len(i.StartsAtIn) > 0 {
+		predicates = append(predicates, promo.StartsAtIn(i.StartsAtIn...))
+	}
+	if len(i.StartsAtNotIn) > 0 {
+		predicates = append(predicates, promo.StartsAtNotIn(i.StartsAtNotIn...))
+	}
+	if i.StartsAtGT != nil {
+		predicates = append(predicates, promo.StartsAtGT(*i.StartsAtGT))
+	}
+	if i.StartsAtGTE != nil {
+		predicates = append(predicates, promo.StartsAtGTE(*i.StartsAtGTE))
+	}
+	if i.StartsAtLT != nil {
+		predicates = append(predicates, promo.StartsAtLT(*i.StartsAtLT))
+	}
+	if i.StartsAtLTE != nil {
+		predicates = append(predicates, promo.StartsAtLTE(*i.StartsAtLTE))
+	}
+	if i.StartsAtIsNil {
+		predicates = append(predicates, promo.StartsAtIsNil())
+	}
+	if i.StartsAtNotNil {
+		predicates = append(predicates, promo.StartsAtNotNil())
+	}
+	if i.EndsAt != nil {
+		predicates = append(predicates, promo.EndsAtEQ(*i.EndsAt))
+	}
+	if i.EndsAtNEQ != nil {
+		predicates = append(predicates, promo.EndsAtNEQ(*i.EndsAtNEQ))
+	}
+	if len(i.EndsAtIn) > 0 {
+		predicates = append(predicates, promo.EndsAtIn(i.EndsAtIn...))
+	}
+	if len(i.EndsAtNotIn) > 0 {
+		predicates = append(predicates, promo.EndsAtNotIn(i.EndsAtNotIn...))
+	}
+	if i.EndsAtGT != nil {
+		predicates = append(predicates, promo.EndsAtGT(*i.EndsAtGT))
+	}
+	if i.EndsAtGTE != nil {
+		predicates = append(predicates, promo.EndsAtGTE(*i.EndsAtGTE))
+	}
+	if i.EndsAtLT != nil {
+		predicates = append(predicates, promo.EndsAtLT(*i.EndsAtLT))
+	}
+	if i.EndsAtLTE != nil {
+		predicates = append(predicates, promo.EndsAtLTE(*i.EndsAtLTE))
+	}
+	if i.EndsAtIsNil {
+		predicates = append(predicates, promo.EndsAtIsNil())
+	}
+	if i.EndsAtNotNil {
+		predicates = append(predicates, promo.EndsAtNotNil())
+	}
+	if i.Conditions != nil {
+		predicates = append(predicates, promo.ConditionsEQ(*i.Conditions))
+	}
+	if i.ConditionsNEQ != nil {
+		predicates = append(predicates, promo.ConditionsNEQ(*i.ConditionsNEQ))
+	}
+	if len(i.ConditionsIn) > 0 {
+		predicates = append(predicates, promo.ConditionsIn(i.ConditionsIn...))
+	}
+	if len(i.ConditionsNotIn) > 0 {
+		predicates = append(predicates, promo.ConditionsNotIn(i.ConditionsNotIn...))
+	}
+	if i.ConditionsGT != nil {
+		predicates = append(predicates, promo.ConditionsGT(*i.ConditionsGT))
+	}
+	if i.ConditionsGTE != nil {
+		predicates = append(predicates, promo.ConditionsGTE(*i.ConditionsGTE))
+	}
+	if i.ConditionsLT != nil {
+		predicates = append(predicates, promo.ConditionsLT(*i.ConditionsLT))
+	}
+	if i.ConditionsLTE != nil {
+		predicates = append(predicates, promo.ConditionsLTE(*i.ConditionsLTE))
+	}
+	if i.ConditionsContains != nil {
+		predicates = append(predicates, promo.ConditionsContains(*i.ConditionsContains))
+	}
+	if i.ConditionsHasPrefix != nil {
+		predicates = append(predicates, promo.ConditionsHasPrefix(*i.ConditionsHasPrefix))
+	}
+	if i.ConditionsHasSuffix != nil {
+		predicates = append(predicates, promo.ConditionsHasSuffix(*i.ConditionsHasSuffix))
+	}
+	if i.ConditionsIsNil {
+		predicates = append(predicates, promo.ConditionsIsNil())
+	}
+	if i.ConditionsNotNil {
+		predicates = append(predicates, promo.ConditionsNotNil())
+	}
+	if i.ConditionsEqualFold != nil {
+		predicates = append(predicates, promo.ConditionsEqualFold(*i.ConditionsEqualFold))
+	}
+	if i.ConditionsContainsFold != nil {
+		predicates = append(predicates, promo.ConditionsContainsFold(*i.ConditionsContainsFold))
+	}
+
+	if i.HasPlan != nil {
+		p := promo.HasPlan()
+		if !*i.HasPlan {
+			p = promo.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasPlanWith) > 0 {
+		with := make([]predicate.Plan, 0, len(i.HasPlanWith))
+		for _, w := range i.HasPlanWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasPlanWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, promo.HasPlanWith(with...))
+	}
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyPromoWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return promo.And(predicates...), nil
+	}
+}
+
+// ProviderWhereInput represents a where input for filtering Provider queries.
+type ProviderWhereInput struct {
+	Predicates []predicate.Provider  `json:"-"`
+	Not        *ProviderWhereInput   `json:"not,omitempty"`
+	Or         []*ProviderWhereInput `json:"or,omitempty"`
+	And        []*ProviderWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *xid.ID  `json:"id,omitempty"`
+	IDNEQ   *xid.ID  `json:"idNEQ,omitempty"`
+	IDIn    []xid.ID `json:"idIn,omitempty"`
+	IDNotIn []xid.ID `json:"idNotIn,omitempty"`
+	IDGT    *xid.ID  `json:"idGT,omitempty"`
+	IDGTE   *xid.ID  `json:"idGTE,omitempty"`
+	IDLT    *xid.ID  `json:"idLT,omitempty"`
+	IDLTE   *xid.ID  `json:"idLTE,omitempty"`
+
+	// "name" field predicates.
+	Name             *string  `json:"name,omitempty"`
+	NameNEQ          *string  `json:"nameNEQ,omitempty"`
+	NameIn           []string `json:"nameIn,omitempty"`
+	NameNotIn        []string `json:"nameNotIn,omitempty"`
+	NameGT           *string  `json:"nameGT,omitempty"`
+	NameGTE          *string  `json:"nameGTE,omitempty"`
+	NameLT           *string  `json:"nameLT,omitempty"`
+	NameLTE          *string  `json:"nameLTE,omitempty"`
+	NameContains     *string  `json:"nameContains,omitempty"`
+	NameHasPrefix    *string  `json:"nameHasPrefix,omitempty"`
+	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
+	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
+	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
+
+	// "website" field predicates.
+	Website             *string  `json:"website,omitempty"`
+	WebsiteNEQ          *string  `json:"websiteNEQ,omitempty"`
+	WebsiteIn           []string `json:"websiteIn,omitempty"`
+	WebsiteNotIn        []string `json:"websiteNotIn,omitempty"`
+	WebsiteGT           *string  `json:"websiteGT,omitempty"`
+	WebsiteGTE          *string  `json:"websiteGTE,omitempty"`
+	WebsiteLT           *string  `json:"websiteLT,omitempty"`
+	WebsiteLTE          *string  `json:"websiteLTE,omitempty"`
+	WebsiteContains     *string  `json:"websiteContains,omitempty"`
+	WebsiteHasPrefix    *string  `json:"websiteHasPrefix,omitempty"`
+	WebsiteHasSuffix    *string  `json:"websiteHasSuffix,omitempty"`
+	WebsiteEqualFold    *string  `json:"websiteEqualFold,omitempty"`
+	WebsiteContainsFold *string  `json:"websiteContainsFold,omitempty"`
+
+	// "plans" edge predicates.
+	HasPlans     *bool             `json:"hasPlans,omitempty"`
+	HasPlansWith []*PlanWhereInput `json:"hasPlansWith,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *ProviderWhereInput) AddPredicates(predicates ...predicate.Provider) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the ProviderWhereInput filter on the ProviderQuery builder.
+func (i *ProviderWhereInput) Filter(q *ProviderQuery) (*ProviderQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyProviderWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyProviderWhereInput is returned in case the ProviderWhereInput is empty.
+var ErrEmptyProviderWhereInput = errors.New("ent: empty predicate ProviderWhereInput")
+
+// P returns a predicate for filtering providers.
+// An error is returned if the input is empty or invalid.
+func (i *ProviderWhereInput) P() (predicate.Provider, error) {
+	var predicates []predicate.Provider
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, provider.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.Provider, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, provider.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.Provider, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, provider.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, provider.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, provider.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, provider.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, provider.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, provider.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, provider.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, provider.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, provider.IDLTE(*i.IDLTE))
+	}
+	if i.Name != nil {
+		predicates = append(predicates, provider.NameEQ(*i.Name))
+	}
+	if i.NameNEQ != nil {
+		predicates = append(predicates, provider.NameNEQ(*i.NameNEQ))
+	}
+	if len(i.NameIn) > 0 {
+		predicates = append(predicates, provider.NameIn(i.NameIn...))
+	}
+	if len(i.NameNotIn) > 0 {
+		predicates = append(predicates, provider.NameNotIn(i.NameNotIn...))
+	}
+	if i.NameGT != nil {
+		predicates = append(predicates, provider.NameGT(*i.NameGT))
+	}
+	if i.NameGTE != nil {
+		predicates = append(predicates, provider.NameGTE(*i.NameGTE))
+	}
+	if i.NameLT != nil {
+		predicates = append(predicates, provider.NameLT(*i.NameLT))
+	}
+	if i.NameLTE != nil {
+		predicates = append(predicates, provider.NameLTE(*i.NameLTE))
+	}
+	if i.NameContains != nil {
+		predicates = append(predicates, provider.NameContains(*i.NameContains))
+	}
+	if i.NameHasPrefix != nil {
+		predicates = append(predicates, provider.NameHasPrefix(*i.NameHasPrefix))
+	}
+	if i.NameHasSuffix != nil {
+		predicates = append(predicates, provider.NameHasSuffix(*i.NameHasSuffix))
+	}
+	if i.NameEqualFold != nil {
+		predicates = append(predicates, provider.NameEqualFold(*i.NameEqualFold))
+	}
+	if i.NameContainsFold != nil {
+		predicates = append(predicates, provider.NameContainsFold(*i.NameContainsFold))
+	}
+	if i.Website != nil {
+		predicates = append(predicates, provider.WebsiteEQ(*i.Website))
+	}
+	if i.WebsiteNEQ != nil {
+		predicates = append(predicates, provider.WebsiteNEQ(*i.WebsiteNEQ))
+	}
+	if len(i.WebsiteIn) > 0 {
+		predicates = append(predicates, provider.WebsiteIn(i.WebsiteIn...))
+	}
+	if len(i.WebsiteNotIn) > 0 {
+		predicates = append(predicates, provider.WebsiteNotIn(i.WebsiteNotIn...))
+	}
+	if i.WebsiteGT != nil {
+		predicates = append(predicates, provider.WebsiteGT(*i.WebsiteGT))
+	}
+	if i.WebsiteGTE != nil {
+		predicates = append(predicates, provider.WebsiteGTE(*i.WebsiteGTE))
+	}
+	if i.WebsiteLT != nil {
+		predicates = append(predicates, provider.WebsiteLT(*i.WebsiteLT))
+	}
+	if i.WebsiteLTE != nil {
+		predicates = append(predicates, provider.WebsiteLTE(*i.WebsiteLTE))
+	}
+	if i.WebsiteContains != nil {
+		predicates = append(predicates, provider.WebsiteContains(*i.WebsiteContains))
+	}
+	if i.WebsiteHasPrefix != nil {
+		predicates = append(predicates, provider.WebsiteHasPrefix(*i.WebsiteHasPrefix))
+	}
+	if i.WebsiteHasSuffix != nil {
+		predicates = append(predicates, provider.WebsiteHasSuffix(*i.WebsiteHasSuffix))
+	}
+	if i.WebsiteEqualFold != nil {
+		predicates = append(predicates, provider.WebsiteEqualFold(*i.WebsiteEqualFold))
+	}
+	if i.WebsiteContainsFold != nil {
+		predicates = append(predicates, provider.WebsiteContainsFold(*i.WebsiteContainsFold))
+	}
+
+	if i.HasPlans != nil {
+		p := provider.HasPlans()
+		if !*i.HasPlans {
+			p = provider.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasPlansWith) > 0 {
+		with := make([]predicate.Plan, 0, len(i.HasPlansWith))
+		for _, w := range i.HasPlansWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasPlansWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, provider.HasPlansWith(with...))
+	}
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyProviderWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return provider.And(predicates...), nil
+	}
+}
+
+// SnapshotWhereInput represents a where input for filtering Snapshot queries.
+type SnapshotWhereInput struct {
+	Predicates []predicate.Snapshot  `json:"-"`
+	Not        *SnapshotWhereInput   `json:"not,omitempty"`
+	Or         []*SnapshotWhereInput `json:"or,omitempty"`
+	And        []*SnapshotWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *xid.ID  `json:"id,omitempty"`
+	IDNEQ   *xid.ID  `json:"idNEQ,omitempty"`
+	IDIn    []xid.ID `json:"idIn,omitempty"`
+	IDNotIn []xid.ID `json:"idNotIn,omitempty"`
+	IDGT    *xid.ID  `json:"idGT,omitempty"`
+	IDGTE   *xid.ID  `json:"idGTE,omitempty"`
+	IDLT    *xid.ID  `json:"idLT,omitempty"`
+	IDLTE   *xid.ID  `json:"idLTE,omitempty"`
+
+	// "month" field predicates.
+	Month      *time.Time  `json:"month,omitempty"`
+	MonthNEQ   *time.Time  `json:"monthNEQ,omitempty"`
+	MonthIn    []time.Time `json:"monthIn,omitempty"`
+	MonthNotIn []time.Time `json:"monthNotIn,omitempty"`
+	MonthGT    *time.Time  `json:"monthGT,omitempty"`
+	MonthGTE   *time.Time  `json:"monthGTE,omitempty"`
+	MonthLT    *time.Time  `json:"monthLT,omitempty"`
+	MonthLTE   *time.Time  `json:"monthLTE,omitempty"`
+
+	// "created_at" field predicates.
+	CreatedAt      *time.Time  `json:"createdAt,omitempty"`
+	CreatedAtNEQ   *time.Time  `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn    []time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn []time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGT    *time.Time  `json:"createdAtGT,omitempty"`
+	CreatedAtGTE   *time.Time  `json:"createdAtGTE,omitempty"`
+	CreatedAtLT    *time.Time  `json:"createdAtLT,omitempty"`
+	CreatedAtLTE   *time.Time  `json:"createdAtLTE,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *SnapshotWhereInput) AddPredicates(predicates ...predicate.Snapshot) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the SnapshotWhereInput filter on the SnapshotQuery builder.
+func (i *SnapshotWhereInput) Filter(q *SnapshotQuery) (*SnapshotQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptySnapshotWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptySnapshotWhereInput is returned in case the SnapshotWhereInput is empty.
+var ErrEmptySnapshotWhereInput = errors.New("ent: empty predicate SnapshotWhereInput")
+
+// P returns a predicate for filtering snapshots.
+// An error is returned if the input is empty or invalid.
+func (i *SnapshotWhereInput) P() (predicate.Snapshot, error) {
+	var predicates []predicate.Snapshot
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, snapshot.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.Snapshot, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, snapshot.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.Snapshot, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, snapshot.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, snapshot.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, snapshot.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, snapshot.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, snapshot.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, snapshot.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, snapshot.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, snapshot.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, snapshot.IDLTE(*i.IDLTE))
+	}
+	if i.Month != nil {
+		predicates = append(predicates, snapshot.MonthEQ(*i.Month))
+	}
+	if i.MonthNEQ != nil {
+		predicates = append(predicates, snapshot.MonthNEQ(*i.MonthNEQ))
+	}
+	if len(i.MonthIn) > 0 {
+		predicates = append(predicates, snapshot.MonthIn(i.MonthIn...))
+	}
+	if len(i.MonthNotIn) > 0 {
+		predicates = append(predicates, snapshot.MonthNotIn(i.MonthNotIn...))
+	}
+	if i.MonthGT != nil {
+		predicates = append(predicates, snapshot.MonthGT(*i.MonthGT))
+	}
+	if i.MonthGTE != nil {
+		predicates = append(predicates, snapshot.MonthGTE(*i.MonthGTE))
+	}
+	if i.MonthLT != nil {
+		predicates = append(predicates, snapshot.MonthLT(*i.MonthLT))
+	}
+	if i.MonthLTE != nil {
+		predicates = append(predicates, snapshot.MonthLTE(*i.MonthLTE))
+	}
+	if i.CreatedAt != nil {
+		predicates = append(predicates, snapshot.CreatedAtEQ(*i.CreatedAt))
+	}
+	if i.CreatedAtNEQ != nil {
+		predicates = append(predicates, snapshot.CreatedAtNEQ(*i.CreatedAtNEQ))
+	}
+	if len(i.CreatedAtIn) > 0 {
+		predicates = append(predicates, snapshot.CreatedAtIn(i.CreatedAtIn...))
+	}
+	if len(i.CreatedAtNotIn) > 0 {
+		predicates = append(predicates, snapshot.CreatedAtNotIn(i.CreatedAtNotIn...))
+	}
+	if i.CreatedAtGT != nil {
+		predicates = append(predicates, snapshot.CreatedAtGT(*i.CreatedAtGT))
+	}
+	if i.CreatedAtGTE != nil {
+		predicates = append(predicates, snapshot.CreatedAtGTE(*i.CreatedAtGTE))
+	}
+	if i.CreatedAtLT != nil {
+		predicates = append(predicates, snapshot.CreatedAtLT(*i.CreatedAtLT))
+	}
+	if i.CreatedAtLTE != nil {
+		predicates = append(predicates, snapshot.CreatedAtLTE(*i.CreatedAtLTE))
 	}
 
 	switch len(predicates) {
 	case 0:
-		return nil, ErrEmptyProfileWhereInput
+		return nil, ErrEmptySnapshotWhereInput
 	case 1:
 		return predicates[0], nil
 	default:
-		return profile.And(predicates...), nil
+		return snapshot.And(predicates...), nil
 	}
 }

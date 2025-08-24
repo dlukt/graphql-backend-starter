@@ -3,7 +3,15 @@
 package ent
 
 import (
-	"github.com/dlukt/graphql-backend-starter/ent/profile"
+	"github.com/deicod/tarife/ent/addon"
+	"github.com/deicod/tarife/ent/bandwidth"
+	"github.com/deicod/tarife/ent/onetimefee"
+	"github.com/deicod/tarife/ent/plan"
+	"github.com/deicod/tarife/ent/predicate"
+	"github.com/deicod/tarife/ent/pricetier"
+	"github.com/deicod/tarife/ent/promo"
+	"github.com/deicod/tarife/ent/provider"
+	"github.com/deicod/tarife/ent/snapshot"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -13,25 +21,283 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 1)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 8)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   profile.Table,
-			Columns: profile.Columns,
+			Table:   addon.Table,
+			Columns: addon.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeString,
-				Column: profile.FieldID,
+				Column: addon.FieldID,
 			},
 		},
-		Type: "Profile",
+		Type: "Addon",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			profile.FieldCreateTime: {Type: field.TypeTime, Column: profile.FieldCreateTime},
-			profile.FieldUpdateTime: {Type: field.TypeTime, Column: profile.FieldUpdateTime},
-			profile.FieldSub:        {Type: field.TypeString, Column: profile.FieldSub},
-			profile.FieldName:       {Type: field.TypeString, Column: profile.FieldName},
-			profile.FieldGender:     {Type: field.TypeString, Column: profile.FieldGender},
+			addon.FieldName:            {Type: field.TypeString, Column: addon.FieldName},
+			addon.FieldMonthlyFeeCents: {Type: field.TypeInt, Column: addon.FieldMonthlyFeeCents},
 		},
 	}
+	graph.Nodes[1] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   bandwidth.Table,
+			Columns: bandwidth.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: bandwidth.FieldID,
+			},
+		},
+		Type: "Bandwidth",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			bandwidth.FieldDownMbps: {Type: field.TypeInt, Column: bandwidth.FieldDownMbps},
+			bandwidth.FieldUpMbps:   {Type: field.TypeInt, Column: bandwidth.FieldUpMbps},
+		},
+	}
+	graph.Nodes[2] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   onetimefee.Table,
+			Columns: onetimefee.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: onetimefee.FieldID,
+			},
+		},
+		Type: "OneTimeFee",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			onetimefee.FieldKind:        {Type: field.TypeEnum, Column: onetimefee.FieldKind},
+			onetimefee.FieldAmountCents: {Type: field.TypeInt, Column: onetimefee.FieldAmountCents},
+		},
+	}
+	graph.Nodes[3] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   plan.Table,
+			Columns: plan.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: plan.FieldID,
+			},
+		},
+		Type: "Plan",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			plan.FieldTechnology:       {Type: field.TypeEnum, Column: plan.FieldTechnology},
+			plan.FieldName:             {Type: field.TypeString, Column: plan.FieldName},
+			plan.FieldDescription:      {Type: field.TypeString, Column: plan.FieldDescription},
+			plan.FieldMinTermMonths:    {Type: field.TypeInt, Column: plan.FieldMinTermMonths},
+			plan.FieldCancelNoticeDays: {Type: field.TypeInt, Column: plan.FieldCancelNoticeDays},
+			plan.FieldValidFrom:        {Type: field.TypeTime, Column: plan.FieldValidFrom},
+			plan.FieldValidTo:          {Type: field.TypeTime, Column: plan.FieldValidTo},
+			plan.FieldSourceURL:        {Type: field.TypeString, Column: plan.FieldSourceURL},
+			plan.FieldVersionTag:       {Type: field.TypeString, Column: plan.FieldVersionTag},
+		},
+	}
+	graph.Nodes[4] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   pricetier.Table,
+			Columns: pricetier.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: pricetier.FieldID,
+			},
+		},
+		Type: "PriceTier",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			pricetier.FieldStartMonth:      {Type: field.TypeInt, Column: pricetier.FieldStartMonth},
+			pricetier.FieldEndMonth:        {Type: field.TypeInt, Column: pricetier.FieldEndMonth},
+			pricetier.FieldMonthlyFeeCents: {Type: field.TypeInt, Column: pricetier.FieldMonthlyFeeCents},
+		},
+	}
+	graph.Nodes[5] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   promo.Table,
+			Columns: promo.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: promo.FieldID,
+			},
+		},
+		Type: "Promo",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			promo.FieldDescription:   {Type: field.TypeString, Column: promo.FieldDescription},
+			promo.FieldDiscountCents: {Type: field.TypeInt, Column: promo.FieldDiscountCents},
+			promo.FieldMonthsApplies: {Type: field.TypeInt, Column: promo.FieldMonthsApplies},
+			promo.FieldStartsAt:      {Type: field.TypeTime, Column: promo.FieldStartsAt},
+			promo.FieldEndsAt:        {Type: field.TypeTime, Column: promo.FieldEndsAt},
+			promo.FieldConditions:    {Type: field.TypeString, Column: promo.FieldConditions},
+		},
+	}
+	graph.Nodes[6] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   provider.Table,
+			Columns: provider.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: provider.FieldID,
+			},
+		},
+		Type: "Provider",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			provider.FieldName:    {Type: field.TypeString, Column: provider.FieldName},
+			provider.FieldWebsite: {Type: field.TypeString, Column: provider.FieldWebsite},
+		},
+	}
+	graph.Nodes[7] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   snapshot.Table,
+			Columns: snapshot.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: snapshot.FieldID,
+			},
+		},
+		Type: "Snapshot",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			snapshot.FieldMonth:     {Type: field.TypeTime, Column: snapshot.FieldMonth},
+			snapshot.FieldCreatedAt: {Type: field.TypeTime, Column: snapshot.FieldCreatedAt},
+		},
+	}
+	graph.MustAddE(
+		"plans",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   addon.PlansTable,
+			Columns: addon.PlansPrimaryKey,
+			Bidi:    false,
+		},
+		"Addon",
+		"Plan",
+	)
+	graph.MustAddE(
+		"plan",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   bandwidth.PlanTable,
+			Columns: []string{bandwidth.PlanColumn},
+			Bidi:    false,
+		},
+		"Bandwidth",
+		"Plan",
+	)
+	graph.MustAddE(
+		"plan",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   onetimefee.PlanTable,
+			Columns: []string{onetimefee.PlanColumn},
+			Bidi:    false,
+		},
+		"OneTimeFee",
+		"Plan",
+	)
+	graph.MustAddE(
+		"provider",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   plan.ProviderTable,
+			Columns: []string{plan.ProviderColumn},
+			Bidi:    false,
+		},
+		"Plan",
+		"Provider",
+	)
+	graph.MustAddE(
+		"bandwidth",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   plan.BandwidthTable,
+			Columns: []string{plan.BandwidthColumn},
+			Bidi:    false,
+		},
+		"Plan",
+		"Bandwidth",
+	)
+	graph.MustAddE(
+		"price_tiers",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   plan.PriceTiersTable,
+			Columns: []string{plan.PriceTiersColumn},
+			Bidi:    false,
+		},
+		"Plan",
+		"PriceTier",
+	)
+	graph.MustAddE(
+		"one_time_fees",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   plan.OneTimeFeesTable,
+			Columns: []string{plan.OneTimeFeesColumn},
+			Bidi:    false,
+		},
+		"Plan",
+		"OneTimeFee",
+	)
+	graph.MustAddE(
+		"promos",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   plan.PromosTable,
+			Columns: []string{plan.PromosColumn},
+			Bidi:    false,
+		},
+		"Plan",
+		"Promo",
+	)
+	graph.MustAddE(
+		"addon",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   plan.AddonTable,
+			Columns: plan.AddonPrimaryKey,
+			Bidi:    false,
+		},
+		"Plan",
+		"Addon",
+	)
+	graph.MustAddE(
+		"plan",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   pricetier.PlanTable,
+			Columns: []string{pricetier.PlanColumn},
+			Bidi:    false,
+		},
+		"PriceTier",
+		"Plan",
+	)
+	graph.MustAddE(
+		"plan",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   promo.PlanTable,
+			Columns: []string{promo.PlanColumn},
+			Bidi:    false,
+		},
+		"Promo",
+		"Plan",
+	)
+	graph.MustAddE(
+		"plans",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   provider.PlansTable,
+			Columns: []string{provider.PlansColumn},
+			Bidi:    false,
+		},
+		"Provider",
+		"Plan",
+	)
 	return graph
 }()
 
@@ -42,33 +308,33 @@ type predicateAdder interface {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (pq *ProfileQuery) addPredicate(pred func(s *sql.Selector)) {
-	pq.predicates = append(pq.predicates, pred)
+func (_q *AddonQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
 }
 
-// Filter returns a Filter implementation to apply filters on the ProfileQuery builder.
-func (pq *ProfileQuery) Filter() *ProfileFilter {
-	return &ProfileFilter{config: pq.config, predicateAdder: pq}
+// Filter returns a Filter implementation to apply filters on the AddonQuery builder.
+func (_q *AddonQuery) Filter() *AddonFilter {
+	return &AddonFilter{config: _q.config, predicateAdder: _q}
 }
 
 // addPredicate implements the predicateAdder interface.
-func (m *ProfileMutation) addPredicate(pred func(s *sql.Selector)) {
+func (m *AddonMutation) addPredicate(pred func(s *sql.Selector)) {
 	m.predicates = append(m.predicates, pred)
 }
 
-// Filter returns an entql.Where implementation to apply filters on the ProfileMutation builder.
-func (m *ProfileMutation) Filter() *ProfileFilter {
-	return &ProfileFilter{config: m.config, predicateAdder: m}
+// Filter returns an entql.Where implementation to apply filters on the AddonMutation builder.
+func (m *AddonMutation) Filter() *AddonFilter {
+	return &AddonFilter{config: m.config, predicateAdder: m}
 }
 
-// ProfileFilter provides a generic filtering capability at runtime for ProfileQuery.
-type ProfileFilter struct {
+// AddonFilter provides a generic filtering capability at runtime for AddonQuery.
+type AddonFilter struct {
 	predicateAdder
 	config
 }
 
 // Where applies the entql predicate on the query filter.
-func (f *ProfileFilter) Where(p entql.P) {
+func (f *AddonFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
 		if err := schemaGraph.EvalP(schemaGraph.Nodes[0].Type, p, s); err != nil {
 			s.AddError(err)
@@ -77,31 +343,594 @@ func (f *ProfileFilter) Where(p entql.P) {
 }
 
 // WhereID applies the entql string predicate on the id field.
-func (f *ProfileFilter) WhereID(p entql.StringP) {
-	f.Where(p.Field(profile.FieldID))
-}
-
-// WhereCreateTime applies the entql time.Time predicate on the create_time field.
-func (f *ProfileFilter) WhereCreateTime(p entql.TimeP) {
-	f.Where(p.Field(profile.FieldCreateTime))
-}
-
-// WhereUpdateTime applies the entql time.Time predicate on the update_time field.
-func (f *ProfileFilter) WhereUpdateTime(p entql.TimeP) {
-	f.Where(p.Field(profile.FieldUpdateTime))
-}
-
-// WhereSub applies the entql string predicate on the sub field.
-func (f *ProfileFilter) WhereSub(p entql.StringP) {
-	f.Where(p.Field(profile.FieldSub))
+func (f *AddonFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(addon.FieldID))
 }
 
 // WhereName applies the entql string predicate on the name field.
-func (f *ProfileFilter) WhereName(p entql.StringP) {
-	f.Where(p.Field(profile.FieldName))
+func (f *AddonFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(addon.FieldName))
 }
 
-// WhereGender applies the entql string predicate on the gender field.
-func (f *ProfileFilter) WhereGender(p entql.StringP) {
-	f.Where(p.Field(profile.FieldGender))
+// WhereMonthlyFeeCents applies the entql int predicate on the monthly_fee_cents field.
+func (f *AddonFilter) WhereMonthlyFeeCents(p entql.IntP) {
+	f.Where(p.Field(addon.FieldMonthlyFeeCents))
+}
+
+// WhereHasPlans applies a predicate to check if query has an edge plans.
+func (f *AddonFilter) WhereHasPlans() {
+	f.Where(entql.HasEdge("plans"))
+}
+
+// WhereHasPlansWith applies a predicate to check if query has an edge plans with a given conditions (other predicates).
+func (f *AddonFilter) WhereHasPlansWith(preds ...predicate.Plan) {
+	f.Where(entql.HasEdgeWith("plans", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (_q *BandwidthQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the BandwidthQuery builder.
+func (_q *BandwidthQuery) Filter() *BandwidthFilter {
+	return &BandwidthFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *BandwidthMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the BandwidthMutation builder.
+func (m *BandwidthMutation) Filter() *BandwidthFilter {
+	return &BandwidthFilter{config: m.config, predicateAdder: m}
+}
+
+// BandwidthFilter provides a generic filtering capability at runtime for BandwidthQuery.
+type BandwidthFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *BandwidthFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *BandwidthFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(bandwidth.FieldID))
+}
+
+// WhereDownMbps applies the entql int predicate on the down_mbps field.
+func (f *BandwidthFilter) WhereDownMbps(p entql.IntP) {
+	f.Where(p.Field(bandwidth.FieldDownMbps))
+}
+
+// WhereUpMbps applies the entql int predicate on the up_mbps field.
+func (f *BandwidthFilter) WhereUpMbps(p entql.IntP) {
+	f.Where(p.Field(bandwidth.FieldUpMbps))
+}
+
+// WhereHasPlan applies a predicate to check if query has an edge plan.
+func (f *BandwidthFilter) WhereHasPlan() {
+	f.Where(entql.HasEdge("plan"))
+}
+
+// WhereHasPlanWith applies a predicate to check if query has an edge plan with a given conditions (other predicates).
+func (f *BandwidthFilter) WhereHasPlanWith(preds ...predicate.Plan) {
+	f.Where(entql.HasEdgeWith("plan", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (_q *OneTimeFeeQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OneTimeFeeQuery builder.
+func (_q *OneTimeFeeQuery) Filter() *OneTimeFeeFilter {
+	return &OneTimeFeeFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OneTimeFeeMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OneTimeFeeMutation builder.
+func (m *OneTimeFeeMutation) Filter() *OneTimeFeeFilter {
+	return &OneTimeFeeFilter{config: m.config, predicateAdder: m}
+}
+
+// OneTimeFeeFilter provides a generic filtering capability at runtime for OneTimeFeeQuery.
+type OneTimeFeeFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OneTimeFeeFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *OneTimeFeeFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(onetimefee.FieldID))
+}
+
+// WhereKind applies the entql string predicate on the kind field.
+func (f *OneTimeFeeFilter) WhereKind(p entql.StringP) {
+	f.Where(p.Field(onetimefee.FieldKind))
+}
+
+// WhereAmountCents applies the entql int predicate on the amount_cents field.
+func (f *OneTimeFeeFilter) WhereAmountCents(p entql.IntP) {
+	f.Where(p.Field(onetimefee.FieldAmountCents))
+}
+
+// WhereHasPlan applies a predicate to check if query has an edge plan.
+func (f *OneTimeFeeFilter) WhereHasPlan() {
+	f.Where(entql.HasEdge("plan"))
+}
+
+// WhereHasPlanWith applies a predicate to check if query has an edge plan with a given conditions (other predicates).
+func (f *OneTimeFeeFilter) WhereHasPlanWith(preds ...predicate.Plan) {
+	f.Where(entql.HasEdgeWith("plan", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (_q *PlanQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the PlanQuery builder.
+func (_q *PlanQuery) Filter() *PlanFilter {
+	return &PlanFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *PlanMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the PlanMutation builder.
+func (m *PlanMutation) Filter() *PlanFilter {
+	return &PlanFilter{config: m.config, predicateAdder: m}
+}
+
+// PlanFilter provides a generic filtering capability at runtime for PlanQuery.
+type PlanFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *PlanFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *PlanFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(plan.FieldID))
+}
+
+// WhereTechnology applies the entql string predicate on the technology field.
+func (f *PlanFilter) WhereTechnology(p entql.StringP) {
+	f.Where(p.Field(plan.FieldTechnology))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *PlanFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(plan.FieldName))
+}
+
+// WhereDescription applies the entql string predicate on the description field.
+func (f *PlanFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(plan.FieldDescription))
+}
+
+// WhereMinTermMonths applies the entql int predicate on the min_term_months field.
+func (f *PlanFilter) WhereMinTermMonths(p entql.IntP) {
+	f.Where(p.Field(plan.FieldMinTermMonths))
+}
+
+// WhereCancelNoticeDays applies the entql int predicate on the cancel_notice_days field.
+func (f *PlanFilter) WhereCancelNoticeDays(p entql.IntP) {
+	f.Where(p.Field(plan.FieldCancelNoticeDays))
+}
+
+// WhereValidFrom applies the entql time.Time predicate on the valid_from field.
+func (f *PlanFilter) WhereValidFrom(p entql.TimeP) {
+	f.Where(p.Field(plan.FieldValidFrom))
+}
+
+// WhereValidTo applies the entql time.Time predicate on the valid_to field.
+func (f *PlanFilter) WhereValidTo(p entql.TimeP) {
+	f.Where(p.Field(plan.FieldValidTo))
+}
+
+// WhereSourceURL applies the entql string predicate on the source_url field.
+func (f *PlanFilter) WhereSourceURL(p entql.StringP) {
+	f.Where(p.Field(plan.FieldSourceURL))
+}
+
+// WhereVersionTag applies the entql string predicate on the version_tag field.
+func (f *PlanFilter) WhereVersionTag(p entql.StringP) {
+	f.Where(p.Field(plan.FieldVersionTag))
+}
+
+// WhereHasProvider applies a predicate to check if query has an edge provider.
+func (f *PlanFilter) WhereHasProvider() {
+	f.Where(entql.HasEdge("provider"))
+}
+
+// WhereHasProviderWith applies a predicate to check if query has an edge provider with a given conditions (other predicates).
+func (f *PlanFilter) WhereHasProviderWith(preds ...predicate.Provider) {
+	f.Where(entql.HasEdgeWith("provider", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasBandwidth applies a predicate to check if query has an edge bandwidth.
+func (f *PlanFilter) WhereHasBandwidth() {
+	f.Where(entql.HasEdge("bandwidth"))
+}
+
+// WhereHasBandwidthWith applies a predicate to check if query has an edge bandwidth with a given conditions (other predicates).
+func (f *PlanFilter) WhereHasBandwidthWith(preds ...predicate.Bandwidth) {
+	f.Where(entql.HasEdgeWith("bandwidth", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasPriceTiers applies a predicate to check if query has an edge price_tiers.
+func (f *PlanFilter) WhereHasPriceTiers() {
+	f.Where(entql.HasEdge("price_tiers"))
+}
+
+// WhereHasPriceTiersWith applies a predicate to check if query has an edge price_tiers with a given conditions (other predicates).
+func (f *PlanFilter) WhereHasPriceTiersWith(preds ...predicate.PriceTier) {
+	f.Where(entql.HasEdgeWith("price_tiers", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasOneTimeFees applies a predicate to check if query has an edge one_time_fees.
+func (f *PlanFilter) WhereHasOneTimeFees() {
+	f.Where(entql.HasEdge("one_time_fees"))
+}
+
+// WhereHasOneTimeFeesWith applies a predicate to check if query has an edge one_time_fees with a given conditions (other predicates).
+func (f *PlanFilter) WhereHasOneTimeFeesWith(preds ...predicate.OneTimeFee) {
+	f.Where(entql.HasEdgeWith("one_time_fees", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasPromos applies a predicate to check if query has an edge promos.
+func (f *PlanFilter) WhereHasPromos() {
+	f.Where(entql.HasEdge("promos"))
+}
+
+// WhereHasPromosWith applies a predicate to check if query has an edge promos with a given conditions (other predicates).
+func (f *PlanFilter) WhereHasPromosWith(preds ...predicate.Promo) {
+	f.Where(entql.HasEdgeWith("promos", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasAddon applies a predicate to check if query has an edge addon.
+func (f *PlanFilter) WhereHasAddon() {
+	f.Where(entql.HasEdge("addon"))
+}
+
+// WhereHasAddonWith applies a predicate to check if query has an edge addon with a given conditions (other predicates).
+func (f *PlanFilter) WhereHasAddonWith(preds ...predicate.Addon) {
+	f.Where(entql.HasEdgeWith("addon", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (_q *PriceTierQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the PriceTierQuery builder.
+func (_q *PriceTierQuery) Filter() *PriceTierFilter {
+	return &PriceTierFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *PriceTierMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the PriceTierMutation builder.
+func (m *PriceTierMutation) Filter() *PriceTierFilter {
+	return &PriceTierFilter{config: m.config, predicateAdder: m}
+}
+
+// PriceTierFilter provides a generic filtering capability at runtime for PriceTierQuery.
+type PriceTierFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *PriceTierFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *PriceTierFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(pricetier.FieldID))
+}
+
+// WhereStartMonth applies the entql int predicate on the start_month field.
+func (f *PriceTierFilter) WhereStartMonth(p entql.IntP) {
+	f.Where(p.Field(pricetier.FieldStartMonth))
+}
+
+// WhereEndMonth applies the entql int predicate on the end_month field.
+func (f *PriceTierFilter) WhereEndMonth(p entql.IntP) {
+	f.Where(p.Field(pricetier.FieldEndMonth))
+}
+
+// WhereMonthlyFeeCents applies the entql int predicate on the monthly_fee_cents field.
+func (f *PriceTierFilter) WhereMonthlyFeeCents(p entql.IntP) {
+	f.Where(p.Field(pricetier.FieldMonthlyFeeCents))
+}
+
+// WhereHasPlan applies a predicate to check if query has an edge plan.
+func (f *PriceTierFilter) WhereHasPlan() {
+	f.Where(entql.HasEdge("plan"))
+}
+
+// WhereHasPlanWith applies a predicate to check if query has an edge plan with a given conditions (other predicates).
+func (f *PriceTierFilter) WhereHasPlanWith(preds ...predicate.Plan) {
+	f.Where(entql.HasEdgeWith("plan", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (_q *PromoQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the PromoQuery builder.
+func (_q *PromoQuery) Filter() *PromoFilter {
+	return &PromoFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *PromoMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the PromoMutation builder.
+func (m *PromoMutation) Filter() *PromoFilter {
+	return &PromoFilter{config: m.config, predicateAdder: m}
+}
+
+// PromoFilter provides a generic filtering capability at runtime for PromoQuery.
+type PromoFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *PromoFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *PromoFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(promo.FieldID))
+}
+
+// WhereDescription applies the entql string predicate on the description field.
+func (f *PromoFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(promo.FieldDescription))
+}
+
+// WhereDiscountCents applies the entql int predicate on the discount_cents field.
+func (f *PromoFilter) WhereDiscountCents(p entql.IntP) {
+	f.Where(p.Field(promo.FieldDiscountCents))
+}
+
+// WhereMonthsApplies applies the entql int predicate on the months_applies field.
+func (f *PromoFilter) WhereMonthsApplies(p entql.IntP) {
+	f.Where(p.Field(promo.FieldMonthsApplies))
+}
+
+// WhereStartsAt applies the entql time.Time predicate on the starts_at field.
+func (f *PromoFilter) WhereStartsAt(p entql.TimeP) {
+	f.Where(p.Field(promo.FieldStartsAt))
+}
+
+// WhereEndsAt applies the entql time.Time predicate on the ends_at field.
+func (f *PromoFilter) WhereEndsAt(p entql.TimeP) {
+	f.Where(p.Field(promo.FieldEndsAt))
+}
+
+// WhereConditions applies the entql string predicate on the conditions field.
+func (f *PromoFilter) WhereConditions(p entql.StringP) {
+	f.Where(p.Field(promo.FieldConditions))
+}
+
+// WhereHasPlan applies a predicate to check if query has an edge plan.
+func (f *PromoFilter) WhereHasPlan() {
+	f.Where(entql.HasEdge("plan"))
+}
+
+// WhereHasPlanWith applies a predicate to check if query has an edge plan with a given conditions (other predicates).
+func (f *PromoFilter) WhereHasPlanWith(preds ...predicate.Plan) {
+	f.Where(entql.HasEdgeWith("plan", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (_q *ProviderQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the ProviderQuery builder.
+func (_q *ProviderQuery) Filter() *ProviderFilter {
+	return &ProviderFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *ProviderMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the ProviderMutation builder.
+func (m *ProviderMutation) Filter() *ProviderFilter {
+	return &ProviderFilter{config: m.config, predicateAdder: m}
+}
+
+// ProviderFilter provides a generic filtering capability at runtime for ProviderQuery.
+type ProviderFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *ProviderFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *ProviderFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(provider.FieldID))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *ProviderFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(provider.FieldName))
+}
+
+// WhereWebsite applies the entql string predicate on the website field.
+func (f *ProviderFilter) WhereWebsite(p entql.StringP) {
+	f.Where(p.Field(provider.FieldWebsite))
+}
+
+// WhereHasPlans applies a predicate to check if query has an edge plans.
+func (f *ProviderFilter) WhereHasPlans() {
+	f.Where(entql.HasEdge("plans"))
+}
+
+// WhereHasPlansWith applies a predicate to check if query has an edge plans with a given conditions (other predicates).
+func (f *ProviderFilter) WhereHasPlansWith(preds ...predicate.Plan) {
+	f.Where(entql.HasEdgeWith("plans", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (_q *SnapshotQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the SnapshotQuery builder.
+func (_q *SnapshotQuery) Filter() *SnapshotFilter {
+	return &SnapshotFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *SnapshotMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the SnapshotMutation builder.
+func (m *SnapshotMutation) Filter() *SnapshotFilter {
+	return &SnapshotFilter{config: m.config, predicateAdder: m}
+}
+
+// SnapshotFilter provides a generic filtering capability at runtime for SnapshotQuery.
+type SnapshotFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *SnapshotFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *SnapshotFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(snapshot.FieldID))
+}
+
+// WhereMonth applies the entql time.Time predicate on the month field.
+func (f *SnapshotFilter) WhereMonth(p entql.TimeP) {
+	f.Where(p.Field(snapshot.FieldMonth))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *SnapshotFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(snapshot.FieldCreatedAt))
 }

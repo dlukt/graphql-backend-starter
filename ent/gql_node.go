@@ -8,7 +8,14 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/dlukt/graphql-backend-starter/ent/profile"
+	"github.com/deicod/tarife/ent/addon"
+	"github.com/deicod/tarife/ent/bandwidth"
+	"github.com/deicod/tarife/ent/onetimefee"
+	"github.com/deicod/tarife/ent/plan"
+	"github.com/deicod/tarife/ent/pricetier"
+	"github.com/deicod/tarife/ent/promo"
+	"github.com/deicod/tarife/ent/provider"
+	"github.com/deicod/tarife/ent/snapshot"
 	"github.com/hashicorp/go-multierror"
 	"github.com/rs/xid"
 )
@@ -18,10 +25,45 @@ type Noder interface {
 	IsNode()
 }
 
-var profileImplementors = []string{"Profile", "Node"}
+var addonImplementors = []string{"Addon", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (*Profile) IsNode() {}
+func (*Addon) IsNode() {}
+
+var bandwidthImplementors = []string{"Bandwidth", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Bandwidth) IsNode() {}
+
+var onetimefeeImplementors = []string{"OneTimeFee", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*OneTimeFee) IsNode() {}
+
+var planImplementors = []string{"Plan", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Plan) IsNode() {}
+
+var pricetierImplementors = []string{"PriceTier", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*PriceTier) IsNode() {}
+
+var promoImplementors = []string{"Promo", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Promo) IsNode() {}
+
+var providerImplementors = []string{"Provider", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Provider) IsNode() {}
+
+var snapshotImplementors = []string{"Snapshot", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Snapshot) IsNode() {}
 
 var errNodeInvalidID = &NotFoundError{"node"}
 
@@ -81,11 +123,74 @@ func (c *Client) Noder(ctx context.Context, id xid.ID, opts ...NodeOption) (_ No
 
 func (c *Client) noder(ctx context.Context, table string, id xid.ID) (Noder, error) {
 	switch table {
-	case profile.Table:
-		query := c.Profile.Query().
-			Where(profile.ID(id))
+	case addon.Table:
+		query := c.Addon.Query().
+			Where(addon.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, profileImplementors...); err != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, addonImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case bandwidth.Table:
+		query := c.Bandwidth.Query().
+			Where(bandwidth.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, bandwidthImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case onetimefee.Table:
+		query := c.OneTimeFee.Query().
+			Where(onetimefee.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, onetimefeeImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case plan.Table:
+		query := c.Plan.Query().
+			Where(plan.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, planImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case pricetier.Table:
+		query := c.PriceTier.Query().
+			Where(pricetier.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, pricetierImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case promo.Table:
+		query := c.Promo.Query().
+			Where(promo.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, promoImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case provider.Table:
+		query := c.Provider.Query().
+			Where(provider.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, providerImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case snapshot.Table:
+		query := c.Snapshot.Query().
+			Where(snapshot.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, snapshotImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -163,10 +268,122 @@ func (c *Client) noders(ctx context.Context, table string, ids []xid.ID) ([]Node
 		idmap[id] = append(idmap[id], &noders[i])
 	}
 	switch table {
-	case profile.Table:
-		query := c.Profile.Query().
-			Where(profile.IDIn(ids...))
-		query, err := query.CollectFields(ctx, profileImplementors...)
+	case addon.Table:
+		query := c.Addon.Query().
+			Where(addon.IDIn(ids...))
+		query, err := query.CollectFields(ctx, addonImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case bandwidth.Table:
+		query := c.Bandwidth.Query().
+			Where(bandwidth.IDIn(ids...))
+		query, err := query.CollectFields(ctx, bandwidthImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case onetimefee.Table:
+		query := c.OneTimeFee.Query().
+			Where(onetimefee.IDIn(ids...))
+		query, err := query.CollectFields(ctx, onetimefeeImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case plan.Table:
+		query := c.Plan.Query().
+			Where(plan.IDIn(ids...))
+		query, err := query.CollectFields(ctx, planImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case pricetier.Table:
+		query := c.PriceTier.Query().
+			Where(pricetier.IDIn(ids...))
+		query, err := query.CollectFields(ctx, pricetierImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case promo.Table:
+		query := c.Promo.Query().
+			Where(promo.IDIn(ids...))
+		query, err := query.CollectFields(ctx, promoImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case provider.Table:
+		query := c.Provider.Query().
+			Where(provider.IDIn(ids...))
+		query, err := query.CollectFields(ctx, providerImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case snapshot.Table:
+		query := c.Snapshot.Query().
+			Where(snapshot.IDIn(ids...))
+		query, err := query.CollectFields(ctx, snapshotImplementors...)
 		if err != nil {
 			return nil, err
 		}

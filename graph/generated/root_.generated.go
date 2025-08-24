@@ -11,7 +11,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/dlukt/graphql-backend-starter/ent"
+	"github.com/deicod/tarife/ent"
 	"github.com/rs/xid"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -35,7 +35,6 @@ type Config struct {
 }
 
 type ResolverRoot interface {
-	Mutation() MutationResolver
 	Query() QueryResolver
 }
 
@@ -43,10 +42,58 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	Mutation struct {
-		CreateProfile func(childComplexity int, input ent.CreateProfileInput) int
-		DeleteProfile func(childComplexity int, id xid.ID) int
-		UpdateProfile func(childComplexity int, id xid.ID, input ent.UpdateProfileInput) int
+	Addon struct {
+		ID              func(childComplexity int) int
+		MonthlyFeeCents func(childComplexity int) int
+		Name            func(childComplexity int) int
+		Plans           func(childComplexity int) int
+	}
+
+	AddonConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	AddonEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	Bandwidth struct {
+		DownMbps func(childComplexity int) int
+		ID       func(childComplexity int) int
+		Plan     func(childComplexity int) int
+		UpMbps   func(childComplexity int) int
+	}
+
+	BandwidthConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	BandwidthEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	OneTimeFee struct {
+		AmountCents func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Kind        func(childComplexity int) int
+		Plan        func(childComplexity int) int
+	}
+
+	OneTimeFeeConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	OneTimeFeeEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	PageInfo struct {
@@ -56,30 +103,123 @@ type ComplexityRoot struct {
 		StartCursor     func(childComplexity int) int
 	}
 
-	Profile struct {
-		CreateTime func(childComplexity int) int
-		Gender     func(childComplexity int) int
-		ID         func(childComplexity int) int
-		Name       func(childComplexity int) int
-		Sub        func(childComplexity int) int
-		UpdateTime func(childComplexity int) int
+	Plan struct {
+		Addon            func(childComplexity int) int
+		Bandwidth        func(childComplexity int) int
+		CancelNoticeDays func(childComplexity int) int
+		Description      func(childComplexity int) int
+		ID               func(childComplexity int) int
+		MinTermMonths    func(childComplexity int) int
+		Name             func(childComplexity int) int
+		OneTimeFees      func(childComplexity int) int
+		PriceTiers       func(childComplexity int) int
+		Promos           func(childComplexity int) int
+		Provider         func(childComplexity int) int
+		SourceURL        func(childComplexity int) int
+		Technology       func(childComplexity int) int
+		ValidFrom        func(childComplexity int) int
+		ValidTo          func(childComplexity int) int
+		VersionTag       func(childComplexity int) int
 	}
 
-	ProfileConnection struct {
+	PlanConnection struct {
 		Edges      func(childComplexity int) int
 		PageInfo   func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
-	ProfileEdge struct {
+	PlanEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	PriceTier struct {
+		EndMonth        func(childComplexity int) int
+		ID              func(childComplexity int) int
+		MonthlyFeeCents func(childComplexity int) int
+		Plan            func(childComplexity int) int
+		StartMonth      func(childComplexity int) int
+	}
+
+	PriceTierConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	PriceTierEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	Promo struct {
+		Conditions    func(childComplexity int) int
+		Description   func(childComplexity int) int
+		DiscountCents func(childComplexity int) int
+		EndsAt        func(childComplexity int) int
+		ID            func(childComplexity int) int
+		MonthsApplies func(childComplexity int) int
+		Plan          func(childComplexity int) int
+		StartsAt      func(childComplexity int) int
+	}
+
+	PromoConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	PromoEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	Provider struct {
+		ID      func(childComplexity int) int
+		Name    func(childComplexity int) int
+		Plans   func(childComplexity int) int
+		Website func(childComplexity int) int
+	}
+
+	ProviderConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	ProviderEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
 	}
 
 	Query struct {
-		Node     func(childComplexity int, id xid.ID) int
-		Nodes    func(childComplexity int, ids []xid.ID) int
-		Profiles func(childComplexity int, after *entgql.Cursor[xid.ID], first *int, before *entgql.Cursor[xid.ID], last *int, orderBy *ent.ProfileOrder, where *ent.ProfileWhereInput) int
+		Addons      func(childComplexity int, after *entgql.Cursor[xid.ID], first *int, before *entgql.Cursor[xid.ID], last *int, where *ent.AddonWhereInput) int
+		Bandwidths  func(childComplexity int, after *entgql.Cursor[xid.ID], first *int, before *entgql.Cursor[xid.ID], last *int, where *ent.BandwidthWhereInput) int
+		Node        func(childComplexity int, id xid.ID) int
+		Nodes       func(childComplexity int, ids []xid.ID) int
+		OneTimeFees func(childComplexity int, after *entgql.Cursor[xid.ID], first *int, before *entgql.Cursor[xid.ID], last *int, where *ent.OneTimeFeeWhereInput) int
+		Plans       func(childComplexity int, after *entgql.Cursor[xid.ID], first *int, before *entgql.Cursor[xid.ID], last *int, where *ent.PlanWhereInput) int
+		PriceTiers  func(childComplexity int, after *entgql.Cursor[xid.ID], first *int, before *entgql.Cursor[xid.ID], last *int, where *ent.PriceTierWhereInput) int
+		Promos      func(childComplexity int, after *entgql.Cursor[xid.ID], first *int, before *entgql.Cursor[xid.ID], last *int, where *ent.PromoWhereInput) int
+		Providers   func(childComplexity int, after *entgql.Cursor[xid.ID], first *int, before *entgql.Cursor[xid.ID], last *int, where *ent.ProviderWhereInput) int
+		Snapshots   func(childComplexity int, after *entgql.Cursor[xid.ID], first *int, before *entgql.Cursor[xid.ID], last *int, where *ent.SnapshotWhereInput) int
+	}
+
+	Snapshot struct {
+		CreatedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Month     func(childComplexity int) int
+	}
+
+	SnapshotConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	SnapshotEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 }
 
@@ -102,41 +242,194 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Mutation.createProfile":
-		if e.complexity.Mutation.CreateProfile == nil {
+	case "Addon.id":
+		if e.complexity.Addon.ID == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createProfile_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
+		return e.complexity.Addon.ID(childComplexity), true
 
-		return e.complexity.Mutation.CreateProfile(childComplexity, args["input"].(ent.CreateProfileInput)), true
-
-	case "Mutation.deleteProfile":
-		if e.complexity.Mutation.DeleteProfile == nil {
+	case "Addon.monthlyFeeCents":
+		if e.complexity.Addon.MonthlyFeeCents == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteProfile_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
+		return e.complexity.Addon.MonthlyFeeCents(childComplexity), true
 
-		return e.complexity.Mutation.DeleteProfile(childComplexity, args["id"].(xid.ID)), true
-
-	case "Mutation.updateProfile":
-		if e.complexity.Mutation.UpdateProfile == nil {
+	case "Addon.name":
+		if e.complexity.Addon.Name == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_updateProfile_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
+		return e.complexity.Addon.Name(childComplexity), true
+
+	case "Addon.plans":
+		if e.complexity.Addon.Plans == nil {
+			break
 		}
 
-		return e.complexity.Mutation.UpdateProfile(childComplexity, args["id"].(xid.ID), args["input"].(ent.UpdateProfileInput)), true
+		return e.complexity.Addon.Plans(childComplexity), true
+
+	case "AddonConnection.edges":
+		if e.complexity.AddonConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.AddonConnection.Edges(childComplexity), true
+
+	case "AddonConnection.pageInfo":
+		if e.complexity.AddonConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.AddonConnection.PageInfo(childComplexity), true
+
+	case "AddonConnection.totalCount":
+		if e.complexity.AddonConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.AddonConnection.TotalCount(childComplexity), true
+
+	case "AddonEdge.cursor":
+		if e.complexity.AddonEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.AddonEdge.Cursor(childComplexity), true
+
+	case "AddonEdge.node":
+		if e.complexity.AddonEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.AddonEdge.Node(childComplexity), true
+
+	case "Bandwidth.downMbps":
+		if e.complexity.Bandwidth.DownMbps == nil {
+			break
+		}
+
+		return e.complexity.Bandwidth.DownMbps(childComplexity), true
+
+	case "Bandwidth.id":
+		if e.complexity.Bandwidth.ID == nil {
+			break
+		}
+
+		return e.complexity.Bandwidth.ID(childComplexity), true
+
+	case "Bandwidth.plan":
+		if e.complexity.Bandwidth.Plan == nil {
+			break
+		}
+
+		return e.complexity.Bandwidth.Plan(childComplexity), true
+
+	case "Bandwidth.upMbps":
+		if e.complexity.Bandwidth.UpMbps == nil {
+			break
+		}
+
+		return e.complexity.Bandwidth.UpMbps(childComplexity), true
+
+	case "BandwidthConnection.edges":
+		if e.complexity.BandwidthConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.BandwidthConnection.Edges(childComplexity), true
+
+	case "BandwidthConnection.pageInfo":
+		if e.complexity.BandwidthConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.BandwidthConnection.PageInfo(childComplexity), true
+
+	case "BandwidthConnection.totalCount":
+		if e.complexity.BandwidthConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.BandwidthConnection.TotalCount(childComplexity), true
+
+	case "BandwidthEdge.cursor":
+		if e.complexity.BandwidthEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.BandwidthEdge.Cursor(childComplexity), true
+
+	case "BandwidthEdge.node":
+		if e.complexity.BandwidthEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.BandwidthEdge.Node(childComplexity), true
+
+	case "OneTimeFee.amountCents":
+		if e.complexity.OneTimeFee.AmountCents == nil {
+			break
+		}
+
+		return e.complexity.OneTimeFee.AmountCents(childComplexity), true
+
+	case "OneTimeFee.id":
+		if e.complexity.OneTimeFee.ID == nil {
+			break
+		}
+
+		return e.complexity.OneTimeFee.ID(childComplexity), true
+
+	case "OneTimeFee.kind":
+		if e.complexity.OneTimeFee.Kind == nil {
+			break
+		}
+
+		return e.complexity.OneTimeFee.Kind(childComplexity), true
+
+	case "OneTimeFee.plan":
+		if e.complexity.OneTimeFee.Plan == nil {
+			break
+		}
+
+		return e.complexity.OneTimeFee.Plan(childComplexity), true
+
+	case "OneTimeFeeConnection.edges":
+		if e.complexity.OneTimeFeeConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.OneTimeFeeConnection.Edges(childComplexity), true
+
+	case "OneTimeFeeConnection.pageInfo":
+		if e.complexity.OneTimeFeeConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.OneTimeFeeConnection.PageInfo(childComplexity), true
+
+	case "OneTimeFeeConnection.totalCount":
+		if e.complexity.OneTimeFeeConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.OneTimeFeeConnection.TotalCount(childComplexity), true
+
+	case "OneTimeFeeEdge.cursor":
+		if e.complexity.OneTimeFeeEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.OneTimeFeeEdge.Cursor(childComplexity), true
+
+	case "OneTimeFeeEdge.node":
+		if e.complexity.OneTimeFeeEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.OneTimeFeeEdge.Node(childComplexity), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -166,82 +459,400 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.PageInfo.StartCursor(childComplexity), true
 
-	case "Profile.createTime":
-		if e.complexity.Profile.CreateTime == nil {
+	case "Plan.addon":
+		if e.complexity.Plan.Addon == nil {
 			break
 		}
 
-		return e.complexity.Profile.CreateTime(childComplexity), true
+		return e.complexity.Plan.Addon(childComplexity), true
 
-	case "Profile.gender":
-		if e.complexity.Profile.Gender == nil {
+	case "Plan.bandwidth":
+		if e.complexity.Plan.Bandwidth == nil {
 			break
 		}
 
-		return e.complexity.Profile.Gender(childComplexity), true
+		return e.complexity.Plan.Bandwidth(childComplexity), true
 
-	case "Profile.id":
-		if e.complexity.Profile.ID == nil {
+	case "Plan.cancelNoticeDays":
+		if e.complexity.Plan.CancelNoticeDays == nil {
 			break
 		}
 
-		return e.complexity.Profile.ID(childComplexity), true
+		return e.complexity.Plan.CancelNoticeDays(childComplexity), true
 
-	case "Profile.name":
-		if e.complexity.Profile.Name == nil {
+	case "Plan.description":
+		if e.complexity.Plan.Description == nil {
 			break
 		}
 
-		return e.complexity.Profile.Name(childComplexity), true
+		return e.complexity.Plan.Description(childComplexity), true
 
-	case "Profile.sub":
-		if e.complexity.Profile.Sub == nil {
+	case "Plan.id":
+		if e.complexity.Plan.ID == nil {
 			break
 		}
 
-		return e.complexity.Profile.Sub(childComplexity), true
+		return e.complexity.Plan.ID(childComplexity), true
 
-	case "Profile.updateTime":
-		if e.complexity.Profile.UpdateTime == nil {
+	case "Plan.minTermMonths":
+		if e.complexity.Plan.MinTermMonths == nil {
 			break
 		}
 
-		return e.complexity.Profile.UpdateTime(childComplexity), true
+		return e.complexity.Plan.MinTermMonths(childComplexity), true
 
-	case "ProfileConnection.edges":
-		if e.complexity.ProfileConnection.Edges == nil {
+	case "Plan.name":
+		if e.complexity.Plan.Name == nil {
 			break
 		}
 
-		return e.complexity.ProfileConnection.Edges(childComplexity), true
+		return e.complexity.Plan.Name(childComplexity), true
 
-	case "ProfileConnection.pageInfo":
-		if e.complexity.ProfileConnection.PageInfo == nil {
+	case "Plan.oneTimeFees":
+		if e.complexity.Plan.OneTimeFees == nil {
 			break
 		}
 
-		return e.complexity.ProfileConnection.PageInfo(childComplexity), true
+		return e.complexity.Plan.OneTimeFees(childComplexity), true
 
-	case "ProfileConnection.totalCount":
-		if e.complexity.ProfileConnection.TotalCount == nil {
+	case "Plan.priceTiers":
+		if e.complexity.Plan.PriceTiers == nil {
 			break
 		}
 
-		return e.complexity.ProfileConnection.TotalCount(childComplexity), true
+		return e.complexity.Plan.PriceTiers(childComplexity), true
 
-	case "ProfileEdge.cursor":
-		if e.complexity.ProfileEdge.Cursor == nil {
+	case "Plan.promos":
+		if e.complexity.Plan.Promos == nil {
 			break
 		}
 
-		return e.complexity.ProfileEdge.Cursor(childComplexity), true
+		return e.complexity.Plan.Promos(childComplexity), true
 
-	case "ProfileEdge.node":
-		if e.complexity.ProfileEdge.Node == nil {
+	case "Plan.provider":
+		if e.complexity.Plan.Provider == nil {
 			break
 		}
 
-		return e.complexity.ProfileEdge.Node(childComplexity), true
+		return e.complexity.Plan.Provider(childComplexity), true
+
+	case "Plan.sourceURL":
+		if e.complexity.Plan.SourceURL == nil {
+			break
+		}
+
+		return e.complexity.Plan.SourceURL(childComplexity), true
+
+	case "Plan.technology":
+		if e.complexity.Plan.Technology == nil {
+			break
+		}
+
+		return e.complexity.Plan.Technology(childComplexity), true
+
+	case "Plan.validFrom":
+		if e.complexity.Plan.ValidFrom == nil {
+			break
+		}
+
+		return e.complexity.Plan.ValidFrom(childComplexity), true
+
+	case "Plan.validTo":
+		if e.complexity.Plan.ValidTo == nil {
+			break
+		}
+
+		return e.complexity.Plan.ValidTo(childComplexity), true
+
+	case "Plan.versionTag":
+		if e.complexity.Plan.VersionTag == nil {
+			break
+		}
+
+		return e.complexity.Plan.VersionTag(childComplexity), true
+
+	case "PlanConnection.edges":
+		if e.complexity.PlanConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.PlanConnection.Edges(childComplexity), true
+
+	case "PlanConnection.pageInfo":
+		if e.complexity.PlanConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.PlanConnection.PageInfo(childComplexity), true
+
+	case "PlanConnection.totalCount":
+		if e.complexity.PlanConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.PlanConnection.TotalCount(childComplexity), true
+
+	case "PlanEdge.cursor":
+		if e.complexity.PlanEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.PlanEdge.Cursor(childComplexity), true
+
+	case "PlanEdge.node":
+		if e.complexity.PlanEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.PlanEdge.Node(childComplexity), true
+
+	case "PriceTier.endMonth":
+		if e.complexity.PriceTier.EndMonth == nil {
+			break
+		}
+
+		return e.complexity.PriceTier.EndMonth(childComplexity), true
+
+	case "PriceTier.id":
+		if e.complexity.PriceTier.ID == nil {
+			break
+		}
+
+		return e.complexity.PriceTier.ID(childComplexity), true
+
+	case "PriceTier.monthlyFeeCents":
+		if e.complexity.PriceTier.MonthlyFeeCents == nil {
+			break
+		}
+
+		return e.complexity.PriceTier.MonthlyFeeCents(childComplexity), true
+
+	case "PriceTier.plan":
+		if e.complexity.PriceTier.Plan == nil {
+			break
+		}
+
+		return e.complexity.PriceTier.Plan(childComplexity), true
+
+	case "PriceTier.startMonth":
+		if e.complexity.PriceTier.StartMonth == nil {
+			break
+		}
+
+		return e.complexity.PriceTier.StartMonth(childComplexity), true
+
+	case "PriceTierConnection.edges":
+		if e.complexity.PriceTierConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.PriceTierConnection.Edges(childComplexity), true
+
+	case "PriceTierConnection.pageInfo":
+		if e.complexity.PriceTierConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.PriceTierConnection.PageInfo(childComplexity), true
+
+	case "PriceTierConnection.totalCount":
+		if e.complexity.PriceTierConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.PriceTierConnection.TotalCount(childComplexity), true
+
+	case "PriceTierEdge.cursor":
+		if e.complexity.PriceTierEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.PriceTierEdge.Cursor(childComplexity), true
+
+	case "PriceTierEdge.node":
+		if e.complexity.PriceTierEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.PriceTierEdge.Node(childComplexity), true
+
+	case "Promo.conditions":
+		if e.complexity.Promo.Conditions == nil {
+			break
+		}
+
+		return e.complexity.Promo.Conditions(childComplexity), true
+
+	case "Promo.description":
+		if e.complexity.Promo.Description == nil {
+			break
+		}
+
+		return e.complexity.Promo.Description(childComplexity), true
+
+	case "Promo.discountCents":
+		if e.complexity.Promo.DiscountCents == nil {
+			break
+		}
+
+		return e.complexity.Promo.DiscountCents(childComplexity), true
+
+	case "Promo.endsAt":
+		if e.complexity.Promo.EndsAt == nil {
+			break
+		}
+
+		return e.complexity.Promo.EndsAt(childComplexity), true
+
+	case "Promo.id":
+		if e.complexity.Promo.ID == nil {
+			break
+		}
+
+		return e.complexity.Promo.ID(childComplexity), true
+
+	case "Promo.monthsApplies":
+		if e.complexity.Promo.MonthsApplies == nil {
+			break
+		}
+
+		return e.complexity.Promo.MonthsApplies(childComplexity), true
+
+	case "Promo.plan":
+		if e.complexity.Promo.Plan == nil {
+			break
+		}
+
+		return e.complexity.Promo.Plan(childComplexity), true
+
+	case "Promo.startsAt":
+		if e.complexity.Promo.StartsAt == nil {
+			break
+		}
+
+		return e.complexity.Promo.StartsAt(childComplexity), true
+
+	case "PromoConnection.edges":
+		if e.complexity.PromoConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.PromoConnection.Edges(childComplexity), true
+
+	case "PromoConnection.pageInfo":
+		if e.complexity.PromoConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.PromoConnection.PageInfo(childComplexity), true
+
+	case "PromoConnection.totalCount":
+		if e.complexity.PromoConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.PromoConnection.TotalCount(childComplexity), true
+
+	case "PromoEdge.cursor":
+		if e.complexity.PromoEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.PromoEdge.Cursor(childComplexity), true
+
+	case "PromoEdge.node":
+		if e.complexity.PromoEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.PromoEdge.Node(childComplexity), true
+
+	case "Provider.id":
+		if e.complexity.Provider.ID == nil {
+			break
+		}
+
+		return e.complexity.Provider.ID(childComplexity), true
+
+	case "Provider.name":
+		if e.complexity.Provider.Name == nil {
+			break
+		}
+
+		return e.complexity.Provider.Name(childComplexity), true
+
+	case "Provider.plans":
+		if e.complexity.Provider.Plans == nil {
+			break
+		}
+
+		return e.complexity.Provider.Plans(childComplexity), true
+
+	case "Provider.website":
+		if e.complexity.Provider.Website == nil {
+			break
+		}
+
+		return e.complexity.Provider.Website(childComplexity), true
+
+	case "ProviderConnection.edges":
+		if e.complexity.ProviderConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.ProviderConnection.Edges(childComplexity), true
+
+	case "ProviderConnection.pageInfo":
+		if e.complexity.ProviderConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.ProviderConnection.PageInfo(childComplexity), true
+
+	case "ProviderConnection.totalCount":
+		if e.complexity.ProviderConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.ProviderConnection.TotalCount(childComplexity), true
+
+	case "ProviderEdge.cursor":
+		if e.complexity.ProviderEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.ProviderEdge.Cursor(childComplexity), true
+
+	case "ProviderEdge.node":
+		if e.complexity.ProviderEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.ProviderEdge.Node(childComplexity), true
+
+	case "Query.addons":
+		if e.complexity.Query.Addons == nil {
+			break
+		}
+
+		args, err := ec.field_Query_addons_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Addons(childComplexity, args["after"].(*entgql.Cursor[xid.ID]), args["first"].(*int), args["before"].(*entgql.Cursor[xid.ID]), args["last"].(*int), args["where"].(*ent.AddonWhereInput)), true
+
+	case "Query.bandwidths":
+		if e.complexity.Query.Bandwidths == nil {
+			break
+		}
+
+		args, err := ec.field_Query_bandwidths_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Bandwidths(childComplexity, args["after"].(*entgql.Cursor[xid.ID]), args["first"].(*int), args["before"].(*entgql.Cursor[xid.ID]), args["last"].(*int), args["where"].(*ent.BandwidthWhereInput)), true
 
 	case "Query.node":
 		if e.complexity.Query.Node == nil {
@@ -267,17 +878,133 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.Nodes(childComplexity, args["ids"].([]xid.ID)), true
 
-	case "Query.profiles":
-		if e.complexity.Query.Profiles == nil {
+	case "Query.oneTimeFees":
+		if e.complexity.Query.OneTimeFees == nil {
 			break
 		}
 
-		args, err := ec.field_Query_profiles_args(ctx, rawArgs)
+		args, err := ec.field_Query_oneTimeFees_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.Profiles(childComplexity, args["after"].(*entgql.Cursor[xid.ID]), args["first"].(*int), args["before"].(*entgql.Cursor[xid.ID]), args["last"].(*int), args["orderBy"].(*ent.ProfileOrder), args["where"].(*ent.ProfileWhereInput)), true
+		return e.complexity.Query.OneTimeFees(childComplexity, args["after"].(*entgql.Cursor[xid.ID]), args["first"].(*int), args["before"].(*entgql.Cursor[xid.ID]), args["last"].(*int), args["where"].(*ent.OneTimeFeeWhereInput)), true
+
+	case "Query.plans":
+		if e.complexity.Query.Plans == nil {
+			break
+		}
+
+		args, err := ec.field_Query_plans_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Plans(childComplexity, args["after"].(*entgql.Cursor[xid.ID]), args["first"].(*int), args["before"].(*entgql.Cursor[xid.ID]), args["last"].(*int), args["where"].(*ent.PlanWhereInput)), true
+
+	case "Query.priceTiers":
+		if e.complexity.Query.PriceTiers == nil {
+			break
+		}
+
+		args, err := ec.field_Query_priceTiers_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PriceTiers(childComplexity, args["after"].(*entgql.Cursor[xid.ID]), args["first"].(*int), args["before"].(*entgql.Cursor[xid.ID]), args["last"].(*int), args["where"].(*ent.PriceTierWhereInput)), true
+
+	case "Query.promos":
+		if e.complexity.Query.Promos == nil {
+			break
+		}
+
+		args, err := ec.field_Query_promos_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Promos(childComplexity, args["after"].(*entgql.Cursor[xid.ID]), args["first"].(*int), args["before"].(*entgql.Cursor[xid.ID]), args["last"].(*int), args["where"].(*ent.PromoWhereInput)), true
+
+	case "Query.providers":
+		if e.complexity.Query.Providers == nil {
+			break
+		}
+
+		args, err := ec.field_Query_providers_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Providers(childComplexity, args["after"].(*entgql.Cursor[xid.ID]), args["first"].(*int), args["before"].(*entgql.Cursor[xid.ID]), args["last"].(*int), args["where"].(*ent.ProviderWhereInput)), true
+
+	case "Query.snapshots":
+		if e.complexity.Query.Snapshots == nil {
+			break
+		}
+
+		args, err := ec.field_Query_snapshots_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Snapshots(childComplexity, args["after"].(*entgql.Cursor[xid.ID]), args["first"].(*int), args["before"].(*entgql.Cursor[xid.ID]), args["last"].(*int), args["where"].(*ent.SnapshotWhereInput)), true
+
+	case "Snapshot.createdAt":
+		if e.complexity.Snapshot.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Snapshot.CreatedAt(childComplexity), true
+
+	case "Snapshot.id":
+		if e.complexity.Snapshot.ID == nil {
+			break
+		}
+
+		return e.complexity.Snapshot.ID(childComplexity), true
+
+	case "Snapshot.month":
+		if e.complexity.Snapshot.Month == nil {
+			break
+		}
+
+		return e.complexity.Snapshot.Month(childComplexity), true
+
+	case "SnapshotConnection.edges":
+		if e.complexity.SnapshotConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.SnapshotConnection.Edges(childComplexity), true
+
+	case "SnapshotConnection.pageInfo":
+		if e.complexity.SnapshotConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.SnapshotConnection.PageInfo(childComplexity), true
+
+	case "SnapshotConnection.totalCount":
+		if e.complexity.SnapshotConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.SnapshotConnection.TotalCount(childComplexity), true
+
+	case "SnapshotEdge.cursor":
+		if e.complexity.SnapshotEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.SnapshotEdge.Cursor(childComplexity), true
+
+	case "SnapshotEdge.node":
+		if e.complexity.SnapshotEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.SnapshotEdge.Node(childComplexity), true
 
 	}
 	return 0, false
@@ -287,10 +1014,30 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputCreateProfileInput,
-		ec.unmarshalInputProfileOrder,
-		ec.unmarshalInputProfileWhereInput,
-		ec.unmarshalInputUpdateProfileInput,
+		ec.unmarshalInputAddonWhereInput,
+		ec.unmarshalInputBandwidthWhereInput,
+		ec.unmarshalInputCreateAddonInput,
+		ec.unmarshalInputCreateBandwidthInput,
+		ec.unmarshalInputCreateOneTimeFeeInput,
+		ec.unmarshalInputCreatePlanInput,
+		ec.unmarshalInputCreatePriceTierInput,
+		ec.unmarshalInputCreatePromoInput,
+		ec.unmarshalInputCreateProviderInput,
+		ec.unmarshalInputCreateSnapshotInput,
+		ec.unmarshalInputOneTimeFeeWhereInput,
+		ec.unmarshalInputPlanWhereInput,
+		ec.unmarshalInputPriceTierWhereInput,
+		ec.unmarshalInputPromoWhereInput,
+		ec.unmarshalInputProviderWhereInput,
+		ec.unmarshalInputSnapshotWhereInput,
+		ec.unmarshalInputUpdateAddonInput,
+		ec.unmarshalInputUpdateBandwidthInput,
+		ec.unmarshalInputUpdateOneTimeFeeInput,
+		ec.unmarshalInputUpdatePlanInput,
+		ec.unmarshalInputUpdatePriceTierInput,
+		ec.unmarshalInputUpdatePromoInput,
+		ec.unmarshalInputUpdateProviderInput,
+		ec.unmarshalInputUpdateSnapshotInput,
 	)
 	first := true
 
@@ -324,21 +1071,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			}
 
 			return &response
-		}
-	case ast.Mutation:
-		return func(ctx context.Context) *graphql.Response {
-			if !first {
-				return nil
-			}
-			first = false
-			ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
-			data := ec._Mutation(ctx, opCtx.Operation.SelectionSet)
-			var buf bytes.Buffer
-			data.MarshalGQL(&buf)
-
-			return &graphql.Response{
-				Data: buf.Bytes(),
-			}
 		}
 
 	default:
@@ -390,16 +1122,264 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 var sources = []*ast.Source{
 	{Name: "../../ent.graphql", Input: `directive @goField(forceResolver: Boolean, name: String, omittable: Boolean) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 directive @goModel(model: String, models: [String!], forceGenerate: Boolean) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
+type Addon implements Node {
+  id: ID!
+  name: String!
+  monthlyFeeCents: Int!
+  plans: [Plan!]
+}
 """
-CreateProfileInput is used for create Profile object.
+A connection to a list of items.
+"""
+type AddonConnection {
+  """
+  A list of edges.
+  """
+  edges: [AddonEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type AddonEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Addon
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+AddonWhereInput is used for filtering Addon objects.
 Input was generated by ent.
 """
-input CreateProfileInput {
-  createTime: Time
-  updateTime: Time
-  sub: String!
+input AddonWhereInput {
+  not: AddonWhereInput
+  and: [AddonWhereInput!]
+  or: [AddonWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  """
+  name field predicates
+  """
   name: String
-  gender: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameEqualFold: String
+  nameContainsFold: String
+  """
+  monthly_fee_cents field predicates
+  """
+  monthlyFeeCents: Int
+  monthlyFeeCentsNEQ: Int
+  monthlyFeeCentsIn: [Int!]
+  monthlyFeeCentsNotIn: [Int!]
+  monthlyFeeCentsGT: Int
+  monthlyFeeCentsGTE: Int
+  monthlyFeeCentsLT: Int
+  monthlyFeeCentsLTE: Int
+  """
+  plans edge predicates
+  """
+  hasPlans: Boolean
+  hasPlansWith: [PlanWhereInput!]
+}
+type Bandwidth implements Node {
+  id: ID!
+  downMbps: Int!
+  upMbps: Int!
+  plan: Plan!
+}
+"""
+A connection to a list of items.
+"""
+type BandwidthConnection {
+  """
+  A list of edges.
+  """
+  edges: [BandwidthEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type BandwidthEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Bandwidth
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+BandwidthWhereInput is used for filtering Bandwidth objects.
+Input was generated by ent.
+"""
+input BandwidthWhereInput {
+  not: BandwidthWhereInput
+  and: [BandwidthWhereInput!]
+  or: [BandwidthWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  """
+  down_mbps field predicates
+  """
+  downMbps: Int
+  downMbpsNEQ: Int
+  downMbpsIn: [Int!]
+  downMbpsNotIn: [Int!]
+  downMbpsGT: Int
+  downMbpsGTE: Int
+  downMbpsLT: Int
+  downMbpsLTE: Int
+  """
+  up_mbps field predicates
+  """
+  upMbps: Int
+  upMbpsNEQ: Int
+  upMbpsIn: [Int!]
+  upMbpsNotIn: [Int!]
+  upMbpsGT: Int
+  upMbpsGTE: Int
+  upMbpsLT: Int
+  upMbpsLTE: Int
+  """
+  plan edge predicates
+  """
+  hasPlan: Boolean
+  hasPlanWith: [PlanWhereInput!]
+}
+"""
+CreateAddonInput is used for create Addon object.
+Input was generated by ent.
+"""
+input CreateAddonInput {
+  name: String!
+  monthlyFeeCents: Int!
+  planIDs: [ID!]
+}
+"""
+CreateBandwidthInput is used for create Bandwidth object.
+Input was generated by ent.
+"""
+input CreateBandwidthInput {
+  downMbps: Int!
+  upMbps: Int!
+  planID: ID!
+}
+"""
+CreateOneTimeFeeInput is used for create OneTimeFee object.
+Input was generated by ent.
+"""
+input CreateOneTimeFeeInput {
+  kind: OneTimeFeeKind!
+  amountCents: Int!
+  planID: ID!
+}
+"""
+CreatePlanInput is used for create Plan object.
+Input was generated by ent.
+"""
+input CreatePlanInput {
+  technology: PlanTechnology!
+  name: String!
+  description: String
+  minTermMonths: Int
+  cancelNoticeDays: Int
+  validFrom: Time!
+  validTo: Time
+  sourceURL: String!
+  versionTag: String!
+  providerID: ID!
+  bandwidthID: ID
+  priceTierIDs: [ID!]
+  oneTimeFeeIDs: [ID!]
+  promoIDs: [ID!]
+  addonIDs: [ID!]
+}
+"""
+CreatePriceTierInput is used for create PriceTier object.
+Input was generated by ent.
+"""
+input CreatePriceTierInput {
+  startMonth: Int!
+  endMonth: Int!
+  monthlyFeeCents: Int!
+  planID: ID!
+}
+"""
+CreatePromoInput is used for create Promo object.
+Input was generated by ent.
+"""
+input CreatePromoInput {
+  description: String!
+  discountCents: Int!
+  monthsApplies: Int
+  startsAt: Time
+  endsAt: Time
+  conditions: String
+  planID: ID!
+}
+"""
+CreateProviderInput is used for create Provider object.
+Input was generated by ent.
+"""
+input CreateProviderInput {
+  name: String!
+  website: String!
+  planIDs: [ID!]
+}
+"""
+CreateSnapshotInput is used for create Snapshot object.
+Input was generated by ent.
+"""
+input CreateSnapshotInput {
+  month: Time!
+  createdAt: Time
 }
 """
 Define a Relay Cursor type:
@@ -410,11 +1390,99 @@ scalar Cursor
 An object with an ID.
 Follows the [Relay Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm)
 """
-interface Node @goModel(model: "github.com/dlukt/graphql-backend-starter/ent.Noder") {
+interface Node @goModel(model: "github.com/deicod/tarife/ent.Noder") {
   """
   The id of the object.
   """
   id: ID!
+}
+type OneTimeFee implements Node {
+  id: ID!
+  kind: OneTimeFeeKind!
+  amountCents: Int!
+  plan: Plan!
+}
+"""
+A connection to a list of items.
+"""
+type OneTimeFeeConnection {
+  """
+  A list of edges.
+  """
+  edges: [OneTimeFeeEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type OneTimeFeeEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: OneTimeFee
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+OneTimeFeeKind is enum for the field kind
+"""
+enum OneTimeFeeKind @goModel(model: "github.com/deicod/tarife/ent/onetimefee.Kind") {
+  activation
+  shipping
+  router_purchase
+  misc
+}
+"""
+OneTimeFeeWhereInput is used for filtering OneTimeFee objects.
+Input was generated by ent.
+"""
+input OneTimeFeeWhereInput {
+  not: OneTimeFeeWhereInput
+  and: [OneTimeFeeWhereInput!]
+  or: [OneTimeFeeWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  """
+  kind field predicates
+  """
+  kind: OneTimeFeeKind
+  kindNEQ: OneTimeFeeKind
+  kindIn: [OneTimeFeeKind!]
+  kindNotIn: [OneTimeFeeKind!]
+  """
+  amount_cents field predicates
+  """
+  amountCents: Int
+  amountCentsNEQ: Int
+  amountCentsIn: [Int!]
+  amountCentsNotIn: [Int!]
+  amountCentsGT: Int
+  amountCentsGTE: Int
+  amountCentsLT: Int
+  amountCentsLTE: Int
+  """
+  plan edge predicates
+  """
+  hasPlan: Boolean
+  hasPlanWith: [PlanWhereInput!]
 }
 """
 Possible directions in which to order a list of items when provided an ` + "`" + `orderBy` + "`" + ` argument.
@@ -451,22 +1519,32 @@ type PageInfo {
   """
   endCursor: Cursor
 }
-type Profile implements Node {
+type Plan implements Node {
   id: ID!
-  createTime: Time!
-  updateTime: Time
-  sub: String!
-  name: String
-  gender: String
+  technology: PlanTechnology!
+  name: String!
+  description: String
+  minTermMonths: Int!
+  cancelNoticeDays: Int
+  validFrom: Time!
+  validTo: Time
+  sourceURL: String!
+  versionTag: String!
+  provider: Provider!
+  bandwidth: Bandwidth
+  priceTiers: [PriceTier!]
+  oneTimeFees: [OneTimeFee!]
+  promos: [Promo!]
+  addon: [Addon!]
 }
 """
 A connection to a list of items.
 """
-type ProfileConnection {
+type PlanConnection {
   """
   A list of edges.
   """
-  edges: [ProfileEdge]
+  edges: [PlanEdge]
   """
   Information to aid in pagination.
   """
@@ -479,45 +1557,33 @@ type ProfileConnection {
 """
 An edge in a connection.
 """
-type ProfileEdge {
+type PlanEdge {
   """
   The item at the end of the edge.
   """
-  node: Profile
+  node: Plan
   """
   A cursor for use in pagination.
   """
   cursor: Cursor!
 }
 """
-Ordering options for Profile connections
+PlanTechnology is enum for the field technology
 """
-input ProfileOrder {
-  """
-  The ordering direction.
-  """
-  direction: OrderDirection! = ASC
-  """
-  The field by which to order Profiles.
-  """
-  field: ProfileOrderField!
+enum PlanTechnology @goModel(model: "github.com/deicod/tarife/ent/plan.Technology") {
+  FTTH
+  DSL
+  CABLE
+  MOBILE
 }
 """
-Properties by which Profile connections can be ordered.
-"""
-enum ProfileOrderField {
-  CREATE_TIME
-  UPDATE_TIME
-  NAME
-}
-"""
-ProfileWhereInput is used for filtering Profile objects.
+PlanWhereInput is used for filtering Plan objects.
 Input was generated by ent.
 """
-input ProfileWhereInput {
-  not: ProfileWhereInput
-  and: [ProfileWhereInput!]
-  or: [ProfileWhereInput!]
+input PlanWhereInput {
+  not: PlanWhereInput
+  and: [PlanWhereInput!]
+  or: [PlanWhereInput!]
   """
   id field predicates
   """
@@ -530,45 +1596,12 @@ input ProfileWhereInput {
   idLT: ID
   idLTE: ID
   """
-  create_time field predicates
+  technology field predicates
   """
-  createTime: Time
-  createTimeNEQ: Time
-  createTimeIn: [Time!]
-  createTimeNotIn: [Time!]
-  createTimeGT: Time
-  createTimeGTE: Time
-  createTimeLT: Time
-  createTimeLTE: Time
-  """
-  update_time field predicates
-  """
-  updateTime: Time
-  updateTimeNEQ: Time
-  updateTimeIn: [Time!]
-  updateTimeNotIn: [Time!]
-  updateTimeGT: Time
-  updateTimeGTE: Time
-  updateTimeLT: Time
-  updateTimeLTE: Time
-  updateTimeIsNil: Boolean
-  updateTimeNotNil: Boolean
-  """
-  sub field predicates
-  """
-  sub: String
-  subNEQ: String
-  subIn: [String!]
-  subNotIn: [String!]
-  subGT: String
-  subGTE: String
-  subLT: String
-  subLTE: String
-  subContains: String
-  subHasPrefix: String
-  subHasSuffix: String
-  subEqualFold: String
-  subContainsFold: String
+  technology: PlanTechnology
+  technologyNEQ: PlanTechnology
+  technologyIn: [PlanTechnology!]
+  technologyNotIn: [PlanTechnology!]
   """
   name field predicates
   """
@@ -583,28 +1616,473 @@ input ProfileWhereInput {
   nameContains: String
   nameHasPrefix: String
   nameHasSuffix: String
-  nameIsNil: Boolean
-  nameNotNil: Boolean
   nameEqualFold: String
   nameContainsFold: String
   """
-  gender field predicates
+  description field predicates
   """
-  gender: String
-  genderNEQ: String
-  genderIn: [String!]
-  genderNotIn: [String!]
-  genderGT: String
-  genderGTE: String
-  genderLT: String
-  genderLTE: String
-  genderContains: String
-  genderHasPrefix: String
-  genderHasSuffix: String
-  genderIsNil: Boolean
-  genderNotNil: Boolean
-  genderEqualFold: String
-  genderContainsFold: String
+  description: String
+  descriptionNEQ: String
+  descriptionIn: [String!]
+  descriptionNotIn: [String!]
+  descriptionGT: String
+  descriptionGTE: String
+  descriptionLT: String
+  descriptionLTE: String
+  descriptionContains: String
+  descriptionHasPrefix: String
+  descriptionHasSuffix: String
+  descriptionIsNil: Boolean
+  descriptionNotNil: Boolean
+  descriptionEqualFold: String
+  descriptionContainsFold: String
+  """
+  min_term_months field predicates
+  """
+  minTermMonths: Int
+  minTermMonthsNEQ: Int
+  minTermMonthsIn: [Int!]
+  minTermMonthsNotIn: [Int!]
+  minTermMonthsGT: Int
+  minTermMonthsGTE: Int
+  minTermMonthsLT: Int
+  minTermMonthsLTE: Int
+  """
+  cancel_notice_days field predicates
+  """
+  cancelNoticeDays: Int
+  cancelNoticeDaysNEQ: Int
+  cancelNoticeDaysIn: [Int!]
+  cancelNoticeDaysNotIn: [Int!]
+  cancelNoticeDaysGT: Int
+  cancelNoticeDaysGTE: Int
+  cancelNoticeDaysLT: Int
+  cancelNoticeDaysLTE: Int
+  cancelNoticeDaysIsNil: Boolean
+  cancelNoticeDaysNotNil: Boolean
+  """
+  valid_from field predicates
+  """
+  validFrom: Time
+  validFromNEQ: Time
+  validFromIn: [Time!]
+  validFromNotIn: [Time!]
+  validFromGT: Time
+  validFromGTE: Time
+  validFromLT: Time
+  validFromLTE: Time
+  """
+  valid_to field predicates
+  """
+  validTo: Time
+  validToNEQ: Time
+  validToIn: [Time!]
+  validToNotIn: [Time!]
+  validToGT: Time
+  validToGTE: Time
+  validToLT: Time
+  validToLTE: Time
+  validToIsNil: Boolean
+  validToNotNil: Boolean
+  """
+  source_url field predicates
+  """
+  sourceURL: String
+  sourceURLNEQ: String
+  sourceURLIn: [String!]
+  sourceURLNotIn: [String!]
+  sourceURLGT: String
+  sourceURLGTE: String
+  sourceURLLT: String
+  sourceURLLTE: String
+  sourceURLContains: String
+  sourceURLHasPrefix: String
+  sourceURLHasSuffix: String
+  sourceURLEqualFold: String
+  sourceURLContainsFold: String
+  """
+  version_tag field predicates
+  """
+  versionTag: String
+  versionTagNEQ: String
+  versionTagIn: [String!]
+  versionTagNotIn: [String!]
+  versionTagGT: String
+  versionTagGTE: String
+  versionTagLT: String
+  versionTagLTE: String
+  versionTagContains: String
+  versionTagHasPrefix: String
+  versionTagHasSuffix: String
+  versionTagEqualFold: String
+  versionTagContainsFold: String
+  """
+  provider edge predicates
+  """
+  hasProvider: Boolean
+  hasProviderWith: [ProviderWhereInput!]
+  """
+  bandwidth edge predicates
+  """
+  hasBandwidth: Boolean
+  hasBandwidthWith: [BandwidthWhereInput!]
+  """
+  price_tiers edge predicates
+  """
+  hasPriceTiers: Boolean
+  hasPriceTiersWith: [PriceTierWhereInput!]
+  """
+  one_time_fees edge predicates
+  """
+  hasOneTimeFees: Boolean
+  hasOneTimeFeesWith: [OneTimeFeeWhereInput!]
+  """
+  promos edge predicates
+  """
+  hasPromos: Boolean
+  hasPromosWith: [PromoWhereInput!]
+  """
+  addon edge predicates
+  """
+  hasAddon: Boolean
+  hasAddonWith: [AddonWhereInput!]
+}
+type PriceTier implements Node {
+  id: ID!
+  startMonth: Int!
+  endMonth: Int!
+  monthlyFeeCents: Int!
+  plan: Plan!
+}
+"""
+A connection to a list of items.
+"""
+type PriceTierConnection {
+  """
+  A list of edges.
+  """
+  edges: [PriceTierEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type PriceTierEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: PriceTier
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+PriceTierWhereInput is used for filtering PriceTier objects.
+Input was generated by ent.
+"""
+input PriceTierWhereInput {
+  not: PriceTierWhereInput
+  and: [PriceTierWhereInput!]
+  or: [PriceTierWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  """
+  start_month field predicates
+  """
+  startMonth: Int
+  startMonthNEQ: Int
+  startMonthIn: [Int!]
+  startMonthNotIn: [Int!]
+  startMonthGT: Int
+  startMonthGTE: Int
+  startMonthLT: Int
+  startMonthLTE: Int
+  """
+  end_month field predicates
+  """
+  endMonth: Int
+  endMonthNEQ: Int
+  endMonthIn: [Int!]
+  endMonthNotIn: [Int!]
+  endMonthGT: Int
+  endMonthGTE: Int
+  endMonthLT: Int
+  endMonthLTE: Int
+  """
+  monthly_fee_cents field predicates
+  """
+  monthlyFeeCents: Int
+  monthlyFeeCentsNEQ: Int
+  monthlyFeeCentsIn: [Int!]
+  monthlyFeeCentsNotIn: [Int!]
+  monthlyFeeCentsGT: Int
+  monthlyFeeCentsGTE: Int
+  monthlyFeeCentsLT: Int
+  monthlyFeeCentsLTE: Int
+  """
+  plan edge predicates
+  """
+  hasPlan: Boolean
+  hasPlanWith: [PlanWhereInput!]
+}
+type Promo implements Node {
+  id: ID!
+  description: String!
+  discountCents: Int!
+  monthsApplies: Int
+  startsAt: Time
+  endsAt: Time
+  conditions: String
+  plan: Plan!
+}
+"""
+A connection to a list of items.
+"""
+type PromoConnection {
+  """
+  A list of edges.
+  """
+  edges: [PromoEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type PromoEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Promo
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+PromoWhereInput is used for filtering Promo objects.
+Input was generated by ent.
+"""
+input PromoWhereInput {
+  not: PromoWhereInput
+  and: [PromoWhereInput!]
+  or: [PromoWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  """
+  description field predicates
+  """
+  description: String
+  descriptionNEQ: String
+  descriptionIn: [String!]
+  descriptionNotIn: [String!]
+  descriptionGT: String
+  descriptionGTE: String
+  descriptionLT: String
+  descriptionLTE: String
+  descriptionContains: String
+  descriptionHasPrefix: String
+  descriptionHasSuffix: String
+  descriptionEqualFold: String
+  descriptionContainsFold: String
+  """
+  discount_cents field predicates
+  """
+  discountCents: Int
+  discountCentsNEQ: Int
+  discountCentsIn: [Int!]
+  discountCentsNotIn: [Int!]
+  discountCentsGT: Int
+  discountCentsGTE: Int
+  discountCentsLT: Int
+  discountCentsLTE: Int
+  """
+  months_applies field predicates
+  """
+  monthsApplies: Int
+  monthsAppliesNEQ: Int
+  monthsAppliesIn: [Int!]
+  monthsAppliesNotIn: [Int!]
+  monthsAppliesGT: Int
+  monthsAppliesGTE: Int
+  monthsAppliesLT: Int
+  monthsAppliesLTE: Int
+  monthsAppliesIsNil: Boolean
+  monthsAppliesNotNil: Boolean
+  """
+  starts_at field predicates
+  """
+  startsAt: Time
+  startsAtNEQ: Time
+  startsAtIn: [Time!]
+  startsAtNotIn: [Time!]
+  startsAtGT: Time
+  startsAtGTE: Time
+  startsAtLT: Time
+  startsAtLTE: Time
+  startsAtIsNil: Boolean
+  startsAtNotNil: Boolean
+  """
+  ends_at field predicates
+  """
+  endsAt: Time
+  endsAtNEQ: Time
+  endsAtIn: [Time!]
+  endsAtNotIn: [Time!]
+  endsAtGT: Time
+  endsAtGTE: Time
+  endsAtLT: Time
+  endsAtLTE: Time
+  endsAtIsNil: Boolean
+  endsAtNotNil: Boolean
+  """
+  conditions field predicates
+  """
+  conditions: String
+  conditionsNEQ: String
+  conditionsIn: [String!]
+  conditionsNotIn: [String!]
+  conditionsGT: String
+  conditionsGTE: String
+  conditionsLT: String
+  conditionsLTE: String
+  conditionsContains: String
+  conditionsHasPrefix: String
+  conditionsHasSuffix: String
+  conditionsIsNil: Boolean
+  conditionsNotNil: Boolean
+  conditionsEqualFold: String
+  conditionsContainsFold: String
+  """
+  plan edge predicates
+  """
+  hasPlan: Boolean
+  hasPlanWith: [PlanWhereInput!]
+}
+type Provider implements Node {
+  id: ID!
+  name: String!
+  website: String!
+  plans: [Plan!]
+}
+"""
+A connection to a list of items.
+"""
+type ProviderConnection {
+  """
+  A list of edges.
+  """
+  edges: [ProviderEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type ProviderEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Provider
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+ProviderWhereInput is used for filtering Provider objects.
+Input was generated by ent.
+"""
+input ProviderWhereInput {
+  not: ProviderWhereInput
+  and: [ProviderWhereInput!]
+  or: [ProviderWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  """
+  name field predicates
+  """
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameEqualFold: String
+  nameContainsFold: String
+  """
+  website field predicates
+  """
+  website: String
+  websiteNEQ: String
+  websiteIn: [String!]
+  websiteNotIn: [String!]
+  websiteGT: String
+  websiteGTE: String
+  websiteLT: String
+  websiteLTE: String
+  websiteContains: String
+  websiteHasPrefix: String
+  websiteHasSuffix: String
+  websiteEqualFold: String
+  websiteContainsFold: String
+  """
+  plans edge predicates
+  """
+  hasPlans: Boolean
+  hasPlansWith: [PlanWhereInput!]
 }
 type Query {
   """
@@ -625,7 +2103,7 @@ type Query {
     """
     ids: [ID!]!
   ): [Node]!
-  profiles(
+  addons(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -647,38 +2125,381 @@ type Query {
     last: Int
 
     """
-    Ordering options for Profiles returned from the connection.
+    Filtering options for Addons returned from the connection.
     """
-    orderBy: ProfileOrder
+    where: AddonWhereInput
+  ): AddonConnection!
+  bandwidths(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
 
     """
-    Filtering options for Profiles returned from the connection.
+    Returns the first _n_ elements from the list.
     """
-    where: ProfileWhereInput
-  ): ProfileConnection!
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for Bandwidths returned from the connection.
+    """
+    where: BandwidthWhereInput
+  ): BandwidthConnection!
+  oneTimeFees(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for OneTimeFees returned from the connection.
+    """
+    where: OneTimeFeeWhereInput
+  ): OneTimeFeeConnection!
+  plans(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for Plans returned from the connection.
+    """
+    where: PlanWhereInput
+  ): PlanConnection!
+  priceTiers(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for PriceTiers returned from the connection.
+    """
+    where: PriceTierWhereInput
+  ): PriceTierConnection!
+  promos(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for Promos returned from the connection.
+    """
+    where: PromoWhereInput
+  ): PromoConnection!
+  providers(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for Providers returned from the connection.
+    """
+    where: ProviderWhereInput
+  ): ProviderConnection!
+  snapshots(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for Snapshots returned from the connection.
+    """
+    where: SnapshotWhereInput
+  ): SnapshotConnection!
+}
+type Snapshot implements Node {
+  id: ID!
+  month: Time!
+  createdAt: Time!
+}
+"""
+A connection to a list of items.
+"""
+type SnapshotConnection {
+  """
+  A list of edges.
+  """
+  edges: [SnapshotEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type SnapshotEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Snapshot
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+SnapshotWhereInput is used for filtering Snapshot objects.
+Input was generated by ent.
+"""
+input SnapshotWhereInput {
+  not: SnapshotWhereInput
+  and: [SnapshotWhereInput!]
+  or: [SnapshotWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  """
+  month field predicates
+  """
+  month: Time
+  monthNEQ: Time
+  monthIn: [Time!]
+  monthNotIn: [Time!]
+  monthGT: Time
+  monthGTE: Time
+  monthLT: Time
+  monthLTE: Time
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
 }
 """
 The builtin Time type
 """
 scalar Time
 """
-UpdateProfileInput is used for update Profile object.
+UpdateAddonInput is used for update Addon object.
 Input was generated by ent.
 """
-input UpdateProfileInput {
-  updateTime: Time
-  clearUpdateTime: Boolean
-  sub: String
+input UpdateAddonInput {
   name: String
-  clearName: Boolean
-  gender: String
-  clearGender: Boolean
+  monthlyFeeCents: Int
+  addPlanIDs: [ID!]
+  removePlanIDs: [ID!]
+  clearPlans: Boolean
 }
-`, BuiltIn: false},
-	{Name: "../../starter.graphql", Input: `type Mutation {
-  createProfile(input: CreateProfileInput!): Profile
-  updateProfile(id: ID!, input: UpdateProfileInput!): Profile
-  deleteProfile(id: ID!): ID
+"""
+UpdateBandwidthInput is used for update Bandwidth object.
+Input was generated by ent.
+"""
+input UpdateBandwidthInput {
+  downMbps: Int
+  upMbps: Int
+  planID: ID
+}
+"""
+UpdateOneTimeFeeInput is used for update OneTimeFee object.
+Input was generated by ent.
+"""
+input UpdateOneTimeFeeInput {
+  kind: OneTimeFeeKind
+  amountCents: Int
+  planID: ID
+}
+"""
+UpdatePlanInput is used for update Plan object.
+Input was generated by ent.
+"""
+input UpdatePlanInput {
+  technology: PlanTechnology
+  name: String
+  description: String
+  clearDescription: Boolean
+  minTermMonths: Int
+  cancelNoticeDays: Int
+  clearCancelNoticeDays: Boolean
+  validFrom: Time
+  validTo: Time
+  clearValidTo: Boolean
+  sourceURL: String
+  versionTag: String
+  providerID: ID
+  bandwidthID: ID
+  clearBandwidth: Boolean
+  addPriceTierIDs: [ID!]
+  removePriceTierIDs: [ID!]
+  clearPriceTiers: Boolean
+  addOneTimeFeeIDs: [ID!]
+  removeOneTimeFeeIDs: [ID!]
+  clearOneTimeFees: Boolean
+  addPromoIDs: [ID!]
+  removePromoIDs: [ID!]
+  clearPromos: Boolean
+  addAddonIDs: [ID!]
+  removeAddonIDs: [ID!]
+  clearAddon: Boolean
+}
+"""
+UpdatePriceTierInput is used for update PriceTier object.
+Input was generated by ent.
+"""
+input UpdatePriceTierInput {
+  startMonth: Int
+  endMonth: Int
+  monthlyFeeCents: Int
+  planID: ID
+}
+"""
+UpdatePromoInput is used for update Promo object.
+Input was generated by ent.
+"""
+input UpdatePromoInput {
+  description: String
+  discountCents: Int
+  monthsApplies: Int
+  clearMonthsApplies: Boolean
+  startsAt: Time
+  clearStartsAt: Boolean
+  endsAt: Time
+  clearEndsAt: Boolean
+  conditions: String
+  clearConditions: Boolean
+  planID: ID
+}
+"""
+UpdateProviderInput is used for update Provider object.
+Input was generated by ent.
+"""
+input UpdateProviderInput {
+  name: String
+  website: String
+  addPlanIDs: [ID!]
+  removePlanIDs: [ID!]
+  clearPlans: Boolean
+}
+"""
+UpdateSnapshotInput is used for update Snapshot object.
+Input was generated by ent.
+"""
+input UpdateSnapshotInput {
+  month: Time
+  createdAt: Time
 }
 `, BuiltIn: false},
 }

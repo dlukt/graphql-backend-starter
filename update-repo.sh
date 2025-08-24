@@ -10,7 +10,7 @@ fi
 new_repo_location=$1
 
 # The old repository URL to be replaced
-old_repo_url="github.com/dlukt/graphql-backend-starter"
+old_repo_url="github.com/deicod/tarife"
 
 # Use grep to find all files containing the old repository URL
 # and use xargs to pass the file names to sed for replacement

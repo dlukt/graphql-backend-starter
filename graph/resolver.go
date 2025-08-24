@@ -1,8 +1,8 @@
 package graph
 
 import (
-	"github.com/dlukt/graphql-backend-starter/ent"
-	"github.com/dlukt/graphql-backend-starter/graph/generated"
+	"github.com/deicod/tarife/ent"
+	"github.com/deicod/tarife/graph/generated"
 	"github.com/99designs/gqlgen/graphql"
 )
 

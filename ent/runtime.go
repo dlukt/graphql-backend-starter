@@ -2,4 +2,103 @@
 
 package ent
 
-// The schema-stitching logic is generated in github.com/dlukt/graphql-backend-starter/ent/runtime/runtime.go
+import (
+	"time"
+
+	"github.com/deicod/tarife/ent/addon"
+	"github.com/deicod/tarife/ent/bandwidth"
+	"github.com/deicod/tarife/ent/onetimefee"
+	"github.com/deicod/tarife/ent/plan"
+	"github.com/deicod/tarife/ent/pricetier"
+	"github.com/deicod/tarife/ent/promo"
+	"github.com/deicod/tarife/ent/provider"
+	"github.com/deicod/tarife/ent/schema"
+	"github.com/deicod/tarife/ent/snapshot"
+	"github.com/rs/xid"
+)
+
+// The init function reads all schema descriptors with runtime code
+// (default values, validators, hooks and policies) and stitches it
+// to their package variables.
+func init() {
+	addonMixin := schema.Addon{}.Mixin()
+	addonMixinFields0 := addonMixin[0].Fields()
+	_ = addonMixinFields0
+	addonFields := schema.Addon{}.Fields()
+	_ = addonFields
+	// addonDescID is the schema descriptor for id field.
+	addonDescID := addonMixinFields0[0].Descriptor()
+	// addon.DefaultID holds the default value on creation for the id field.
+	addon.DefaultID = addonDescID.Default.(func() xid.ID)
+	bandwidthMixin := schema.Bandwidth{}.Mixin()
+	bandwidthMixinFields0 := bandwidthMixin[0].Fields()
+	_ = bandwidthMixinFields0
+	bandwidthFields := schema.Bandwidth{}.Fields()
+	_ = bandwidthFields
+	// bandwidthDescID is the schema descriptor for id field.
+	bandwidthDescID := bandwidthMixinFields0[0].Descriptor()
+	// bandwidth.DefaultID holds the default value on creation for the id field.
+	bandwidth.DefaultID = bandwidthDescID.Default.(func() xid.ID)
+	onetimefeeMixin := schema.OneTimeFee{}.Mixin()
+	onetimefeeMixinFields0 := onetimefeeMixin[0].Fields()
+	_ = onetimefeeMixinFields0
+	onetimefeeFields := schema.OneTimeFee{}.Fields()
+	_ = onetimefeeFields
+	// onetimefeeDescID is the schema descriptor for id field.
+	onetimefeeDescID := onetimefeeMixinFields0[0].Descriptor()
+	// onetimefee.DefaultID holds the default value on creation for the id field.
+	onetimefee.DefaultID = onetimefeeDescID.Default.(func() xid.ID)
+	planMixin := schema.Plan{}.Mixin()
+	planMixinFields0 := planMixin[0].Fields()
+	_ = planMixinFields0
+	planFields := schema.Plan{}.Fields()
+	_ = planFields
+	// planDescMinTermMonths is the schema descriptor for min_term_months field.
+	planDescMinTermMonths := planFields[3].Descriptor()
+	// plan.DefaultMinTermMonths holds the default value on creation for the min_term_months field.
+	plan.DefaultMinTermMonths = planDescMinTermMonths.Default.(int)
+	// planDescID is the schema descriptor for id field.
+	planDescID := planMixinFields0[0].Descriptor()
+	// plan.DefaultID holds the default value on creation for the id field.
+	plan.DefaultID = planDescID.Default.(func() xid.ID)
+	pricetierMixin := schema.PriceTier{}.Mixin()
+	pricetierMixinFields0 := pricetierMixin[0].Fields()
+	_ = pricetierMixinFields0
+	pricetierFields := schema.PriceTier{}.Fields()
+	_ = pricetierFields
+	// pricetierDescID is the schema descriptor for id field.
+	pricetierDescID := pricetierMixinFields0[0].Descriptor()
+	// pricetier.DefaultID holds the default value on creation for the id field.
+	pricetier.DefaultID = pricetierDescID.Default.(func() xid.ID)
+	promoMixin := schema.Promo{}.Mixin()
+	promoMixinFields0 := promoMixin[0].Fields()
+	_ = promoMixinFields0
+	promoFields := schema.Promo{}.Fields()
+	_ = promoFields
+	// promoDescID is the schema descriptor for id field.
+	promoDescID := promoMixinFields0[0].Descriptor()
+	// promo.DefaultID holds the default value on creation for the id field.
+	promo.DefaultID = promoDescID.Default.(func() xid.ID)
+	providerMixin := schema.Provider{}.Mixin()
+	providerMixinFields0 := providerMixin[0].Fields()
+	_ = providerMixinFields0
+	providerFields := schema.Provider{}.Fields()
+	_ = providerFields
+	// providerDescID is the schema descriptor for id field.
+	providerDescID := providerMixinFields0[0].Descriptor()
+	// provider.DefaultID holds the default value on creation for the id field.
+	provider.DefaultID = providerDescID.Default.(func() xid.ID)
+	snapshotMixin := schema.Snapshot{}.Mixin()
+	snapshotMixinFields0 := snapshotMixin[0].Fields()
+	_ = snapshotMixinFields0
+	snapshotFields := schema.Snapshot{}.Fields()
+	_ = snapshotFields
+	// snapshotDescCreatedAt is the schema descriptor for created_at field.
+	snapshotDescCreatedAt := snapshotFields[1].Descriptor()
+	// snapshot.DefaultCreatedAt holds the default value on creation for the created_at field.
+	snapshot.DefaultCreatedAt = snapshotDescCreatedAt.Default.(func() time.Time)
+	// snapshotDescID is the schema descriptor for id field.
+	snapshotDescID := snapshotMixinFields0[0].Descriptor()
+	// snapshot.DefaultID holds the default value on creation for the id field.
+	snapshot.DefaultID = snapshotDescID.Default.(func() xid.ID)
+}

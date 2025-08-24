@@ -3,8 +3,8 @@ package rules
 import (
 	"context"
 
-	"github.com/dlukt/graphql-backend-starter/ent/privacy"
-	"github.com/dlukt/graphql-backend-starter/rules/claims"
+	"github.com/deicod/tarife/ent/privacy"
+	"github.com/deicod/tarife/rules/claims"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/google/uuid"
 )

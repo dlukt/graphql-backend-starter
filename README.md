@@ -51,7 +51,7 @@ Let's assume your project is at github.com/user/repo
 ```bash
 mkdir -p ~/go/src/github.com/user
 cd ~/go/src/github.com/user
-git clone https://github.com/dlukt/graphql-backend-starter.git repo
+git clone https://github.com/deicod/tarife.git repo
 cd repo
 ```
 

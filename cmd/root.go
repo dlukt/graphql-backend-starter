@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/dlukt/graphql-backend-starter/config"
+	"github.com/deicod/tarife/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

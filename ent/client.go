@@ -9,13 +9,21 @@ import (
 	"log"
 	"reflect"
 
-	"github.com/dlukt/graphql-backend-starter/ent/migrate"
+	"github.com/deicod/tarife/ent/migrate"
 	"github.com/rs/xid"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
-	"github.com/dlukt/graphql-backend-starter/ent/profile"
+	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/deicod/tarife/ent/addon"
+	"github.com/deicod/tarife/ent/bandwidth"
+	"github.com/deicod/tarife/ent/onetimefee"
+	"github.com/deicod/tarife/ent/plan"
+	"github.com/deicod/tarife/ent/pricetier"
+	"github.com/deicod/tarife/ent/promo"
+	"github.com/deicod/tarife/ent/provider"
+	"github.com/deicod/tarife/ent/snapshot"
 )
 
 // Client is the client that holds all ent builders.
@@ -23,8 +31,22 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// Profile is the client for interacting with the Profile builders.
-	Profile *ProfileClient
+	// Addon is the client for interacting with the Addon builders.
+	Addon *AddonClient
+	// Bandwidth is the client for interacting with the Bandwidth builders.
+	Bandwidth *BandwidthClient
+	// OneTimeFee is the client for interacting with the OneTimeFee builders.
+	OneTimeFee *OneTimeFeeClient
+	// Plan is the client for interacting with the Plan builders.
+	Plan *PlanClient
+	// PriceTier is the client for interacting with the PriceTier builders.
+	PriceTier *PriceTierClient
+	// Promo is the client for interacting with the Promo builders.
+	Promo *PromoClient
+	// Provider is the client for interacting with the Provider builders.
+	Provider *ProviderClient
+	// Snapshot is the client for interacting with the Snapshot builders.
+	Snapshot *SnapshotClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -36,7 +58,14 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.Profile = NewProfileClient(c.config)
+	c.Addon = NewAddonClient(c.config)
+	c.Bandwidth = NewBandwidthClient(c.config)
+	c.OneTimeFee = NewOneTimeFeeClient(c.config)
+	c.Plan = NewPlanClient(c.config)
+	c.PriceTier = NewPriceTierClient(c.config)
+	c.Promo = NewPromoClient(c.config)
+	c.Provider = NewProviderClient(c.config)
+	c.Snapshot = NewSnapshotClient(c.config)
 }
 
 type (
@@ -127,9 +156,16 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:     ctx,
-		config:  cfg,
-		Profile: NewProfileClient(cfg),
+		ctx:        ctx,
+		config:     cfg,
+		Addon:      NewAddonClient(cfg),
+		Bandwidth:  NewBandwidthClient(cfg),
+		OneTimeFee: NewOneTimeFeeClient(cfg),
+		Plan:       NewPlanClient(cfg),
+		PriceTier:  NewPriceTierClient(cfg),
+		Promo:      NewPromoClient(cfg),
+		Provider:   NewProviderClient(cfg),
+		Snapshot:   NewSnapshotClient(cfg),
 	}, nil
 }
 
@@ -147,16 +183,23 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:     ctx,
-		config:  cfg,
-		Profile: NewProfileClient(cfg),
+		ctx:        ctx,
+		config:     cfg,
+		Addon:      NewAddonClient(cfg),
+		Bandwidth:  NewBandwidthClient(cfg),
+		OneTimeFee: NewOneTimeFeeClient(cfg),
+		Plan:       NewPlanClient(cfg),
+		PriceTier:  NewPriceTierClient(cfg),
+		Promo:      NewPromoClient(cfg),
+		Provider:   NewProviderClient(cfg),
+		Snapshot:   NewSnapshotClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Profile.
+//		Addon.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -178,126 +221,1273 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Profile.Use(hooks...)
+	for _, n := range []interface{ Use(...Hook) }{
+		c.Addon, c.Bandwidth, c.OneTimeFee, c.Plan, c.PriceTier, c.Promo, c.Provider,
+		c.Snapshot,
+	} {
+		n.Use(hooks...)
+	}
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
-	c.Profile.Intercept(interceptors...)
+	for _, n := range []interface{ Intercept(...Interceptor) }{
+		c.Addon, c.Bandwidth, c.OneTimeFee, c.Plan, c.PriceTier, c.Promo, c.Provider,
+		c.Snapshot,
+	} {
+		n.Intercept(interceptors...)
+	}
 }
 
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
-	case *ProfileMutation:
-		return c.Profile.mutate(ctx, m)
+	case *AddonMutation:
+		return c.Addon.mutate(ctx, m)
+	case *BandwidthMutation:
+		return c.Bandwidth.mutate(ctx, m)
+	case *OneTimeFeeMutation:
+		return c.OneTimeFee.mutate(ctx, m)
+	case *PlanMutation:
+		return c.Plan.mutate(ctx, m)
+	case *PriceTierMutation:
+		return c.PriceTier.mutate(ctx, m)
+	case *PromoMutation:
+		return c.Promo.mutate(ctx, m)
+	case *ProviderMutation:
+		return c.Provider.mutate(ctx, m)
+	case *SnapshotMutation:
+		return c.Snapshot.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
 }
 
-// ProfileClient is a client for the Profile schema.
-type ProfileClient struct {
+// AddonClient is a client for the Addon schema.
+type AddonClient struct {
 	config
 }
 
-// NewProfileClient returns a client for the Profile from the given config.
-func NewProfileClient(c config) *ProfileClient {
-	return &ProfileClient{config: c}
+// NewAddonClient returns a client for the Addon from the given config.
+func NewAddonClient(c config) *AddonClient {
+	return &AddonClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `profile.Hooks(f(g(h())))`.
-func (c *ProfileClient) Use(hooks ...Hook) {
-	c.hooks.Profile = append(c.hooks.Profile, hooks...)
+// A call to `Use(f, g, h)` equals to `addon.Hooks(f(g(h())))`.
+func (c *AddonClient) Use(hooks ...Hook) {
+	c.hooks.Addon = append(c.hooks.Addon, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `profile.Intercept(f(g(h())))`.
-func (c *ProfileClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Profile = append(c.inters.Profile, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `addon.Intercept(f(g(h())))`.
+func (c *AddonClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Addon = append(c.inters.Addon, interceptors...)
 }
 
-// Create returns a builder for creating a Profile entity.
-func (c *ProfileClient) Create() *ProfileCreate {
-	mutation := newProfileMutation(c.config, OpCreate)
-	return &ProfileCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a Addon entity.
+func (c *AddonClient) Create() *AddonCreate {
+	mutation := newAddonMutation(c.config, OpCreate)
+	return &AddonCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of Profile entities.
-func (c *ProfileClient) CreateBulk(builders ...*ProfileCreate) *ProfileCreateBulk {
-	return &ProfileCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of Addon entities.
+func (c *AddonClient) CreateBulk(builders ...*AddonCreate) *AddonCreateBulk {
+	return &AddonCreateBulk{config: c.config, builders: builders}
 }
 
 // MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
 // a builder and applies setFunc on it.
-func (c *ProfileClient) MapCreateBulk(slice any, setFunc func(*ProfileCreate, int)) *ProfileCreateBulk {
+func (c *AddonClient) MapCreateBulk(slice any, setFunc func(*AddonCreate, int)) *AddonCreateBulk {
 	rv := reflect.ValueOf(slice)
 	if rv.Kind() != reflect.Slice {
-		return &ProfileCreateBulk{err: fmt.Errorf("calling to ProfileClient.MapCreateBulk with wrong type %T, need slice", slice)}
+		return &AddonCreateBulk{err: fmt.Errorf("calling to AddonClient.MapCreateBulk with wrong type %T, need slice", slice)}
 	}
-	builders := make([]*ProfileCreate, rv.Len())
+	builders := make([]*AddonCreate, rv.Len())
 	for i := 0; i < rv.Len(); i++ {
 		builders[i] = c.Create()
 		setFunc(builders[i], i)
 	}
-	return &ProfileCreateBulk{config: c.config, builders: builders}
+	return &AddonCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for Profile.
-func (c *ProfileClient) Update() *ProfileUpdate {
-	mutation := newProfileMutation(c.config, OpUpdate)
-	return &ProfileUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for Addon.
+func (c *AddonClient) Update() *AddonUpdate {
+	mutation := newAddonMutation(c.config, OpUpdate)
+	return &AddonUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *ProfileClient) UpdateOne(pr *Profile) *ProfileUpdateOne {
-	mutation := newProfileMutation(c.config, OpUpdateOne, withProfile(pr))
-	return &ProfileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AddonClient) UpdateOne(_m *Addon) *AddonUpdateOne {
+	mutation := newAddonMutation(c.config, OpUpdateOne, withAddon(_m))
+	return &AddonUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ProfileClient) UpdateOneID(id xid.ID) *ProfileUpdateOne {
-	mutation := newProfileMutation(c.config, OpUpdateOne, withProfileID(id))
-	return &ProfileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AddonClient) UpdateOneID(id xid.ID) *AddonUpdateOne {
+	mutation := newAddonMutation(c.config, OpUpdateOne, withAddonID(id))
+	return &AddonUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for Profile.
-func (c *ProfileClient) Delete() *ProfileDelete {
-	mutation := newProfileMutation(c.config, OpDelete)
-	return &ProfileDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for Addon.
+func (c *AddonClient) Delete() *AddonDelete {
+	mutation := newAddonMutation(c.config, OpDelete)
+	return &AddonDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *ProfileClient) DeleteOne(pr *Profile) *ProfileDeleteOne {
-	return c.DeleteOneID(pr.ID)
+func (c *AddonClient) DeleteOne(_m *Addon) *AddonDeleteOne {
+	return c.DeleteOneID(_m.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ProfileClient) DeleteOneID(id xid.ID) *ProfileDeleteOne {
-	builder := c.Delete().Where(profile.ID(id))
+func (c *AddonClient) DeleteOneID(id xid.ID) *AddonDeleteOne {
+	builder := c.Delete().Where(addon.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &ProfileDeleteOne{builder}
+	return &AddonDeleteOne{builder}
 }
 
-// Query returns a query builder for Profile.
-func (c *ProfileClient) Query() *ProfileQuery {
-	return &ProfileQuery{
+// Query returns a query builder for Addon.
+func (c *AddonClient) Query() *AddonQuery {
+	return &AddonQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeProfile},
+		ctx:    &QueryContext{Type: TypeAddon},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a Profile entity by its id.
-func (c *ProfileClient) Get(ctx context.Context, id xid.ID) (*Profile, error) {
-	return c.Query().Where(profile.ID(id)).Only(ctx)
+// Get returns a Addon entity by its id.
+func (c *AddonClient) Get(ctx context.Context, id xid.ID) (*Addon, error) {
+	return c.Query().Where(addon.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ProfileClient) GetX(ctx context.Context, id xid.ID) *Profile {
+func (c *AddonClient) GetX(ctx context.Context, id xid.ID) *Addon {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPlans queries the plans edge of a Addon.
+func (c *AddonClient) QueryPlans(_m *Addon) *PlanQuery {
+	query := (&PlanClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(addon.Table, addon.FieldID, id),
+			sqlgraph.To(plan.Table, plan.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, addon.PlansTable, addon.PlansPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AddonClient) Hooks() []Hook {
+	return c.hooks.Addon
+}
+
+// Interceptors returns the client interceptors.
+func (c *AddonClient) Interceptors() []Interceptor {
+	return c.inters.Addon
+}
+
+func (c *AddonClient) mutate(ctx context.Context, m *AddonMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AddonCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AddonUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AddonUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AddonDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Addon mutation op: %q", m.Op())
+	}
+}
+
+// BandwidthClient is a client for the Bandwidth schema.
+type BandwidthClient struct {
+	config
+}
+
+// NewBandwidthClient returns a client for the Bandwidth from the given config.
+func NewBandwidthClient(c config) *BandwidthClient {
+	return &BandwidthClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `bandwidth.Hooks(f(g(h())))`.
+func (c *BandwidthClient) Use(hooks ...Hook) {
+	c.hooks.Bandwidth = append(c.hooks.Bandwidth, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `bandwidth.Intercept(f(g(h())))`.
+func (c *BandwidthClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Bandwidth = append(c.inters.Bandwidth, interceptors...)
+}
+
+// Create returns a builder for creating a Bandwidth entity.
+func (c *BandwidthClient) Create() *BandwidthCreate {
+	mutation := newBandwidthMutation(c.config, OpCreate)
+	return &BandwidthCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Bandwidth entities.
+func (c *BandwidthClient) CreateBulk(builders ...*BandwidthCreate) *BandwidthCreateBulk {
+	return &BandwidthCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *BandwidthClient) MapCreateBulk(slice any, setFunc func(*BandwidthCreate, int)) *BandwidthCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &BandwidthCreateBulk{err: fmt.Errorf("calling to BandwidthClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*BandwidthCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &BandwidthCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Bandwidth.
+func (c *BandwidthClient) Update() *BandwidthUpdate {
+	mutation := newBandwidthMutation(c.config, OpUpdate)
+	return &BandwidthUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *BandwidthClient) UpdateOne(_m *Bandwidth) *BandwidthUpdateOne {
+	mutation := newBandwidthMutation(c.config, OpUpdateOne, withBandwidth(_m))
+	return &BandwidthUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *BandwidthClient) UpdateOneID(id xid.ID) *BandwidthUpdateOne {
+	mutation := newBandwidthMutation(c.config, OpUpdateOne, withBandwidthID(id))
+	return &BandwidthUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Bandwidth.
+func (c *BandwidthClient) Delete() *BandwidthDelete {
+	mutation := newBandwidthMutation(c.config, OpDelete)
+	return &BandwidthDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *BandwidthClient) DeleteOne(_m *Bandwidth) *BandwidthDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *BandwidthClient) DeleteOneID(id xid.ID) *BandwidthDeleteOne {
+	builder := c.Delete().Where(bandwidth.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &BandwidthDeleteOne{builder}
+}
+
+// Query returns a query builder for Bandwidth.
+func (c *BandwidthClient) Query() *BandwidthQuery {
+	return &BandwidthQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeBandwidth},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Bandwidth entity by its id.
+func (c *BandwidthClient) Get(ctx context.Context, id xid.ID) (*Bandwidth, error) {
+	return c.Query().Where(bandwidth.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *BandwidthClient) GetX(ctx context.Context, id xid.ID) *Bandwidth {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPlan queries the plan edge of a Bandwidth.
+func (c *BandwidthClient) QueryPlan(_m *Bandwidth) *PlanQuery {
+	query := (&PlanClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(bandwidth.Table, bandwidth.FieldID, id),
+			sqlgraph.To(plan.Table, plan.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, bandwidth.PlanTable, bandwidth.PlanColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *BandwidthClient) Hooks() []Hook {
+	return c.hooks.Bandwidth
+}
+
+// Interceptors returns the client interceptors.
+func (c *BandwidthClient) Interceptors() []Interceptor {
+	return c.inters.Bandwidth
+}
+
+func (c *BandwidthClient) mutate(ctx context.Context, m *BandwidthMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&BandwidthCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&BandwidthUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&BandwidthUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&BandwidthDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Bandwidth mutation op: %q", m.Op())
+	}
+}
+
+// OneTimeFeeClient is a client for the OneTimeFee schema.
+type OneTimeFeeClient struct {
+	config
+}
+
+// NewOneTimeFeeClient returns a client for the OneTimeFee from the given config.
+func NewOneTimeFeeClient(c config) *OneTimeFeeClient {
+	return &OneTimeFeeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `onetimefee.Hooks(f(g(h())))`.
+func (c *OneTimeFeeClient) Use(hooks ...Hook) {
+	c.hooks.OneTimeFee = append(c.hooks.OneTimeFee, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `onetimefee.Intercept(f(g(h())))`.
+func (c *OneTimeFeeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.OneTimeFee = append(c.inters.OneTimeFee, interceptors...)
+}
+
+// Create returns a builder for creating a OneTimeFee entity.
+func (c *OneTimeFeeClient) Create() *OneTimeFeeCreate {
+	mutation := newOneTimeFeeMutation(c.config, OpCreate)
+	return &OneTimeFeeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OneTimeFee entities.
+func (c *OneTimeFeeClient) CreateBulk(builders ...*OneTimeFeeCreate) *OneTimeFeeCreateBulk {
+	return &OneTimeFeeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *OneTimeFeeClient) MapCreateBulk(slice any, setFunc func(*OneTimeFeeCreate, int)) *OneTimeFeeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &OneTimeFeeCreateBulk{err: fmt.Errorf("calling to OneTimeFeeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*OneTimeFeeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &OneTimeFeeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OneTimeFee.
+func (c *OneTimeFeeClient) Update() *OneTimeFeeUpdate {
+	mutation := newOneTimeFeeMutation(c.config, OpUpdate)
+	return &OneTimeFeeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OneTimeFeeClient) UpdateOne(_m *OneTimeFee) *OneTimeFeeUpdateOne {
+	mutation := newOneTimeFeeMutation(c.config, OpUpdateOne, withOneTimeFee(_m))
+	return &OneTimeFeeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OneTimeFeeClient) UpdateOneID(id xid.ID) *OneTimeFeeUpdateOne {
+	mutation := newOneTimeFeeMutation(c.config, OpUpdateOne, withOneTimeFeeID(id))
+	return &OneTimeFeeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OneTimeFee.
+func (c *OneTimeFeeClient) Delete() *OneTimeFeeDelete {
+	mutation := newOneTimeFeeMutation(c.config, OpDelete)
+	return &OneTimeFeeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OneTimeFeeClient) DeleteOne(_m *OneTimeFee) *OneTimeFeeDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *OneTimeFeeClient) DeleteOneID(id xid.ID) *OneTimeFeeDeleteOne {
+	builder := c.Delete().Where(onetimefee.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OneTimeFeeDeleteOne{builder}
+}
+
+// Query returns a query builder for OneTimeFee.
+func (c *OneTimeFeeClient) Query() *OneTimeFeeQuery {
+	return &OneTimeFeeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOneTimeFee},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a OneTimeFee entity by its id.
+func (c *OneTimeFeeClient) Get(ctx context.Context, id xid.ID) (*OneTimeFee, error) {
+	return c.Query().Where(onetimefee.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OneTimeFeeClient) GetX(ctx context.Context, id xid.ID) *OneTimeFee {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPlan queries the plan edge of a OneTimeFee.
+func (c *OneTimeFeeClient) QueryPlan(_m *OneTimeFee) *PlanQuery {
+	query := (&PlanClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(onetimefee.Table, onetimefee.FieldID, id),
+			sqlgraph.To(plan.Table, plan.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, onetimefee.PlanTable, onetimefee.PlanColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *OneTimeFeeClient) Hooks() []Hook {
+	return c.hooks.OneTimeFee
+}
+
+// Interceptors returns the client interceptors.
+func (c *OneTimeFeeClient) Interceptors() []Interceptor {
+	return c.inters.OneTimeFee
+}
+
+func (c *OneTimeFeeClient) mutate(ctx context.Context, m *OneTimeFeeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OneTimeFeeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OneTimeFeeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OneTimeFeeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OneTimeFeeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown OneTimeFee mutation op: %q", m.Op())
+	}
+}
+
+// PlanClient is a client for the Plan schema.
+type PlanClient struct {
+	config
+}
+
+// NewPlanClient returns a client for the Plan from the given config.
+func NewPlanClient(c config) *PlanClient {
+	return &PlanClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `plan.Hooks(f(g(h())))`.
+func (c *PlanClient) Use(hooks ...Hook) {
+	c.hooks.Plan = append(c.hooks.Plan, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `plan.Intercept(f(g(h())))`.
+func (c *PlanClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Plan = append(c.inters.Plan, interceptors...)
+}
+
+// Create returns a builder for creating a Plan entity.
+func (c *PlanClient) Create() *PlanCreate {
+	mutation := newPlanMutation(c.config, OpCreate)
+	return &PlanCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Plan entities.
+func (c *PlanClient) CreateBulk(builders ...*PlanCreate) *PlanCreateBulk {
+	return &PlanCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PlanClient) MapCreateBulk(slice any, setFunc func(*PlanCreate, int)) *PlanCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PlanCreateBulk{err: fmt.Errorf("calling to PlanClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PlanCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PlanCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Plan.
+func (c *PlanClient) Update() *PlanUpdate {
+	mutation := newPlanMutation(c.config, OpUpdate)
+	return &PlanUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PlanClient) UpdateOne(_m *Plan) *PlanUpdateOne {
+	mutation := newPlanMutation(c.config, OpUpdateOne, withPlan(_m))
+	return &PlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PlanClient) UpdateOneID(id xid.ID) *PlanUpdateOne {
+	mutation := newPlanMutation(c.config, OpUpdateOne, withPlanID(id))
+	return &PlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Plan.
+func (c *PlanClient) Delete() *PlanDelete {
+	mutation := newPlanMutation(c.config, OpDelete)
+	return &PlanDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PlanClient) DeleteOne(_m *Plan) *PlanDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PlanClient) DeleteOneID(id xid.ID) *PlanDeleteOne {
+	builder := c.Delete().Where(plan.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PlanDeleteOne{builder}
+}
+
+// Query returns a query builder for Plan.
+func (c *PlanClient) Query() *PlanQuery {
+	return &PlanQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePlan},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Plan entity by its id.
+func (c *PlanClient) Get(ctx context.Context, id xid.ID) (*Plan, error) {
+	return c.Query().Where(plan.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PlanClient) GetX(ctx context.Context, id xid.ID) *Plan {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryProvider queries the provider edge of a Plan.
+func (c *PlanClient) QueryProvider(_m *Plan) *ProviderQuery {
+	query := (&ProviderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(plan.Table, plan.FieldID, id),
+			sqlgraph.To(provider.Table, provider.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, plan.ProviderTable, plan.ProviderColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBandwidth queries the bandwidth edge of a Plan.
+func (c *PlanClient) QueryBandwidth(_m *Plan) *BandwidthQuery {
+	query := (&BandwidthClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(plan.Table, plan.FieldID, id),
+			sqlgraph.To(bandwidth.Table, bandwidth.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, plan.BandwidthTable, plan.BandwidthColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPriceTiers queries the price_tiers edge of a Plan.
+func (c *PlanClient) QueryPriceTiers(_m *Plan) *PriceTierQuery {
+	query := (&PriceTierClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(plan.Table, plan.FieldID, id),
+			sqlgraph.To(pricetier.Table, pricetier.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, plan.PriceTiersTable, plan.PriceTiersColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOneTimeFees queries the one_time_fees edge of a Plan.
+func (c *PlanClient) QueryOneTimeFees(_m *Plan) *OneTimeFeeQuery {
+	query := (&OneTimeFeeClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(plan.Table, plan.FieldID, id),
+			sqlgraph.To(onetimefee.Table, onetimefee.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, plan.OneTimeFeesTable, plan.OneTimeFeesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPromos queries the promos edge of a Plan.
+func (c *PlanClient) QueryPromos(_m *Plan) *PromoQuery {
+	query := (&PromoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(plan.Table, plan.FieldID, id),
+			sqlgraph.To(promo.Table, promo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, plan.PromosTable, plan.PromosColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAddon queries the addon edge of a Plan.
+func (c *PlanClient) QueryAddon(_m *Plan) *AddonQuery {
+	query := (&AddonClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(plan.Table, plan.FieldID, id),
+			sqlgraph.To(addon.Table, addon.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, plan.AddonTable, plan.AddonPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PlanClient) Hooks() []Hook {
+	return c.hooks.Plan
+}
+
+// Interceptors returns the client interceptors.
+func (c *PlanClient) Interceptors() []Interceptor {
+	return c.inters.Plan
+}
+
+func (c *PlanClient) mutate(ctx context.Context, m *PlanMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PlanCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PlanUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PlanDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Plan mutation op: %q", m.Op())
+	}
+}
+
+// PriceTierClient is a client for the PriceTier schema.
+type PriceTierClient struct {
+	config
+}
+
+// NewPriceTierClient returns a client for the PriceTier from the given config.
+func NewPriceTierClient(c config) *PriceTierClient {
+	return &PriceTierClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `pricetier.Hooks(f(g(h())))`.
+func (c *PriceTierClient) Use(hooks ...Hook) {
+	c.hooks.PriceTier = append(c.hooks.PriceTier, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `pricetier.Intercept(f(g(h())))`.
+func (c *PriceTierClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PriceTier = append(c.inters.PriceTier, interceptors...)
+}
+
+// Create returns a builder for creating a PriceTier entity.
+func (c *PriceTierClient) Create() *PriceTierCreate {
+	mutation := newPriceTierMutation(c.config, OpCreate)
+	return &PriceTierCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PriceTier entities.
+func (c *PriceTierClient) CreateBulk(builders ...*PriceTierCreate) *PriceTierCreateBulk {
+	return &PriceTierCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PriceTierClient) MapCreateBulk(slice any, setFunc func(*PriceTierCreate, int)) *PriceTierCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PriceTierCreateBulk{err: fmt.Errorf("calling to PriceTierClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PriceTierCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PriceTierCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PriceTier.
+func (c *PriceTierClient) Update() *PriceTierUpdate {
+	mutation := newPriceTierMutation(c.config, OpUpdate)
+	return &PriceTierUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PriceTierClient) UpdateOne(_m *PriceTier) *PriceTierUpdateOne {
+	mutation := newPriceTierMutation(c.config, OpUpdateOne, withPriceTier(_m))
+	return &PriceTierUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PriceTierClient) UpdateOneID(id xid.ID) *PriceTierUpdateOne {
+	mutation := newPriceTierMutation(c.config, OpUpdateOne, withPriceTierID(id))
+	return &PriceTierUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PriceTier.
+func (c *PriceTierClient) Delete() *PriceTierDelete {
+	mutation := newPriceTierMutation(c.config, OpDelete)
+	return &PriceTierDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PriceTierClient) DeleteOne(_m *PriceTier) *PriceTierDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PriceTierClient) DeleteOneID(id xid.ID) *PriceTierDeleteOne {
+	builder := c.Delete().Where(pricetier.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PriceTierDeleteOne{builder}
+}
+
+// Query returns a query builder for PriceTier.
+func (c *PriceTierClient) Query() *PriceTierQuery {
+	return &PriceTierQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePriceTier},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PriceTier entity by its id.
+func (c *PriceTierClient) Get(ctx context.Context, id xid.ID) (*PriceTier, error) {
+	return c.Query().Where(pricetier.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PriceTierClient) GetX(ctx context.Context, id xid.ID) *PriceTier {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPlan queries the plan edge of a PriceTier.
+func (c *PriceTierClient) QueryPlan(_m *PriceTier) *PlanQuery {
+	query := (&PlanClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(pricetier.Table, pricetier.FieldID, id),
+			sqlgraph.To(plan.Table, plan.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, pricetier.PlanTable, pricetier.PlanColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PriceTierClient) Hooks() []Hook {
+	return c.hooks.PriceTier
+}
+
+// Interceptors returns the client interceptors.
+func (c *PriceTierClient) Interceptors() []Interceptor {
+	return c.inters.PriceTier
+}
+
+func (c *PriceTierClient) mutate(ctx context.Context, m *PriceTierMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PriceTierCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PriceTierUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PriceTierUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PriceTierDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PriceTier mutation op: %q", m.Op())
+	}
+}
+
+// PromoClient is a client for the Promo schema.
+type PromoClient struct {
+	config
+}
+
+// NewPromoClient returns a client for the Promo from the given config.
+func NewPromoClient(c config) *PromoClient {
+	return &PromoClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `promo.Hooks(f(g(h())))`.
+func (c *PromoClient) Use(hooks ...Hook) {
+	c.hooks.Promo = append(c.hooks.Promo, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `promo.Intercept(f(g(h())))`.
+func (c *PromoClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Promo = append(c.inters.Promo, interceptors...)
+}
+
+// Create returns a builder for creating a Promo entity.
+func (c *PromoClient) Create() *PromoCreate {
+	mutation := newPromoMutation(c.config, OpCreate)
+	return &PromoCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Promo entities.
+func (c *PromoClient) CreateBulk(builders ...*PromoCreate) *PromoCreateBulk {
+	return &PromoCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PromoClient) MapCreateBulk(slice any, setFunc func(*PromoCreate, int)) *PromoCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PromoCreateBulk{err: fmt.Errorf("calling to PromoClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PromoCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PromoCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Promo.
+func (c *PromoClient) Update() *PromoUpdate {
+	mutation := newPromoMutation(c.config, OpUpdate)
+	return &PromoUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PromoClient) UpdateOne(_m *Promo) *PromoUpdateOne {
+	mutation := newPromoMutation(c.config, OpUpdateOne, withPromo(_m))
+	return &PromoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PromoClient) UpdateOneID(id xid.ID) *PromoUpdateOne {
+	mutation := newPromoMutation(c.config, OpUpdateOne, withPromoID(id))
+	return &PromoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Promo.
+func (c *PromoClient) Delete() *PromoDelete {
+	mutation := newPromoMutation(c.config, OpDelete)
+	return &PromoDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PromoClient) DeleteOne(_m *Promo) *PromoDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PromoClient) DeleteOneID(id xid.ID) *PromoDeleteOne {
+	builder := c.Delete().Where(promo.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PromoDeleteOne{builder}
+}
+
+// Query returns a query builder for Promo.
+func (c *PromoClient) Query() *PromoQuery {
+	return &PromoQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePromo},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Promo entity by its id.
+func (c *PromoClient) Get(ctx context.Context, id xid.ID) (*Promo, error) {
+	return c.Query().Where(promo.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PromoClient) GetX(ctx context.Context, id xid.ID) *Promo {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPlan queries the plan edge of a Promo.
+func (c *PromoClient) QueryPlan(_m *Promo) *PlanQuery {
+	query := (&PlanClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(promo.Table, promo.FieldID, id),
+			sqlgraph.To(plan.Table, plan.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, promo.PlanTable, promo.PlanColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PromoClient) Hooks() []Hook {
+	return c.hooks.Promo
+}
+
+// Interceptors returns the client interceptors.
+func (c *PromoClient) Interceptors() []Interceptor {
+	return c.inters.Promo
+}
+
+func (c *PromoClient) mutate(ctx context.Context, m *PromoMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PromoCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PromoUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PromoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PromoDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Promo mutation op: %q", m.Op())
+	}
+}
+
+// ProviderClient is a client for the Provider schema.
+type ProviderClient struct {
+	config
+}
+
+// NewProviderClient returns a client for the Provider from the given config.
+func NewProviderClient(c config) *ProviderClient {
+	return &ProviderClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `provider.Hooks(f(g(h())))`.
+func (c *ProviderClient) Use(hooks ...Hook) {
+	c.hooks.Provider = append(c.hooks.Provider, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `provider.Intercept(f(g(h())))`.
+func (c *ProviderClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Provider = append(c.inters.Provider, interceptors...)
+}
+
+// Create returns a builder for creating a Provider entity.
+func (c *ProviderClient) Create() *ProviderCreate {
+	mutation := newProviderMutation(c.config, OpCreate)
+	return &ProviderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Provider entities.
+func (c *ProviderClient) CreateBulk(builders ...*ProviderCreate) *ProviderCreateBulk {
+	return &ProviderCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ProviderClient) MapCreateBulk(slice any, setFunc func(*ProviderCreate, int)) *ProviderCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ProviderCreateBulk{err: fmt.Errorf("calling to ProviderClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ProviderCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ProviderCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Provider.
+func (c *ProviderClient) Update() *ProviderUpdate {
+	mutation := newProviderMutation(c.config, OpUpdate)
+	return &ProviderUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProviderClient) UpdateOne(_m *Provider) *ProviderUpdateOne {
+	mutation := newProviderMutation(c.config, OpUpdateOne, withProvider(_m))
+	return &ProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProviderClient) UpdateOneID(id xid.ID) *ProviderUpdateOne {
+	mutation := newProviderMutation(c.config, OpUpdateOne, withProviderID(id))
+	return &ProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Provider.
+func (c *ProviderClient) Delete() *ProviderDelete {
+	mutation := newProviderMutation(c.config, OpDelete)
+	return &ProviderDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ProviderClient) DeleteOne(_m *Provider) *ProviderDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ProviderClient) DeleteOneID(id xid.ID) *ProviderDeleteOne {
+	builder := c.Delete().Where(provider.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProviderDeleteOne{builder}
+}
+
+// Query returns a query builder for Provider.
+func (c *ProviderClient) Query() *ProviderQuery {
+	return &ProviderQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeProvider},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Provider entity by its id.
+func (c *ProviderClient) Get(ctx context.Context, id xid.ID) (*Provider, error) {
+	return c.Query().Where(provider.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProviderClient) GetX(ctx context.Context, id xid.ID) *Provider {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPlans queries the plans edge of a Provider.
+func (c *ProviderClient) QueryPlans(_m *Provider) *PlanQuery {
+	query := (&PlanClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(provider.Table, provider.FieldID, id),
+			sqlgraph.To(plan.Table, plan.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, provider.PlansTable, provider.PlansColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ProviderClient) Hooks() []Hook {
+	return c.hooks.Provider
+}
+
+// Interceptors returns the client interceptors.
+func (c *ProviderClient) Interceptors() []Interceptor {
+	return c.inters.Provider
+}
+
+func (c *ProviderClient) mutate(ctx context.Context, m *ProviderMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ProviderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ProviderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ProviderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Provider mutation op: %q", m.Op())
+	}
+}
+
+// SnapshotClient is a client for the Snapshot schema.
+type SnapshotClient struct {
+	config
+}
+
+// NewSnapshotClient returns a client for the Snapshot from the given config.
+func NewSnapshotClient(c config) *SnapshotClient {
+	return &SnapshotClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `snapshot.Hooks(f(g(h())))`.
+func (c *SnapshotClient) Use(hooks ...Hook) {
+	c.hooks.Snapshot = append(c.hooks.Snapshot, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `snapshot.Intercept(f(g(h())))`.
+func (c *SnapshotClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Snapshot = append(c.inters.Snapshot, interceptors...)
+}
+
+// Create returns a builder for creating a Snapshot entity.
+func (c *SnapshotClient) Create() *SnapshotCreate {
+	mutation := newSnapshotMutation(c.config, OpCreate)
+	return &SnapshotCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Snapshot entities.
+func (c *SnapshotClient) CreateBulk(builders ...*SnapshotCreate) *SnapshotCreateBulk {
+	return &SnapshotCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SnapshotClient) MapCreateBulk(slice any, setFunc func(*SnapshotCreate, int)) *SnapshotCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SnapshotCreateBulk{err: fmt.Errorf("calling to SnapshotClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SnapshotCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SnapshotCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Snapshot.
+func (c *SnapshotClient) Update() *SnapshotUpdate {
+	mutation := newSnapshotMutation(c.config, OpUpdate)
+	return &SnapshotUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SnapshotClient) UpdateOne(_m *Snapshot) *SnapshotUpdateOne {
+	mutation := newSnapshotMutation(c.config, OpUpdateOne, withSnapshot(_m))
+	return &SnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SnapshotClient) UpdateOneID(id xid.ID) *SnapshotUpdateOne {
+	mutation := newSnapshotMutation(c.config, OpUpdateOne, withSnapshotID(id))
+	return &SnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Snapshot.
+func (c *SnapshotClient) Delete() *SnapshotDelete {
+	mutation := newSnapshotMutation(c.config, OpDelete)
+	return &SnapshotDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SnapshotClient) DeleteOne(_m *Snapshot) *SnapshotDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SnapshotClient) DeleteOneID(id xid.ID) *SnapshotDeleteOne {
+	builder := c.Delete().Where(snapshot.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SnapshotDeleteOne{builder}
+}
+
+// Query returns a query builder for Snapshot.
+func (c *SnapshotClient) Query() *SnapshotQuery {
+	return &SnapshotQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSnapshot},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Snapshot entity by its id.
+func (c *SnapshotClient) Get(ctx context.Context, id xid.ID) (*Snapshot, error) {
+	return c.Query().Where(snapshot.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SnapshotClient) GetX(ctx context.Context, id xid.ID) *Snapshot {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -306,37 +1496,38 @@ func (c *ProfileClient) GetX(ctx context.Context, id xid.ID) *Profile {
 }
 
 // Hooks returns the client hooks.
-func (c *ProfileClient) Hooks() []Hook {
-	hooks := c.hooks.Profile
-	return append(hooks[:len(hooks):len(hooks)], profile.Hooks[:]...)
+func (c *SnapshotClient) Hooks() []Hook {
+	return c.hooks.Snapshot
 }
 
 // Interceptors returns the client interceptors.
-func (c *ProfileClient) Interceptors() []Interceptor {
-	return c.inters.Profile
+func (c *SnapshotClient) Interceptors() []Interceptor {
+	return c.inters.Snapshot
 }
 
-func (c *ProfileClient) mutate(ctx context.Context, m *ProfileMutation) (Value, error) {
+func (c *SnapshotClient) mutate(ctx context.Context, m *SnapshotMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&ProfileCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&SnapshotCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&ProfileUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&SnapshotUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&ProfileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&SnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&ProfileDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&SnapshotDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("ent: unknown Profile mutation op: %q", m.Op())
+		return nil, fmt.Errorf("ent: unknown Snapshot mutation op: %q", m.Op())
 	}
 }
 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Profile []ent.Hook
+		Addon, Bandwidth, OneTimeFee, Plan, PriceTier, Promo, Provider,
+		Snapshot []ent.Hook
 	}
 	inters struct {
-		Profile []ent.Interceptor
+		Addon, Bandwidth, OneTimeFee, Plan, PriceTier, Promo, Provider,
+		Snapshot []ent.Interceptor
 	}
 )

@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"github.com/dlukt/graphql-backend-starter/ent"
+	"github.com/deicod/tarife/ent"
 	// required by schema hooks.
-	_ "github.com/dlukt/graphql-backend-starter/ent/runtime"
+	_ "github.com/deicod/tarife/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/dlukt/graphql-backend-starter/ent/migrate"
+	"github.com/deicod/tarife/ent/migrate"
 )
 
 type (

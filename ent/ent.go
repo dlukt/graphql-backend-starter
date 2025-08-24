@@ -12,7 +12,14 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/dlukt/graphql-backend-starter/ent/profile"
+	"github.com/deicod/tarife/ent/addon"
+	"github.com/deicod/tarife/ent/bandwidth"
+	"github.com/deicod/tarife/ent/onetimefee"
+	"github.com/deicod/tarife/ent/plan"
+	"github.com/deicod/tarife/ent/pricetier"
+	"github.com/deicod/tarife/ent/promo"
+	"github.com/deicod/tarife/ent/provider"
+	"github.com/deicod/tarife/ent/snapshot"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -70,13 +77,20 @@ var (
 )
 
 // checkColumn checks if the column exists in the given table.
-func checkColumn(table, column string) error {
+func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			profile.Table: profile.ValidColumn,
+			addon.Table:      addon.ValidColumn,
+			bandwidth.Table:  bandwidth.ValidColumn,
+			onetimefee.Table: onetimefee.ValidColumn,
+			plan.Table:       plan.ValidColumn,
+			pricetier.Table:  pricetier.ValidColumn,
+			promo.Table:      promo.ValidColumn,
+			provider.Table:   provider.ValidColumn,
+			snapshot.Table:   snapshot.ValidColumn,
 		})
 	})
-	return columnCheck(table, column)
+	return columnCheck(t, c)
 }
 
 // Asc applies the given fields in ASC order.
