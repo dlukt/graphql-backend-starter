@@ -149,6 +149,16 @@ type Claims struct {
 }
 ```
 
+### Viewer and Middleware
+
+This template now derives a typed `Viewer` from the OIDC claims and attaches it to the request context via middleware:
+
+- `rules/viewer/viewer.go`: defines `Viewer` with helpers like `IsAuthenticated()`, `Subject()`, and `HasRole()`.
+- `middleware/viewer.go`: HTTP middleware that reads claims from context (populated by the OIDC middleware) and stores a `Viewer` in context.
+- Ent privacy rules and hooks prefer `Viewer` when present and fall back to raw claims.
+
+If you want to require auth for reads, remove `options.IsPermissive()` in `cmd/graphql.go`.
+
 ### Making read access require auth
 
 On line 79 in `cmd/graphql.go` remove the `options.IsPermissive(),`.

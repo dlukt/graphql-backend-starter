@@ -24,6 +24,7 @@ import (
 	"github.com/dlukt/graphql-backend-starter/config"
 	"github.com/dlukt/graphql-backend-starter/ent"
 	"github.com/dlukt/graphql-backend-starter/graph"
+	"github.com/dlukt/graphql-backend-starter/middleware"
 	"github.com/rs/cors"
 	"github.com/spf13/cobra"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -71,7 +72,9 @@ var graphqlCmd = &cobra.Command{
 
 		cfg := config.OidcConfigDev
 
-		oidcHandler := nethttpoidc.New(srv,
+		// Compose middleware: OIDC first, then Viewer, then GraphQL server.
+		viewerHandler := middleware.WithViewer(srv)
+		oidcHandler := nethttpoidc.New(viewerHandler,
 			options.WithIssuer(cfg.Issuer),
 			options.WithRequiredTokenType("JWT"),
 			options.WithRequiredAudience(cfg.Audience),
