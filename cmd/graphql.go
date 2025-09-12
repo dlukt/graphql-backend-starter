@@ -73,7 +73,7 @@ var graphqlCmd = &cobra.Command{
 			log.Fatal("opening ent client", e)
 		}
 
-		srv := NewDefaultServer(graph.NewSchema(client), client)
+		srv := NewDefaultServer(graph.NewSchema(client))
 		srv.Use(entgql.Transactioner{TxOpener: client})
 
 		cfg := config.OidcConfigDev
@@ -159,14 +159,12 @@ func openDB(databaseURL string) *ent.Client {
 	return ent.NewClient(ent.Driver(driver))
 }
 
-func NewDefaultServer(es graphql.ExecutableSchema, client *ent.Client) *handler.Server {
+func NewDefaultServer(es graphql.ExecutableSchema) *handler.Server {
 	srv := handler.New(es)
 
 	srv.AddTransport(transport.Websocket{
 		KeepAlivePingInterval: 10 * time.Second,
 		InitFunc: func(ctx context.Context, p transport.InitPayload) (context.Context, *transport.InitPayload, error) {
-			// Ensure Ent client is present on websocket context as well
-			ctx = ent.NewContext(ctx, client)
 			var auth string
 			if v := p.GetString("Authorization"); v != "" {
 				auth = v
