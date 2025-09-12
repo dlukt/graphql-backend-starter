@@ -4,11 +4,15 @@ import {
   RecordSource,
   Store,
   type FetchFunction,
+  type SubscribeFunction,
+  Observable,
 } from "relay-runtime";
+import { createClient } from 'graphql-ws'
 import {oidcConfig} from './oidc-config.ts';
 import {User} from 'oidc-client-ts';
 
 const HTTP_ENDPOINT = import.meta.env.VITE_HTTP_ENDPOINT;
+const WS_ENDPOINT = (import.meta.env as any).VITE_WS_ENDPOINT ?? String(HTTP_ENDPOINT || '').replace(/^http/, 'ws')
 const file = "file"
 const files = "files"
 
@@ -127,12 +131,38 @@ const fetchFn: FetchFunction = async (request, variables, _cacheConfig, uploadab
 };
 
 
+const subscribeFn: SubscribeFunction = (request, variables) => {
+  const user = getUser()
+  const access_token = user?.access_token
+  const client = createClient({
+    url: WS_ENDPOINT,
+    lazy: true,
+    connectionParams: access_token ? { headers: { Authorization: `Bearer ${access_token}` } } : undefined,
+  })
+  return Observable.create(sink => {
+    const dispose = client.subscribe(
+      { query: request.text as string, variables },
+      {
+        next: (value) => {
+          const resp: any = { ...(value as any) }
+          if (resp && Object.prototype.hasOwnProperty.call(resp, 'data') && resp.data === null) {
+            resp.data = undefined
+          }
+          sink.next(resp)
+        },
+        error: sink.error.bind(sink),
+        complete: sink.complete.bind(sink),
+      }
+    )
+    return () => dispose()
+  })
+}
+
 function createRelayEnvironment() {
   return new Environment({
-    network: Network.create(fetchFn),
+    network: Network.create(fetchFn, subscribeFn),
     store: new Store(new RecordSource()),
   });
 }
 
 export const RelayEnvironment = createRelayEnvironment();
-

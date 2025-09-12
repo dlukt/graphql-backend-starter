@@ -3,3 +3,6 @@ type Mutation {
   updateProfile(id: ID!, input: UpdateProfileInput!): Profile
   deleteProfile(id: ID!): ID
 }
+
+type Subscription {
+}

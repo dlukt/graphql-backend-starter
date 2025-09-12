@@ -3,10 +3,13 @@ package cmd
 import (
 	"context"
 	"database/sql"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"code.icod.de/dalu/nethttpoidc"
@@ -25,6 +28,9 @@ import (
 	"github.com/dlukt/graphql-backend-starter/ent"
 	"github.com/dlukt/graphql-backend-starter/graph"
 	"github.com/dlukt/graphql-backend-starter/middleware"
+	"github.com/dlukt/graphql-backend-starter/rules/claims"
+	"github.com/dlukt/graphql-backend-starter/rules/viewer"
+	"github.com/gorilla/websocket"
 	"github.com/rs/cors"
 	"github.com/spf13/cobra"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -44,7 +50,7 @@ var graphqlCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("graphql called")
 		setDatabaseURI()
-		
+
 		var client *ent.Client
 		if useSQLite {
 			fmt.Println("Running with SQLite")
@@ -67,7 +73,7 @@ var graphqlCmd = &cobra.Command{
 			log.Fatal("opening ent client", e)
 		}
 
-		srv := NewDefaultServer(graph.NewSchema(client))
+		srv := NewDefaultServer(graph.NewSchema(client), client)
 		srv.Use(entgql.Transactioner{TxOpener: client})
 
 		cfg := config.OidcConfigDev
@@ -153,11 +159,51 @@ func openDB(databaseURL string) *ent.Client {
 	return ent.NewClient(ent.Driver(driver))
 }
 
-func NewDefaultServer(es graphql.ExecutableSchema) *handler.Server {
+func NewDefaultServer(es graphql.ExecutableSchema, client *ent.Client) *handler.Server {
 	srv := handler.New(es)
 
 	srv.AddTransport(transport.Websocket{
 		KeepAlivePingInterval: 10 * time.Second,
+		InitFunc: func(ctx context.Context, p transport.InitPayload) (context.Context, *transport.InitPayload, error) {
+			// Ensure Ent client is present on websocket context as well
+			ctx = ent.NewContext(ctx, client)
+			var auth string
+			if v := p.GetString("Authorization"); v != "" {
+				auth = v
+			}
+			if auth == "" {
+				if h, ok := p["headers"].(map[string]any); ok {
+					if s, ok2 := h["Authorization"].(string); ok2 {
+						auth = s
+					} else {
+						for k, val := range h {
+							if strings.ToLower(k) == "authorization" {
+								if s, ok3 := val.(string); ok3 {
+									auth = s
+								}
+								break
+							}
+						}
+					}
+				}
+			}
+			if auth == "" {
+				return ctx, nil, nil
+			}
+			token := strings.TrimPrefix(auth, "Bearer ")
+			if m := decodeJWTClaims(token); m != nil {
+				ctx = context.WithValue(ctx, options.DefaultClaimsContextKeyName, m)
+				c := claimsFromMap(m)
+				v := viewer.NewFromClaims(c)
+				ctx = viewer.NewContext(ctx, v)
+			}
+			return ctx, nil, nil
+		},
+		Upgrader: websocket.Upgrader{
+			CheckOrigin: func(r *http.Request) bool {
+				return true
+			},
+		},
 	})
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.GET{})
@@ -172,4 +218,38 @@ func NewDefaultServer(es graphql.ExecutableSchema) *handler.Server {
 	})
 
 	return srv
+}
+
+func decodeJWTClaims(token string) map[string]any {
+	parts := strings.Split(token, ".")
+	if len(parts) < 2 {
+		return nil
+	}
+	payload := parts[1]
+	// Base64url decode
+	// add padding if needed
+	if l := len(payload) % 4; l != 0 {
+		payload += strings.Repeat("=", 4-l)
+	}
+	b, err := base64.URLEncoding.DecodeString(payload)
+	if err != nil {
+		return nil
+	}
+	var out map[string]any
+	if err := json.Unmarshal(b, &out); err != nil {
+		return nil
+	}
+	return out
+}
+
+func claimsFromMap(m map[string]any) *claims.Claims {
+	j, err := json.Marshal(m)
+	if err != nil {
+		return nil
+	}
+	var c claims.Claims
+	if err := json.Unmarshal(j, &c); err != nil {
+		return nil
+	}
+	return &c
 }
