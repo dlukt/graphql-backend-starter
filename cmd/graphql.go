@@ -12,8 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"code.icod.de/dalu/nethttpoidc"
-	"code.icod.de/dalu/oidc/options"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
@@ -24,12 +22,12 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/MadAppGang/httplog"
+	oidcCfg "github.com/deicod/oidcmw/config"
+	oidcMW "github.com/deicod/oidcmw/middleware"
+	"github.com/deicod/oidcmw/viewer"
 	"github.com/dlukt/graphql-backend-starter/config"
 	"github.com/dlukt/graphql-backend-starter/ent"
 	"github.com/dlukt/graphql-backend-starter/graph"
-	"github.com/dlukt/graphql-backend-starter/middleware"
-	"github.com/dlukt/graphql-backend-starter/rules/claims"
-	"github.com/dlukt/graphql-backend-starter/rules/viewer"
 	"github.com/gorilla/websocket"
 	"github.com/rs/cors"
 	"github.com/spf13/cobra"
@@ -73,19 +71,39 @@ var graphqlCmd = &cobra.Command{
 			log.Fatal("opening ent client", e)
 		}
 
+		var oidcConfig oidcCfg.Config
+
+		if graphqlDebug {
+			oidcConfig = oidcCfg.Config{
+				Issuer: config.OidcConfigDev.Issuer,
+				Audiences: []string{
+					"account",
+					config.OidcConfigDev.Audience,
+				},
+				AuthorizedParties: []string{
+					config.OidcConfigDev.AuthorizedParty,
+				},
+				AllowAnonymousRequests: true,
+			}
+		} else {
+			oidcConfig = oidcCfg.Config{
+				Issuer: config.OidcConfigProd.Issuer,
+				Audiences: []string{
+					"account",
+					config.OidcConfigProd.Audience,
+				},
+				AuthorizedParties: []string{
+					config.OidcConfigProd.AuthorizedParty,
+				},
+				AllowAnonymousRequests: true,
+			}
+		}
+		mw, e := oidcMW.NewMiddleware(oidcConfig)
+		if e != nil {
+			return e
+		}
 		srv := NewDefaultServer(graph.NewSchema(client))
 		srv.Use(entgql.Transactioner{TxOpener: client})
-
-		cfg := config.OidcConfigDev
-
-		// Compose middleware: OIDC first, then Viewer, then GraphQL server.
-		viewerHandler := middleware.WithViewer(srv)
-		oidcHandler := nethttpoidc.New(viewerHandler,
-			options.WithIssuer(cfg.Issuer),
-			options.WithRequiredTokenType("JWT"),
-			options.WithRequiredAudience(cfg.Audience),
-			options.IsPermissive(),
-		)
 
 		corsHandler := cors.AllowAll()
 		fmt.Println("debug:", graphqlDebug)
@@ -93,14 +111,14 @@ var graphqlCmd = &cobra.Command{
 			http.Handle("/query", corsHandler.Handler(
 				httplog.HandlerWithFormatter(
 					httplog.DefaultLogFormatter,
-					oidcHandler,
+					mw(srv),
 				)))
 		} else {
 			http.Handle("/", playground.Handler("graphql", "/query"))
 			http.Handle("/query", corsHandler.Handler(
 				httplog.HandlerWithFormatter(
 					httplog.DefaultLogFormatterWithRequestHeader,
-					oidcHandler,
+					mw(srv),
 				)))
 		}
 
@@ -190,10 +208,9 @@ func NewDefaultServer(es graphql.ExecutableSchema) *handler.Server {
 			}
 			token := strings.TrimPrefix(auth, "Bearer ")
 			if m := decodeJWTClaims(token); m != nil {
-				ctx = context.WithValue(ctx, options.DefaultClaimsContextKeyName, m)
-				c := claimsFromMap(m)
-				v := viewer.NewFromClaims(c)
-				ctx = viewer.NewContext(ctx, v)
+				ctx = context.WithValue(ctx, "claims", m)
+				v := viewer.FromClaims(m)
+				ctx = viewer.WithViewer(ctx, v)
 			}
 			return ctx, nil, nil
 		},
@@ -238,16 +255,4 @@ func decodeJWTClaims(token string) map[string]any {
 		return nil
 	}
 	return out
-}
-
-func claimsFromMap(m map[string]any) *claims.Claims {
-	j, err := json.Marshal(m)
-	if err != nil {
-		return nil
-	}
-	var c claims.Claims
-	if err := json.Unmarshal(j, &c); err != nil {
-		return nil
-	}
-	return &c
 }

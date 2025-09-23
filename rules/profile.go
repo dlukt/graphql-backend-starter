@@ -3,23 +3,19 @@ package rules
 import (
 	"context"
 
+	"github.com/deicod/oidcmw/viewer"
 	"github.com/dlukt/graphql-backend-starter/ent"
 	"github.com/dlukt/graphql-backend-starter/ent/privacy"
 	"github.com/dlukt/graphql-backend-starter/ent/profile"
-	"github.com/dlukt/graphql-backend-starter/rules/claims"
-	"github.com/dlukt/graphql-backend-starter/rules/viewer"
 )
 
 func ProfileDefaultMutationRule() privacy.MutationRule {
 	return privacy.ProfileMutationRuleFunc(func(ctx context.Context, m *ent.ProfileMutation) error {
 		// Prefer viewer if available; fall back to raw claims.
-		v := viewer.FromContext(ctx)
+		v, _ := viewer.FromContext(ctx)
 		claimSubject := ""
-		if v != nil && v.IsAuthenticated() {
-			claimSubject = v.Subject()
-		}
-		if claimSubject == "" {
-			claimSubject = claims.SubFromContext(ctx)
+		if v != nil && viewer.IsAuthenticated(ctx) {
+			claimSubject = v.Subject
 		}
 		if claimSubject == "" {
 			return privacy.Denyf("no sub in context")
@@ -77,13 +73,10 @@ func ProfileDefaultMutationRule() privacy.MutationRule {
 
 func ProfileCreateIfNotExists() privacy.QueryRule {
 	return privacy.ProfileQueryRuleFunc(func(ctx context.Context, q *ent.ProfileQuery) error {
-		v := viewer.FromContext(ctx)
+		v, _ := viewer.FromContext(ctx)
 		claimSubject := ""
-		if v != nil && v.IsAuthenticated() {
-			claimSubject = v.Subject()
-		}
-		if claimSubject == "" {
-			claimSubject = claims.SubFromContext(ctx)
+		if v != nil && viewer.IsAuthenticated(ctx) {
+			claimSubject = v.Subject
 		}
 		if claimSubject == "" {
 			return privacy.Skip

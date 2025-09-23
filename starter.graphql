@@ -4,5 +4,5 @@ type Mutation {
   deleteProfile(id: ID!): ID
 }
 
-type Subscription {
-}
+#type Subscription {
+#}

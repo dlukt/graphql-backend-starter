@@ -30,108 +30,39 @@ type MutationResolver interface {
 func (ec *executionContext) field_Mutation_createProfile_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Mutation_createProfile_argsInput(ctx, rawArgs)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateProfileInput2githubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐCreateProfileInput)
 	if err != nil {
 		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_createProfile_argsInput(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (ent.CreateProfileInput, error) {
-	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal ent.CreateProfileInput
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNCreateProfileInput2githubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐCreateProfileInput(ctx, tmp)
-	}
-
-	var zeroVal ent.CreateProfileInput
-	return zeroVal, nil
-}
 
 func (ec *executionContext) field_Mutation_deleteProfile_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Mutation_deleteProfile_argsID(ctx, rawArgs)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2githubᚗcomᚋrsᚋxidᚐID)
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
-}
-func (ec *executionContext) field_Mutation_deleteProfile_argsID(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (xid.ID, error) {
-	if _, ok := rawArgs["id"]; !ok {
-		var zeroVal xid.ID
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-	if tmp, ok := rawArgs["id"]; ok {
-		return ec.unmarshalNID2githubᚗcomᚋrsᚋxidᚐID(ctx, tmp)
-	}
-
-	var zeroVal xid.ID
-	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_updateProfile_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Mutation_updateProfile_argsID(ctx, rawArgs)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2githubᚗcomᚋrsᚋxidᚐID)
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := ec.field_Mutation_updateProfile_argsInput(ctx, rawArgs)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateProfileInput2githubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐUpdateProfileInput)
 	if err != nil {
 		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
-}
-func (ec *executionContext) field_Mutation_updateProfile_argsID(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (xid.ID, error) {
-	if _, ok := rawArgs["id"]; !ok {
-		var zeroVal xid.ID
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-	if tmp, ok := rawArgs["id"]; ok {
-		return ec.unmarshalNID2githubᚗcomᚋrsᚋxidᚐID(ctx, tmp)
-	}
-
-	var zeroVal xid.ID
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_updateProfile_argsInput(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (ent.UpdateProfileInput, error) {
-	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal ent.UpdateProfileInput
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNUpdateProfileInput2githubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐUpdateProfileInput(ctx, tmp)
-	}
-
-	var zeroVal ent.UpdateProfileInput
-	return zeroVal, nil
 }
 
 // endregion ***************************** args.gotpl *****************************

@@ -22,97 +22,97 @@ type ProfileCreate struct {
 }
 
 // SetCreateTime sets the "create_time" field.
-func (pc *ProfileCreate) SetCreateTime(t time.Time) *ProfileCreate {
-	pc.mutation.SetCreateTime(t)
-	return pc
+func (_c *ProfileCreate) SetCreateTime(v time.Time) *ProfileCreate {
+	_c.mutation.SetCreateTime(v)
+	return _c
 }
 
 // SetNillableCreateTime sets the "create_time" field if the given value is not nil.
-func (pc *ProfileCreate) SetNillableCreateTime(t *time.Time) *ProfileCreate {
-	if t != nil {
-		pc.SetCreateTime(*t)
+func (_c *ProfileCreate) SetNillableCreateTime(v *time.Time) *ProfileCreate {
+	if v != nil {
+		_c.SetCreateTime(*v)
 	}
-	return pc
+	return _c
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (pc *ProfileCreate) SetUpdateTime(t time.Time) *ProfileCreate {
-	pc.mutation.SetUpdateTime(t)
-	return pc
+func (_c *ProfileCreate) SetUpdateTime(v time.Time) *ProfileCreate {
+	_c.mutation.SetUpdateTime(v)
+	return _c
 }
 
 // SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
-func (pc *ProfileCreate) SetNillableUpdateTime(t *time.Time) *ProfileCreate {
-	if t != nil {
-		pc.SetUpdateTime(*t)
+func (_c *ProfileCreate) SetNillableUpdateTime(v *time.Time) *ProfileCreate {
+	if v != nil {
+		_c.SetUpdateTime(*v)
 	}
-	return pc
+	return _c
 }
 
 // SetSub sets the "sub" field.
-func (pc *ProfileCreate) SetSub(s string) *ProfileCreate {
-	pc.mutation.SetSub(s)
-	return pc
+func (_c *ProfileCreate) SetSub(v string) *ProfileCreate {
+	_c.mutation.SetSub(v)
+	return _c
 }
 
 // SetName sets the "name" field.
-func (pc *ProfileCreate) SetName(s string) *ProfileCreate {
-	pc.mutation.SetName(s)
-	return pc
+func (_c *ProfileCreate) SetName(v string) *ProfileCreate {
+	_c.mutation.SetName(v)
+	return _c
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (pc *ProfileCreate) SetNillableName(s *string) *ProfileCreate {
-	if s != nil {
-		pc.SetName(*s)
+func (_c *ProfileCreate) SetNillableName(v *string) *ProfileCreate {
+	if v != nil {
+		_c.SetName(*v)
 	}
-	return pc
+	return _c
 }
 
 // SetGender sets the "gender" field.
-func (pc *ProfileCreate) SetGender(s string) *ProfileCreate {
-	pc.mutation.SetGender(s)
-	return pc
+func (_c *ProfileCreate) SetGender(v string) *ProfileCreate {
+	_c.mutation.SetGender(v)
+	return _c
 }
 
 // SetNillableGender sets the "gender" field if the given value is not nil.
-func (pc *ProfileCreate) SetNillableGender(s *string) *ProfileCreate {
-	if s != nil {
-		pc.SetGender(*s)
+func (_c *ProfileCreate) SetNillableGender(v *string) *ProfileCreate {
+	if v != nil {
+		_c.SetGender(*v)
 	}
-	return pc
+	return _c
 }
 
 // SetID sets the "id" field.
-func (pc *ProfileCreate) SetID(x xid.ID) *ProfileCreate {
-	pc.mutation.SetID(x)
-	return pc
+func (_c *ProfileCreate) SetID(v xid.ID) *ProfileCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (pc *ProfileCreate) SetNillableID(x *xid.ID) *ProfileCreate {
-	if x != nil {
-		pc.SetID(*x)
+func (_c *ProfileCreate) SetNillableID(v *xid.ID) *ProfileCreate {
+	if v != nil {
+		_c.SetID(*v)
 	}
-	return pc
+	return _c
 }
 
 // Mutation returns the ProfileMutation object of the builder.
-func (pc *ProfileCreate) Mutation() *ProfileMutation {
-	return pc.mutation
+func (_c *ProfileCreate) Mutation() *ProfileMutation {
+	return _c.mutation
 }
 
 // Save creates the Profile in the database.
-func (pc *ProfileCreate) Save(ctx context.Context) (*Profile, error) {
-	if err := pc.defaults(); err != nil {
+func (_c *ProfileCreate) Save(ctx context.Context) (*Profile, error) {
+	if err := _c.defaults(); err != nil {
 		return nil, err
 	}
-	return withHooks(ctx, pc.sqlSave, pc.mutation, pc.hooks)
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (pc *ProfileCreate) SaveX(ctx context.Context) *Profile {
-	v, err := pc.Save(ctx)
+func (_c *ProfileCreate) SaveX(ctx context.Context) *Profile {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -120,53 +120,53 @@ func (pc *ProfileCreate) SaveX(ctx context.Context) *Profile {
 }
 
 // Exec executes the query.
-func (pc *ProfileCreate) Exec(ctx context.Context) error {
-	_, err := pc.Save(ctx)
+func (_c *ProfileCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (pc *ProfileCreate) ExecX(ctx context.Context) {
-	if err := pc.Exec(ctx); err != nil {
+func (_c *ProfileCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (pc *ProfileCreate) defaults() error {
-	if _, ok := pc.mutation.CreateTime(); !ok {
+func (_c *ProfileCreate) defaults() error {
+	if _, ok := _c.mutation.CreateTime(); !ok {
 		if profile.DefaultCreateTime == nil {
 			return fmt.Errorf("ent: uninitialized profile.DefaultCreateTime (forgotten import ent/runtime?)")
 		}
 		v := profile.DefaultCreateTime()
-		pc.mutation.SetCreateTime(v)
+		_c.mutation.SetCreateTime(v)
 	}
-	if _, ok := pc.mutation.UpdateTime(); !ok {
+	if _, ok := _c.mutation.UpdateTime(); !ok {
 		if profile.DefaultUpdateTime == nil {
 			return fmt.Errorf("ent: uninitialized profile.DefaultUpdateTime (forgotten import ent/runtime?)")
 		}
 		v := profile.DefaultUpdateTime()
-		pc.mutation.SetUpdateTime(v)
+		_c.mutation.SetUpdateTime(v)
 	}
-	if _, ok := pc.mutation.ID(); !ok {
+	if _, ok := _c.mutation.ID(); !ok {
 		if profile.DefaultID == nil {
 			return fmt.Errorf("ent: uninitialized profile.DefaultID (forgotten import ent/runtime?)")
 		}
 		v := profile.DefaultID()
-		pc.mutation.SetID(v)
+		_c.mutation.SetID(v)
 	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (pc *ProfileCreate) check() error {
-	if _, ok := pc.mutation.CreateTime(); !ok {
+func (_c *ProfileCreate) check() error {
+	if _, ok := _c.mutation.CreateTime(); !ok {
 		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Profile.create_time"`)}
 	}
-	if _, ok := pc.mutation.Sub(); !ok {
+	if _, ok := _c.mutation.Sub(); !ok {
 		return &ValidationError{Name: "sub", err: errors.New(`ent: missing required field "Profile.sub"`)}
 	}
-	if v, ok := pc.mutation.Sub(); ok {
+	if v, ok := _c.mutation.Sub(); ok {
 		if err := profile.SubValidator(v); err != nil {
 			return &ValidationError{Name: "sub", err: fmt.Errorf(`ent: validator failed for field "Profile.sub": %w`, err)}
 		}
@@ -174,12 +174,12 @@ func (pc *ProfileCreate) check() error {
 	return nil
 }
 
-func (pc *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
-	if err := pc.check(); err != nil {
+func (_c *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := pc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, pc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -192,37 +192,37 @@ func (pc *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
 			return nil, err
 		}
 	}
-	pc.mutation.id = &_node.ID
-	pc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
+func (_c *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Profile{config: pc.config}
+		_node = &Profile{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(profile.Table, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString))
 	)
-	if id, ok := pc.mutation.ID(); ok {
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := pc.mutation.CreateTime(); ok {
+	if value, ok := _c.mutation.CreateTime(); ok {
 		_spec.SetField(profile.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
 	}
-	if value, ok := pc.mutation.UpdateTime(); ok {
+	if value, ok := _c.mutation.UpdateTime(); ok {
 		_spec.SetField(profile.FieldUpdateTime, field.TypeTime, value)
 		_node.UpdateTime = value
 	}
-	if value, ok := pc.mutation.Sub(); ok {
+	if value, ok := _c.mutation.Sub(); ok {
 		_spec.SetField(profile.FieldSub, field.TypeString, value)
 		_node.Sub = value
 	}
-	if value, ok := pc.mutation.Name(); ok {
+	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(profile.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := pc.mutation.Gender(); ok {
+	if value, ok := _c.mutation.Gender(); ok {
 		_spec.SetField(profile.FieldGender, field.TypeString, value)
 		_node.Gender = value
 	}
@@ -237,16 +237,16 @@ type ProfileCreateBulk struct {
 }
 
 // Save creates the Profile entities in the database.
-func (pcb *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
-	if pcb.err != nil {
-		return nil, pcb.err
+func (_c *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(pcb.builders))
-	nodes := make([]*Profile, len(pcb.builders))
-	mutators := make([]Mutator, len(pcb.builders))
-	for i := range pcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*Profile, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := pcb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*ProfileMutation)
@@ -260,11 +260,11 @@ func (pcb *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, pcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, pcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -284,7 +284,7 @@ func (pcb *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, pcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -292,8 +292,8 @@ func (pcb *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (pcb *ProfileCreateBulk) SaveX(ctx context.Context) []*Profile {
-	v, err := pcb.Save(ctx)
+func (_c *ProfileCreateBulk) SaveX(ctx context.Context) []*Profile {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -301,14 +301,14 @@ func (pcb *ProfileCreateBulk) SaveX(ctx context.Context) []*Profile {
 }
 
 // Exec executes the query.
-func (pcb *ProfileCreateBulk) Exec(ctx context.Context) error {
-	_, err := pcb.Save(ctx)
+func (_c *ProfileCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (pcb *ProfileCreateBulk) ExecX(ctx context.Context) {
-	if err := pcb.Exec(ctx); err != nil {
+func (_c *ProfileCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

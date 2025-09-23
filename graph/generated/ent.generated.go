@@ -34,228 +34,70 @@ type QueryResolver interface {
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query___type_argsName(ctx, rawArgs)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "name", ec.unmarshalNString2string)
 	if err != nil {
 		return nil, err
 	}
 	args["name"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query___type_argsName(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (string, error) {
-	if _, ok := rawArgs["name"]; !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-	if tmp, ok := rawArgs["name"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
 
 func (ec *executionContext) field_Query_node_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_node_argsID(ctx, rawArgs)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2githubᚗcomᚋrsᚋxidᚐID)
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_node_argsID(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (xid.ID, error) {
-	if _, ok := rawArgs["id"]; !ok {
-		var zeroVal xid.ID
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-	if tmp, ok := rawArgs["id"]; ok {
-		return ec.unmarshalNID2githubᚗcomᚋrsᚋxidᚐID(ctx, tmp)
-	}
-
-	var zeroVal xid.ID
-	return zeroVal, nil
-}
 
 func (ec *executionContext) field_Query_nodes_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_nodes_argsIds(ctx, rawArgs)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "ids", ec.unmarshalNID2ᚕgithubᚗcomᚋrsᚋxidᚐIDᚄ)
 	if err != nil {
 		return nil, err
 	}
 	args["ids"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_nodes_argsIds(
-	ctx context.Context,
-	rawArgs map[string]any,
-) ([]xid.ID, error) {
-	if _, ok := rawArgs["ids"]; !ok {
-		var zeroVal []xid.ID
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("ids"))
-	if tmp, ok := rawArgs["ids"]; ok {
-		return ec.unmarshalNID2ᚕgithubᚗcomᚋrsᚋxidᚐIDᚄ(ctx, tmp)
-	}
-
-	var zeroVal []xid.ID
-	return zeroVal, nil
-}
 
 func (ec *executionContext) field_Query_profiles_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_profiles_argsAfter(ctx, rawArgs)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "after", ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor)
 	if err != nil {
 		return nil, err
 	}
 	args["after"] = arg0
-	arg1, err := ec.field_Query_profiles_argsFirst(ctx, rawArgs)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "first", ec.unmarshalOInt2ᚖint)
 	if err != nil {
 		return nil, err
 	}
 	args["first"] = arg1
-	arg2, err := ec.field_Query_profiles_argsBefore(ctx, rawArgs)
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "before", ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor)
 	if err != nil {
 		return nil, err
 	}
 	args["before"] = arg2
-	arg3, err := ec.field_Query_profiles_argsLast(ctx, rawArgs)
+	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "last", ec.unmarshalOInt2ᚖint)
 	if err != nil {
 		return nil, err
 	}
 	args["last"] = arg3
-	arg4, err := ec.field_Query_profiles_argsOrderBy(ctx, rawArgs)
+	arg4, err := graphql.ProcessArgField(ctx, rawArgs, "orderBy", ec.unmarshalOProfileOrder2ᚖgithubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐProfileOrder)
 	if err != nil {
 		return nil, err
 	}
 	args["orderBy"] = arg4
-	arg5, err := ec.field_Query_profiles_argsWhere(ctx, rawArgs)
+	arg5, err := graphql.ProcessArgField(ctx, rawArgs, "where", ec.unmarshalOProfileWhereInput2ᚖgithubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐProfileWhereInput)
 	if err != nil {
 		return nil, err
 	}
 	args["where"] = arg5
 	return args, nil
-}
-func (ec *executionContext) field_Query_profiles_argsAfter(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (*entgql.Cursor[xid.ID], error) {
-	if _, ok := rawArgs["after"]; !ok {
-		var zeroVal *entgql.Cursor[xid.ID]
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-	if tmp, ok := rawArgs["after"]; ok {
-		return ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
-	}
-
-	var zeroVal *entgql.Cursor[xid.ID]
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Query_profiles_argsFirst(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (*int, error) {
-	if _, ok := rawArgs["first"]; !ok {
-		var zeroVal *int
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
-	if tmp, ok := rawArgs["first"]; ok {
-		return ec.unmarshalOInt2ᚖint(ctx, tmp)
-	}
-
-	var zeroVal *int
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Query_profiles_argsBefore(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (*entgql.Cursor[xid.ID], error) {
-	if _, ok := rawArgs["before"]; !ok {
-		var zeroVal *entgql.Cursor[xid.ID]
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-	if tmp, ok := rawArgs["before"]; ok {
-		return ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
-	}
-
-	var zeroVal *entgql.Cursor[xid.ID]
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Query_profiles_argsLast(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (*int, error) {
-	if _, ok := rawArgs["last"]; !ok {
-		var zeroVal *int
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
-	if tmp, ok := rawArgs["last"]; ok {
-		return ec.unmarshalOInt2ᚖint(ctx, tmp)
-	}
-
-	var zeroVal *int
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Query_profiles_argsOrderBy(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (*ent.ProfileOrder, error) {
-	if _, ok := rawArgs["orderBy"]; !ok {
-		var zeroVal *ent.ProfileOrder
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
-	if tmp, ok := rawArgs["orderBy"]; ok {
-		return ec.unmarshalOProfileOrder2ᚖgithubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐProfileOrder(ctx, tmp)
-	}
-
-	var zeroVal *ent.ProfileOrder
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Query_profiles_argsWhere(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (*ent.ProfileWhereInput, error) {
-	if _, ok := rawArgs["where"]; !ok {
-		var zeroVal *ent.ProfileWhereInput
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-	if tmp, ok := rawArgs["where"]; ok {
-		return ec.unmarshalOProfileWhereInput2ᚖgithubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐProfileWhereInput(ctx, tmp)
-	}
-
-	var zeroVal *ent.ProfileWhereInput
-	return zeroVal, nil
 }
 
 // endregion ***************************** args.gotpl *****************************

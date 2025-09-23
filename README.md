@@ -7,7 +7,7 @@ This is here to make things easier and help people get started with GraphQL and 
 ## Assumptions
 
 - You use [Keycloak](https://www.keycloak.org/) as the OIDC IDP.
-  It can of course be used with any IDP. Just the claims struct is the default that Keycloak uses.
+  It can be used with any IDP, but a custom viewer would need to be constructed.
   You will have to add the audience in Keycloak to the token, because Keycloak is dumb like that.
 - [xid](https://github.com/rs/xid) is used for globally unique IDs
 - The `Profile` schema is the root of your related entities.
@@ -128,40 +128,9 @@ go generate ./...
 
 ## OIDC
 
-### Claims
-
-This package assumes Keycloak being the OIDC IDP.
-Therefore the [claims object](rules/claims/claims.go) reflects Keycloak's claim structure.
-Change this to your claim structure.
-For instance I'm using Zitadel, adding per project grants and flattening roles and adding them to the root level as `roles`.
-The claims structure looks like this:
-
-```go
-type Claims struct {
-    Aud   []string  `json:"aud"`
-    Exp   time.Time `json:"exp"`
-    Iat   time.Time `json:"iat"`
-    Iss   string    `json:"iss"`
-    Jti   string    `json:"jti"`
-    Nbf   time.Time `json:"nbf"`
-    Roles []string  `json:"roles"`
-    Sub   string    `json:"sub"`
-}
-```
-
-### Viewer and Middleware
-
-This template now derives a typed `Viewer` from the OIDC claims and attaches it to the request context via middleware:
-
-- `rules/viewer/viewer.go`: defines `Viewer` with helpers like `IsAuthenticated()`, `Subject()`, and `HasRole()`.
-- `middleware/viewer.go`: HTTP middleware that reads claims from context (populated by the OIDC middleware) and stores a `Viewer` in context.
-- Ent privacy rules and hooks prefer `Viewer` when present and fall back to raw claims.
-
-If you want to require auth for reads, remove `options.IsPermissive()` in `cmd/graphql.go`.
-
-### Making read access require auth
-
-On line 79 in `cmd/graphql.go` remove the `options.IsPermissive(),`.
+Uses [OIDC Middleware Guard](https://github.com/deicod/oidcmw) and its viewer with helper functions.
+It assumes a Keycloak claims structure.
+If you need the claims `viewer.RawClaims` which returns a `map[string]any`.
 
 ## Further reading
 

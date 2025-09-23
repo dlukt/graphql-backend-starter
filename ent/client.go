@@ -252,8 +252,8 @@ func (c *ProfileClient) Update() *ProfileUpdate {
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *ProfileClient) UpdateOne(pr *Profile) *ProfileUpdateOne {
-	mutation := newProfileMutation(c.config, OpUpdateOne, withProfile(pr))
+func (c *ProfileClient) UpdateOne(_m *Profile) *ProfileUpdateOne {
+	mutation := newProfileMutation(c.config, OpUpdateOne, withProfile(_m))
 	return &ProfileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
@@ -270,8 +270,8 @@ func (c *ProfileClient) Delete() *ProfileDelete {
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *ProfileClient) DeleteOne(pr *Profile) *ProfileDeleteOne {
-	return c.DeleteOneID(pr.ID)
+func (c *ProfileClient) DeleteOne(_m *Profile) *ProfileDeleteOne {
+	return c.DeleteOneID(_m.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.

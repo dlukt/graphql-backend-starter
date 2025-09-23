@@ -24,93 +24,93 @@ type ProfileUpdate struct {
 }
 
 // Where appends a list predicates to the ProfileUpdate builder.
-func (pu *ProfileUpdate) Where(ps ...predicate.Profile) *ProfileUpdate {
-	pu.mutation.Where(ps...)
-	return pu
+func (_u *ProfileUpdate) Where(ps ...predicate.Profile) *ProfileUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (pu *ProfileUpdate) SetUpdateTime(t time.Time) *ProfileUpdate {
-	pu.mutation.SetUpdateTime(t)
-	return pu
+func (_u *ProfileUpdate) SetUpdateTime(v time.Time) *ProfileUpdate {
+	_u.mutation.SetUpdateTime(v)
+	return _u
 }
 
 // ClearUpdateTime clears the value of the "update_time" field.
-func (pu *ProfileUpdate) ClearUpdateTime() *ProfileUpdate {
-	pu.mutation.ClearUpdateTime()
-	return pu
+func (_u *ProfileUpdate) ClearUpdateTime() *ProfileUpdate {
+	_u.mutation.ClearUpdateTime()
+	return _u
 }
 
 // SetSub sets the "sub" field.
-func (pu *ProfileUpdate) SetSub(s string) *ProfileUpdate {
-	pu.mutation.SetSub(s)
-	return pu
+func (_u *ProfileUpdate) SetSub(v string) *ProfileUpdate {
+	_u.mutation.SetSub(v)
+	return _u
 }
 
 // SetNillableSub sets the "sub" field if the given value is not nil.
-func (pu *ProfileUpdate) SetNillableSub(s *string) *ProfileUpdate {
-	if s != nil {
-		pu.SetSub(*s)
+func (_u *ProfileUpdate) SetNillableSub(v *string) *ProfileUpdate {
+	if v != nil {
+		_u.SetSub(*v)
 	}
-	return pu
+	return _u
 }
 
 // SetName sets the "name" field.
-func (pu *ProfileUpdate) SetName(s string) *ProfileUpdate {
-	pu.mutation.SetName(s)
-	return pu
+func (_u *ProfileUpdate) SetName(v string) *ProfileUpdate {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (pu *ProfileUpdate) SetNillableName(s *string) *ProfileUpdate {
-	if s != nil {
-		pu.SetName(*s)
+func (_u *ProfileUpdate) SetNillableName(v *string) *ProfileUpdate {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return pu
+	return _u
 }
 
 // ClearName clears the value of the "name" field.
-func (pu *ProfileUpdate) ClearName() *ProfileUpdate {
-	pu.mutation.ClearName()
-	return pu
+func (_u *ProfileUpdate) ClearName() *ProfileUpdate {
+	_u.mutation.ClearName()
+	return _u
 }
 
 // SetGender sets the "gender" field.
-func (pu *ProfileUpdate) SetGender(s string) *ProfileUpdate {
-	pu.mutation.SetGender(s)
-	return pu
+func (_u *ProfileUpdate) SetGender(v string) *ProfileUpdate {
+	_u.mutation.SetGender(v)
+	return _u
 }
 
 // SetNillableGender sets the "gender" field if the given value is not nil.
-func (pu *ProfileUpdate) SetNillableGender(s *string) *ProfileUpdate {
-	if s != nil {
-		pu.SetGender(*s)
+func (_u *ProfileUpdate) SetNillableGender(v *string) *ProfileUpdate {
+	if v != nil {
+		_u.SetGender(*v)
 	}
-	return pu
+	return _u
 }
 
 // ClearGender clears the value of the "gender" field.
-func (pu *ProfileUpdate) ClearGender() *ProfileUpdate {
-	pu.mutation.ClearGender()
-	return pu
+func (_u *ProfileUpdate) ClearGender() *ProfileUpdate {
+	_u.mutation.ClearGender()
+	return _u
 }
 
 // Mutation returns the ProfileMutation object of the builder.
-func (pu *ProfileUpdate) Mutation() *ProfileMutation {
-	return pu.mutation
+func (_u *ProfileUpdate) Mutation() *ProfileMutation {
+	return _u.mutation
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (pu *ProfileUpdate) Save(ctx context.Context) (int, error) {
-	if err := pu.defaults(); err != nil {
+func (_u *ProfileUpdate) Save(ctx context.Context) (int, error) {
+	if err := _u.defaults(); err != nil {
 		return 0, err
 	}
-	return withHooks(ctx, pu.sqlSave, pu.mutation, pu.hooks)
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (pu *ProfileUpdate) SaveX(ctx context.Context) int {
-	affected, err := pu.Save(ctx)
+func (_u *ProfileUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -118,33 +118,33 @@ func (pu *ProfileUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (pu *ProfileUpdate) Exec(ctx context.Context) error {
-	_, err := pu.Save(ctx)
+func (_u *ProfileUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (pu *ProfileUpdate) ExecX(ctx context.Context) {
-	if err := pu.Exec(ctx); err != nil {
+func (_u *ProfileUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (pu *ProfileUpdate) defaults() error {
-	if _, ok := pu.mutation.UpdateTime(); !ok && !pu.mutation.UpdateTimeCleared() {
+func (_u *ProfileUpdate) defaults() error {
+	if _, ok := _u.mutation.UpdateTime(); !ok && !_u.mutation.UpdateTimeCleared() {
 		if profile.UpdateDefaultUpdateTime == nil {
 			return fmt.Errorf("ent: uninitialized profile.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
 		}
 		v := profile.UpdateDefaultUpdateTime()
-		pu.mutation.SetUpdateTime(v)
+		_u.mutation.SetUpdateTime(v)
 	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (pu *ProfileUpdate) check() error {
-	if v, ok := pu.mutation.Sub(); ok {
+func (_u *ProfileUpdate) check() error {
+	if v, ok := _u.mutation.Sub(); ok {
 		if err := profile.SubValidator(v); err != nil {
 			return &ValidationError{Name: "sub", err: fmt.Errorf(`ent: validator failed for field "Profile.sub": %w`, err)}
 		}
@@ -153,46 +153,46 @@ func (pu *ProfileUpdate) check() error {
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (pu *ProfileUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ProfileUpdate {
-	pu.modifiers = append(pu.modifiers, modifiers...)
-	return pu
+func (_u *ProfileUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ProfileUpdate {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
 }
 
-func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := pu.check(); err != nil {
-		return n, err
+func (_u *ProfileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString))
-	if ps := pu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := pu.mutation.UpdateTime(); ok {
+	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(profile.FieldUpdateTime, field.TypeTime, value)
 	}
-	if pu.mutation.UpdateTimeCleared() {
+	if _u.mutation.UpdateTimeCleared() {
 		_spec.ClearField(profile.FieldUpdateTime, field.TypeTime)
 	}
-	if value, ok := pu.mutation.Sub(); ok {
+	if value, ok := _u.mutation.Sub(); ok {
 		_spec.SetField(profile.FieldSub, field.TypeString, value)
 	}
-	if value, ok := pu.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(profile.FieldName, field.TypeString, value)
 	}
-	if pu.mutation.NameCleared() {
+	if _u.mutation.NameCleared() {
 		_spec.ClearField(profile.FieldName, field.TypeString)
 	}
-	if value, ok := pu.mutation.Gender(); ok {
+	if value, ok := _u.mutation.Gender(); ok {
 		_spec.SetField(profile.FieldGender, field.TypeString, value)
 	}
-	if pu.mutation.GenderCleared() {
+	if _u.mutation.GenderCleared() {
 		_spec.ClearField(profile.FieldGender, field.TypeString)
 	}
-	_spec.AddModifiers(pu.modifiers...)
-	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
+	_spec.AddModifiers(_u.modifiers...)
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{profile.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -200,8 +200,8 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	pu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // ProfileUpdateOne is the builder for updating a single Profile entity.
@@ -214,100 +214,100 @@ type ProfileUpdateOne struct {
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (puo *ProfileUpdateOne) SetUpdateTime(t time.Time) *ProfileUpdateOne {
-	puo.mutation.SetUpdateTime(t)
-	return puo
+func (_u *ProfileUpdateOne) SetUpdateTime(v time.Time) *ProfileUpdateOne {
+	_u.mutation.SetUpdateTime(v)
+	return _u
 }
 
 // ClearUpdateTime clears the value of the "update_time" field.
-func (puo *ProfileUpdateOne) ClearUpdateTime() *ProfileUpdateOne {
-	puo.mutation.ClearUpdateTime()
-	return puo
+func (_u *ProfileUpdateOne) ClearUpdateTime() *ProfileUpdateOne {
+	_u.mutation.ClearUpdateTime()
+	return _u
 }
 
 // SetSub sets the "sub" field.
-func (puo *ProfileUpdateOne) SetSub(s string) *ProfileUpdateOne {
-	puo.mutation.SetSub(s)
-	return puo
+func (_u *ProfileUpdateOne) SetSub(v string) *ProfileUpdateOne {
+	_u.mutation.SetSub(v)
+	return _u
 }
 
 // SetNillableSub sets the "sub" field if the given value is not nil.
-func (puo *ProfileUpdateOne) SetNillableSub(s *string) *ProfileUpdateOne {
-	if s != nil {
-		puo.SetSub(*s)
+func (_u *ProfileUpdateOne) SetNillableSub(v *string) *ProfileUpdateOne {
+	if v != nil {
+		_u.SetSub(*v)
 	}
-	return puo
+	return _u
 }
 
 // SetName sets the "name" field.
-func (puo *ProfileUpdateOne) SetName(s string) *ProfileUpdateOne {
-	puo.mutation.SetName(s)
-	return puo
+func (_u *ProfileUpdateOne) SetName(v string) *ProfileUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (puo *ProfileUpdateOne) SetNillableName(s *string) *ProfileUpdateOne {
-	if s != nil {
-		puo.SetName(*s)
+func (_u *ProfileUpdateOne) SetNillableName(v *string) *ProfileUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return puo
+	return _u
 }
 
 // ClearName clears the value of the "name" field.
-func (puo *ProfileUpdateOne) ClearName() *ProfileUpdateOne {
-	puo.mutation.ClearName()
-	return puo
+func (_u *ProfileUpdateOne) ClearName() *ProfileUpdateOne {
+	_u.mutation.ClearName()
+	return _u
 }
 
 // SetGender sets the "gender" field.
-func (puo *ProfileUpdateOne) SetGender(s string) *ProfileUpdateOne {
-	puo.mutation.SetGender(s)
-	return puo
+func (_u *ProfileUpdateOne) SetGender(v string) *ProfileUpdateOne {
+	_u.mutation.SetGender(v)
+	return _u
 }
 
 // SetNillableGender sets the "gender" field if the given value is not nil.
-func (puo *ProfileUpdateOne) SetNillableGender(s *string) *ProfileUpdateOne {
-	if s != nil {
-		puo.SetGender(*s)
+func (_u *ProfileUpdateOne) SetNillableGender(v *string) *ProfileUpdateOne {
+	if v != nil {
+		_u.SetGender(*v)
 	}
-	return puo
+	return _u
 }
 
 // ClearGender clears the value of the "gender" field.
-func (puo *ProfileUpdateOne) ClearGender() *ProfileUpdateOne {
-	puo.mutation.ClearGender()
-	return puo
+func (_u *ProfileUpdateOne) ClearGender() *ProfileUpdateOne {
+	_u.mutation.ClearGender()
+	return _u
 }
 
 // Mutation returns the ProfileMutation object of the builder.
-func (puo *ProfileUpdateOne) Mutation() *ProfileMutation {
-	return puo.mutation
+func (_u *ProfileUpdateOne) Mutation() *ProfileMutation {
+	return _u.mutation
 }
 
 // Where appends a list predicates to the ProfileUpdate builder.
-func (puo *ProfileUpdateOne) Where(ps ...predicate.Profile) *ProfileUpdateOne {
-	puo.mutation.Where(ps...)
-	return puo
+func (_u *ProfileUpdateOne) Where(ps ...predicate.Profile) *ProfileUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (puo *ProfileUpdateOne) Select(field string, fields ...string) *ProfileUpdateOne {
-	puo.fields = append([]string{field}, fields...)
-	return puo
+func (_u *ProfileUpdateOne) Select(field string, fields ...string) *ProfileUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Profile entity.
-func (puo *ProfileUpdateOne) Save(ctx context.Context) (*Profile, error) {
-	if err := puo.defaults(); err != nil {
+func (_u *ProfileUpdateOne) Save(ctx context.Context) (*Profile, error) {
+	if err := _u.defaults(); err != nil {
 		return nil, err
 	}
-	return withHooks(ctx, puo.sqlSave, puo.mutation, puo.hooks)
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (puo *ProfileUpdateOne) SaveX(ctx context.Context) *Profile {
-	node, err := puo.Save(ctx)
+func (_u *ProfileUpdateOne) SaveX(ctx context.Context) *Profile {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -315,33 +315,33 @@ func (puo *ProfileUpdateOne) SaveX(ctx context.Context) *Profile {
 }
 
 // Exec executes the query on the entity.
-func (puo *ProfileUpdateOne) Exec(ctx context.Context) error {
-	_, err := puo.Save(ctx)
+func (_u *ProfileUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (puo *ProfileUpdateOne) ExecX(ctx context.Context) {
-	if err := puo.Exec(ctx); err != nil {
+func (_u *ProfileUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (puo *ProfileUpdateOne) defaults() error {
-	if _, ok := puo.mutation.UpdateTime(); !ok && !puo.mutation.UpdateTimeCleared() {
+func (_u *ProfileUpdateOne) defaults() error {
+	if _, ok := _u.mutation.UpdateTime(); !ok && !_u.mutation.UpdateTimeCleared() {
 		if profile.UpdateDefaultUpdateTime == nil {
 			return fmt.Errorf("ent: uninitialized profile.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
 		}
 		v := profile.UpdateDefaultUpdateTime()
-		puo.mutation.SetUpdateTime(v)
+		_u.mutation.SetUpdateTime(v)
 	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (puo *ProfileUpdateOne) check() error {
-	if v, ok := puo.mutation.Sub(); ok {
+func (_u *ProfileUpdateOne) check() error {
+	if v, ok := _u.mutation.Sub(); ok {
 		if err := profile.SubValidator(v); err != nil {
 			return &ValidationError{Name: "sub", err: fmt.Errorf(`ent: validator failed for field "Profile.sub": %w`, err)}
 		}
@@ -350,22 +350,22 @@ func (puo *ProfileUpdateOne) check() error {
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (puo *ProfileUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ProfileUpdateOne {
-	puo.modifiers = append(puo.modifiers, modifiers...)
-	return puo
+func (_u *ProfileUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *ProfileUpdateOne {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
 }
 
-func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err error) {
-	if err := puo.check(); err != nil {
+func (_u *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString))
-	id, ok := puo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Profile.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := puo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, profile.FieldID)
 		for _, f := range fields {
@@ -377,39 +377,39 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 			}
 		}
 	}
-	if ps := puo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := puo.mutation.UpdateTime(); ok {
+	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(profile.FieldUpdateTime, field.TypeTime, value)
 	}
-	if puo.mutation.UpdateTimeCleared() {
+	if _u.mutation.UpdateTimeCleared() {
 		_spec.ClearField(profile.FieldUpdateTime, field.TypeTime)
 	}
-	if value, ok := puo.mutation.Sub(); ok {
+	if value, ok := _u.mutation.Sub(); ok {
 		_spec.SetField(profile.FieldSub, field.TypeString, value)
 	}
-	if value, ok := puo.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(profile.FieldName, field.TypeString, value)
 	}
-	if puo.mutation.NameCleared() {
+	if _u.mutation.NameCleared() {
 		_spec.ClearField(profile.FieldName, field.TypeString)
 	}
-	if value, ok := puo.mutation.Gender(); ok {
+	if value, ok := _u.mutation.Gender(); ok {
 		_spec.SetField(profile.FieldGender, field.TypeString, value)
 	}
-	if puo.mutation.GenderCleared() {
+	if _u.mutation.GenderCleared() {
 		_spec.ClearField(profile.FieldGender, field.TypeString)
 	}
-	_spec.AddModifiers(puo.modifiers...)
-	_node = &Profile{config: puo.config}
+	_spec.AddModifiers(_u.modifiers...)
+	_node = &Profile{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, puo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{profile.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -417,6 +417,6 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 		}
 		return nil, err
 	}
-	puo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

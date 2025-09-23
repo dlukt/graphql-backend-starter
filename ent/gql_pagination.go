@@ -208,8 +208,8 @@ func (p *profilePager) applyFilter(query *ProfileQuery) (*ProfileQuery, error) {
 	return query, nil
 }
 
-func (p *profilePager) toCursor(pr *Profile) Cursor {
-	return p.order.Field.toCursor(pr)
+func (p *profilePager) toCursor(_m *Profile) Cursor {
+	return p.order.Field.toCursor(_m)
 }
 
 func (p *profilePager) applyCursors(query *ProfileQuery, after, before *Cursor) (*ProfileQuery, error) {
@@ -255,7 +255,7 @@ func (p *profilePager) orderExpr(query *ProfileQuery) sql.Querier {
 }
 
 // Paginate executes the query and returns a relay based cursor connection to Profile.
-func (pr *ProfileQuery) Paginate(
+func (_m *ProfileQuery) Paginate(
 	ctx context.Context, after *Cursor, first *int,
 	before *Cursor, last *int, opts ...ProfilePaginateOption,
 ) (*ProfileConnection, error) {
@@ -266,7 +266,7 @@ func (pr *ProfileQuery) Paginate(
 	if err != nil {
 		return nil, err
 	}
-	if pr, err = pager.applyFilter(pr); err != nil {
+	if _m, err = pager.applyFilter(_m); err != nil {
 		return nil, err
 	}
 	conn := &ProfileConnection{Edges: []*ProfileEdge{}}
@@ -274,7 +274,7 @@ func (pr *ProfileQuery) Paginate(
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
 		if hasPagination || ignoredEdges {
-			c := pr.Clone()
+			c := _m.Clone()
 			c.ctx.Fields = nil
 			if conn.TotalCount, err = c.Count(ctx); err != nil {
 				return nil, err
@@ -286,20 +286,20 @@ func (pr *ProfileQuery) Paginate(
 	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
 		return conn, nil
 	}
-	if pr, err = pager.applyCursors(pr, after, before); err != nil {
+	if _m, err = pager.applyCursors(_m, after, before); err != nil {
 		return nil, err
 	}
 	limit := paginateLimit(first, last)
 	if limit != 0 {
-		pr.Limit(limit)
+		_m.Limit(limit)
 	}
 	if field := collectedField(ctx, edgesField, nodeField); field != nil {
-		if err := pr.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+		if err := _m.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
 			return nil, err
 		}
 	}
-	pr = pager.applyOrder(pr)
-	nodes, err := pr.All(ctx)
+	_m = pager.applyOrder(_m)
+	nodes, err := _m.All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -310,43 +310,43 @@ func (pr *ProfileQuery) Paginate(
 var (
 	// ProfileOrderFieldCreateTime orders Profile by create_time.
 	ProfileOrderFieldCreateTime = &ProfileOrderField{
-		Value: func(pr *Profile) (ent.Value, error) {
-			return pr.CreateTime, nil
+		Value: func(_m *Profile) (ent.Value, error) {
+			return _m.CreateTime, nil
 		},
 		column: profile.FieldCreateTime,
 		toTerm: profile.ByCreateTime,
-		toCursor: func(pr *Profile) Cursor {
+		toCursor: func(_m *Profile) Cursor {
 			return Cursor{
-				ID:    pr.ID,
-				Value: pr.CreateTime,
+				ID:    _m.ID,
+				Value: _m.CreateTime,
 			}
 		},
 	}
 	// ProfileOrderFieldUpdateTime orders Profile by update_time.
 	ProfileOrderFieldUpdateTime = &ProfileOrderField{
-		Value: func(pr *Profile) (ent.Value, error) {
-			return pr.UpdateTime, nil
+		Value: func(_m *Profile) (ent.Value, error) {
+			return _m.UpdateTime, nil
 		},
 		column: profile.FieldUpdateTime,
 		toTerm: profile.ByUpdateTime,
-		toCursor: func(pr *Profile) Cursor {
+		toCursor: func(_m *Profile) Cursor {
 			return Cursor{
-				ID:    pr.ID,
-				Value: pr.UpdateTime,
+				ID:    _m.ID,
+				Value: _m.UpdateTime,
 			}
 		},
 	}
 	// ProfileOrderFieldName orders Profile by name.
 	ProfileOrderFieldName = &ProfileOrderField{
-		Value: func(pr *Profile) (ent.Value, error) {
-			return pr.Name, nil
+		Value: func(_m *Profile) (ent.Value, error) {
+			return _m.Name, nil
 		},
 		column: profile.FieldName,
 		toTerm: profile.ByName,
-		toCursor: func(pr *Profile) Cursor {
+		toCursor: func(_m *Profile) Cursor {
 			return Cursor{
-				ID:    pr.ID,
-				Value: pr.Name,
+				ID:    _m.ID,
+				Value: _m.Name,
 			}
 		},
 	}
@@ -409,24 +409,24 @@ type ProfileOrder struct {
 var DefaultProfileOrder = &ProfileOrder{
 	Direction: entgql.OrderDirectionAsc,
 	Field: &ProfileOrderField{
-		Value: func(pr *Profile) (ent.Value, error) {
-			return pr.ID, nil
+		Value: func(_m *Profile) (ent.Value, error) {
+			return _m.ID, nil
 		},
 		column: profile.FieldID,
 		toTerm: profile.ByID,
-		toCursor: func(pr *Profile) Cursor {
-			return Cursor{ID: pr.ID}
+		toCursor: func(_m *Profile) Cursor {
+			return Cursor{ID: _m.ID}
 		},
 	},
 }
 
 // ToEdge converts Profile into ProfileEdge.
-func (pr *Profile) ToEdge(order *ProfileOrder) *ProfileEdge {
+func (_m *Profile) ToEdge(order *ProfileOrder) *ProfileEdge {
 	if order == nil {
 		order = DefaultProfileOrder
 	}
 	return &ProfileEdge{
-		Node:   pr,
-		Cursor: order.Field.toCursor(pr),
+		Node:   _m,
+		Cursor: order.Field.toCursor(_m),
 	}
 }

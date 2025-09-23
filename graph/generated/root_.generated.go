@@ -680,6 +680,8 @@ input UpdateProfileInput {
   updateProfile(id: ID!, input: UpdateProfileInput!): Profile
   deleteProfile(id: ID!): ID
 }
-`, BuiltIn: false},
+
+#type Subscription {
+#}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)

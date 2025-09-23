@@ -11,18 +11,18 @@ import (
 )
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (pr *ProfileQuery) CollectFields(ctx context.Context, satisfies ...string) (*ProfileQuery, error) {
+func (_q *ProfileQuery) CollectFields(ctx context.Context, satisfies ...string) (*ProfileQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
-		return pr, nil
+		return _q, nil
 	}
-	if err := pr.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
-	return pr, nil
+	return _q, nil
 }
 
-func (pr *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (_q *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -63,7 +63,7 @@ func (pr *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 		}
 	}
 	if !unknownSeen {
-		pr.Select(selectedFields...)
+		_q.Select(selectedFields...)
 	}
 	return nil
 }
@@ -144,7 +144,7 @@ func fieldArgs(ctx context.Context, whereInput any, path ...string) map[string]a
 func unmarshalArgs(ctx context.Context, whereInput any, args map[string]any) map[string]any {
 	for _, k := range []string{firstField, lastField} {
 		v, ok := args[k]
-		if !ok {
+		if !ok || v == nil {
 			continue
 		}
 		i, err := graphql.UnmarshalInt(v)

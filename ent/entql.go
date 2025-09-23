@@ -42,13 +42,13 @@ type predicateAdder interface {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (pq *ProfileQuery) addPredicate(pred func(s *sql.Selector)) {
-	pq.predicates = append(pq.predicates, pred)
+func (_q *ProfileQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
 }
 
 // Filter returns a Filter implementation to apply filters on the ProfileQuery builder.
-func (pq *ProfileQuery) Filter() *ProfileFilter {
-	return &ProfileFilter{config: pq.config, predicateAdder: pq}
+func (_q *ProfileQuery) Filter() *ProfileFilter {
+	return &ProfileFilter{config: _q.config, predicateAdder: _q}
 }
 
 // addPredicate implements the predicateAdder interface.
