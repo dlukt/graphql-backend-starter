@@ -74,31 +74,20 @@ func (ec *executionContext) field_Mutation_updateProfile_args(ctx context.Contex
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _Mutation_createProfile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createProfile(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateProfile(rctx, fc.Args["input"].(ent.CreateProfileInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.Profile)
-	fc.Result = res
-	return ec.marshalOProfile2ᚖgithubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐProfile(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createProfile,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateProfile(ctx, fc.Args["input"].(ent.CreateProfileInput))
+		},
+		nil,
+		ec.marshalOProfile2ᚖgithubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐProfile,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createProfile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -140,31 +129,20 @@ func (ec *executionContext) fieldContext_Mutation_createProfile(ctx context.Cont
 }
 
 func (ec *executionContext) _Mutation_updateProfile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateProfile(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateProfile(rctx, fc.Args["id"].(xid.ID), fc.Args["input"].(ent.UpdateProfileInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*ent.Profile)
-	fc.Result = res
-	return ec.marshalOProfile2ᚖgithubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐProfile(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_updateProfile,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdateProfile(ctx, fc.Args["id"].(xid.ID), fc.Args["input"].(ent.UpdateProfileInput))
+		},
+		nil,
+		ec.marshalOProfile2ᚖgithubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐProfile,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateProfile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -206,31 +184,20 @@ func (ec *executionContext) fieldContext_Mutation_updateProfile(ctx context.Cont
 }
 
 func (ec *executionContext) _Mutation_deleteProfile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteProfile(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteProfile(rctx, fc.Args["id"].(xid.ID))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*xid.ID)
-	fc.Result = res
-	return ec.marshalOID2ᚖgithubᚗcomᚋrsᚋxidᚐID(ctx, field.Selections, res)
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_deleteProfile,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().DeleteProfile(ctx, fc.Args["id"].(xid.ID))
+		},
+		nil,
+		ec.marshalOID2ᚖgithubᚗcomᚋrsᚋxidᚐID,
+		true,
+		false,
+	)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteProfile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
