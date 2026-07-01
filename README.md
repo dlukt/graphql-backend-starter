@@ -42,18 +42,6 @@ go run main.go graphql \
 --db_port="5432"
 ```
 
-### restricting websocket origins
-
-By default the websocket transport accepts connections from any origin. Restrict
-this in production with `--ws_allowed_origins` (comma-separated host patterns):
-
-```bash
-go run main.go graphql \
---debug=true \
---ws_allowed_origins="app.example.com,*.example.com"
-```
-
-
 ## Getting started
 
 Let's assume your project is at github.com/user/repo
@@ -143,6 +131,18 @@ go generate ./...
 Uses [OIDC Middleware Guard](https://github.com/deicod/oidcmw) and its viewer with helper functions.
 It assumes a Keycloak claims structure.
 If you need the claims `viewer.RawClaims` which returns a `map[string]any`.
+
+
+### restricting websocket origins
+
+By default the websocket transport accepts connections from any origin. Restrict
+this in production with `--ws_allowed_origins` (comma-separated host patterns):
+
+```bash
+go run main.go graphql \
+--debug=true \
+--ws_allowed_origins="app.example.com,*.example.com"
+```
 
 ## Further reading
 
