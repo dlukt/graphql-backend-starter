@@ -4,6 +4,7 @@ import {
   RecordSource,
   Store,
   type FetchFunction,
+  type GraphQLResponse,
   type SubscribeFunction,
   Observable,
 } from "relay-runtime";
@@ -12,7 +13,7 @@ import {oidcConfig} from './oidc-config.ts';
 import {User} from 'oidc-client-ts';
 
 const HTTP_ENDPOINT = import.meta.env.VITE_HTTP_ENDPOINT;
-const WS_ENDPOINT = (import.meta.env as any).VITE_WS_ENDPOINT ?? String(HTTP_ENDPOINT || '').replace(/^http/, 'ws')
+const WS_ENDPOINT = import.meta.env.VITE_WS_ENDPOINT ?? String(HTTP_ENDPOINT || '').replace(/^http/, 'ws')
 const file = "file"
 const files = "files"
 
@@ -144,11 +145,13 @@ const subscribeFn: SubscribeFunction = (request, variables) => {
       { query: request.text as string, variables },
       {
         next: (value) => {
-          const resp: any = { ...(value as any) }
-          if (resp && Object.prototype.hasOwnProperty.call(resp, 'data') && resp.data === null) {
+          // Relay treats `data: null` as a hard error boundary; normalize
+          // explicit null to undefined so the payload is forwarded as "no data".
+          const resp: Record<string, unknown> = { ...value }
+          if (resp.data === null) {
             resp.data = undefined
           }
-          sink.next(resp)
+          sink.next(resp as unknown as GraphQLResponse)
         },
         error: sink.error.bind(sink),
         complete: sink.complete.bind(sink),
