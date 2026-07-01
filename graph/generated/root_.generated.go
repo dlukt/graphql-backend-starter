@@ -5,12 +5,11 @@ package generated
 import (
 	"bytes"
 	"context"
-	"errors"
+	"fmt"
 	"sync/atomic"
 
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/dlukt/graphql-backend-starter/ent"
 	"github.com/rs/xid"
 	gqlparser "github.com/vektah/gqlparser/v2"
@@ -19,20 +18,10 @@ import (
 
 // NewExecutableSchema creates an ExecutableSchema from the ResolverRoot interface.
 func NewExecutableSchema(cfg Config) graphql.ExecutableSchema {
-	return &executableSchema{
-		schema:     cfg.Schema,
-		resolvers:  cfg.Resolvers,
-		directives: cfg.Directives,
-		complexity: cfg.Complexity,
-	}
+	return &executableSchema{SchemaData: cfg.Schema, Resolvers: cfg.Resolvers, Directives: cfg.Directives, ComplexityRoot: cfg.Complexity}
 }
 
-type Config struct {
-	Schema     *ast.Schema
-	Resolvers  ResolverRoot
-	Directives DirectiveRoot
-	Complexity ComplexityRoot
-}
+type Config = graphql.Config[ResolverRoot, DirectiveRoot, ComplexityRoot]
 
 type ResolverRoot interface {
 	Mutation() MutationResolver
@@ -83,27 +72,22 @@ type ComplexityRoot struct {
 	}
 }
 
-type executableSchema struct {
-	schema     *ast.Schema
-	resolvers  ResolverRoot
-	directives DirectiveRoot
-	complexity ComplexityRoot
-}
+type executableSchema graphql.ExecutableSchemaState[ResolverRoot, DirectiveRoot, ComplexityRoot]
 
 func (e *executableSchema) Schema() *ast.Schema {
-	if e.schema != nil {
-		return e.schema
+	if e.SchemaData != nil {
+		return e.SchemaData
 	}
 	return parsedSchema
 }
 
 func (e *executableSchema) Complexity(ctx context.Context, typeName, field string, childComplexity int, rawArgs map[string]any) (int, bool) {
-	ec := executionContext{nil, e, 0, 0, nil}
+	ec := newExecutionContext(nil, e, nil)
 	_ = ec
 	switch typeName + "." + field {
 
 	case "Mutation.createProfile":
-		if e.complexity.Mutation.CreateProfile == nil {
+		if e.ComplexityRoot.Mutation.CreateProfile == nil {
 			break
 		}
 
@@ -112,10 +96,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateProfile(childComplexity, args["input"].(ent.CreateProfileInput)), true
-
+		return e.ComplexityRoot.Mutation.CreateProfile(childComplexity, args["input"].(ent.CreateProfileInput)), true
 	case "Mutation.deleteProfile":
-		if e.complexity.Mutation.DeleteProfile == nil {
+		if e.ComplexityRoot.Mutation.DeleteProfile == nil {
 			break
 		}
 
@@ -124,10 +107,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteProfile(childComplexity, args["id"].(xid.ID)), true
-
+		return e.ComplexityRoot.Mutation.DeleteProfile(childComplexity, args["id"].(xid.ID)), true
 	case "Mutation.updateProfile":
-		if e.complexity.Mutation.UpdateProfile == nil {
+		if e.ComplexityRoot.Mutation.UpdateProfile == nil {
 			break
 		}
 
@@ -136,115 +118,104 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateProfile(childComplexity, args["id"].(xid.ID), args["input"].(ent.UpdateProfileInput)), true
+		return e.ComplexityRoot.Mutation.UpdateProfile(childComplexity, args["id"].(xid.ID), args["input"].(ent.UpdateProfileInput)), true
 
 	case "PageInfo.endCursor":
-		if e.complexity.PageInfo.EndCursor == nil {
+		if e.ComplexityRoot.PageInfo.EndCursor == nil {
 			break
 		}
 
-		return e.complexity.PageInfo.EndCursor(childComplexity), true
-
+		return e.ComplexityRoot.PageInfo.EndCursor(childComplexity), true
 	case "PageInfo.hasNextPage":
-		if e.complexity.PageInfo.HasNextPage == nil {
+		if e.ComplexityRoot.PageInfo.HasNextPage == nil {
 			break
 		}
 
-		return e.complexity.PageInfo.HasNextPage(childComplexity), true
-
+		return e.ComplexityRoot.PageInfo.HasNextPage(childComplexity), true
 	case "PageInfo.hasPreviousPage":
-		if e.complexity.PageInfo.HasPreviousPage == nil {
+		if e.ComplexityRoot.PageInfo.HasPreviousPage == nil {
 			break
 		}
 
-		return e.complexity.PageInfo.HasPreviousPage(childComplexity), true
-
+		return e.ComplexityRoot.PageInfo.HasPreviousPage(childComplexity), true
 	case "PageInfo.startCursor":
-		if e.complexity.PageInfo.StartCursor == nil {
+		if e.ComplexityRoot.PageInfo.StartCursor == nil {
 			break
 		}
 
-		return e.complexity.PageInfo.StartCursor(childComplexity), true
+		return e.ComplexityRoot.PageInfo.StartCursor(childComplexity), true
 
 	case "Profile.createTime":
-		if e.complexity.Profile.CreateTime == nil {
+		if e.ComplexityRoot.Profile.CreateTime == nil {
 			break
 		}
 
-		return e.complexity.Profile.CreateTime(childComplexity), true
-
+		return e.ComplexityRoot.Profile.CreateTime(childComplexity), true
 	case "Profile.gender":
-		if e.complexity.Profile.Gender == nil {
+		if e.ComplexityRoot.Profile.Gender == nil {
 			break
 		}
 
-		return e.complexity.Profile.Gender(childComplexity), true
-
+		return e.ComplexityRoot.Profile.Gender(childComplexity), true
 	case "Profile.id":
-		if e.complexity.Profile.ID == nil {
+		if e.ComplexityRoot.Profile.ID == nil {
 			break
 		}
 
-		return e.complexity.Profile.ID(childComplexity), true
-
+		return e.ComplexityRoot.Profile.ID(childComplexity), true
 	case "Profile.name":
-		if e.complexity.Profile.Name == nil {
+		if e.ComplexityRoot.Profile.Name == nil {
 			break
 		}
 
-		return e.complexity.Profile.Name(childComplexity), true
-
+		return e.ComplexityRoot.Profile.Name(childComplexity), true
 	case "Profile.sub":
-		if e.complexity.Profile.Sub == nil {
+		if e.ComplexityRoot.Profile.Sub == nil {
 			break
 		}
 
-		return e.complexity.Profile.Sub(childComplexity), true
-
+		return e.ComplexityRoot.Profile.Sub(childComplexity), true
 	case "Profile.updateTime":
-		if e.complexity.Profile.UpdateTime == nil {
+		if e.ComplexityRoot.Profile.UpdateTime == nil {
 			break
 		}
 
-		return e.complexity.Profile.UpdateTime(childComplexity), true
+		return e.ComplexityRoot.Profile.UpdateTime(childComplexity), true
 
 	case "ProfileConnection.edges":
-		if e.complexity.ProfileConnection.Edges == nil {
+		if e.ComplexityRoot.ProfileConnection.Edges == nil {
 			break
 		}
 
-		return e.complexity.ProfileConnection.Edges(childComplexity), true
-
+		return e.ComplexityRoot.ProfileConnection.Edges(childComplexity), true
 	case "ProfileConnection.pageInfo":
-		if e.complexity.ProfileConnection.PageInfo == nil {
+		if e.ComplexityRoot.ProfileConnection.PageInfo == nil {
 			break
 		}
 
-		return e.complexity.ProfileConnection.PageInfo(childComplexity), true
-
+		return e.ComplexityRoot.ProfileConnection.PageInfo(childComplexity), true
 	case "ProfileConnection.totalCount":
-		if e.complexity.ProfileConnection.TotalCount == nil {
+		if e.ComplexityRoot.ProfileConnection.TotalCount == nil {
 			break
 		}
 
-		return e.complexity.ProfileConnection.TotalCount(childComplexity), true
+		return e.ComplexityRoot.ProfileConnection.TotalCount(childComplexity), true
 
 	case "ProfileEdge.cursor":
-		if e.complexity.ProfileEdge.Cursor == nil {
+		if e.ComplexityRoot.ProfileEdge.Cursor == nil {
 			break
 		}
 
-		return e.complexity.ProfileEdge.Cursor(childComplexity), true
-
+		return e.ComplexityRoot.ProfileEdge.Cursor(childComplexity), true
 	case "ProfileEdge.node":
-		if e.complexity.ProfileEdge.Node == nil {
+		if e.ComplexityRoot.ProfileEdge.Node == nil {
 			break
 		}
 
-		return e.complexity.ProfileEdge.Node(childComplexity), true
+		return e.ComplexityRoot.ProfileEdge.Node(childComplexity), true
 
 	case "Query.node":
-		if e.complexity.Query.Node == nil {
+		if e.ComplexityRoot.Query.Node == nil {
 			break
 		}
 
@@ -253,10 +224,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Node(childComplexity, args["id"].(xid.ID)), true
-
+		return e.ComplexityRoot.Query.Node(childComplexity, args["id"].(xid.ID)), true
 	case "Query.nodes":
-		if e.complexity.Query.Nodes == nil {
+		if e.ComplexityRoot.Query.Nodes == nil {
 			break
 		}
 
@@ -265,10 +235,9 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Nodes(childComplexity, args["ids"].([]xid.ID)), true
-
+		return e.ComplexityRoot.Query.Nodes(childComplexity, args["ids"].([]xid.ID)), true
 	case "Query.profiles":
-		if e.complexity.Query.Profiles == nil {
+		if e.ComplexityRoot.Query.Profiles == nil {
 			break
 		}
 
@@ -277,7 +246,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Profiles(childComplexity, args["after"].(*entgql.Cursor[xid.ID]), args["first"].(*int), args["before"].(*entgql.Cursor[xid.ID]), args["last"].(*int), args["orderBy"].(*ent.ProfileOrder), args["where"].(*ent.ProfileWhereInput)), true
+		return e.ComplexityRoot.Query.Profiles(childComplexity, args["after"].(*entgql.Cursor[xid.ID]), args["first"].(*int), args["before"].(*entgql.Cursor[xid.ID]), args["last"].(*int), args["orderBy"].(*ent.ProfileOrder), args["where"].(*ent.ProfileWhereInput)), true
 
 	}
 	return 0, false
@@ -285,7 +254,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
-	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
+	ec := newExecutionContext(opCtx, e, make(chan graphql.DeferredResult))
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCreateProfileInput,
 		ec.unmarshalInputProfileOrder,
@@ -304,9 +273,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 				ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
 				data = ec._Query(ctx, opCtx.Operation.SelectionSet)
 			} else {
-				if atomic.LoadInt32(&ec.pendingDeferred) > 0 {
-					result := <-ec.deferredResults
-					atomic.AddInt32(&ec.pendingDeferred, -1)
+				if atomic.LoadInt32(&ec.PendingDeferred) > 0 {
+					result := <-ec.DeferredResults
+					atomic.AddInt32(&ec.PendingDeferred, -1)
 					data = result.Result
 					response.Path = result.Path
 					response.Label = result.Label
@@ -318,8 +287,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			var buf bytes.Buffer
 			data.MarshalGQL(&buf)
 			response.Data = buf.Bytes()
-			if atomic.LoadInt32(&ec.deferred) > 0 {
-				hasNext := atomic.LoadInt32(&ec.pendingDeferred) > 0
+			if atomic.LoadInt32(&ec.Deferred) > 0 {
+				hasNext := atomic.LoadInt32(&ec.PendingDeferred) > 0
 				response.HasNext = &hasNext
 			}
 
@@ -347,44 +316,22 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 }
 
 type executionContext struct {
-	*graphql.OperationContext
-	*executableSchema
-	deferred        int32
-	pendingDeferred int32
-	deferredResults chan graphql.DeferredResult
+	*graphql.ExecutionContextState[ResolverRoot, DirectiveRoot, ComplexityRoot]
 }
 
-func (ec *executionContext) processDeferredGroup(dg graphql.DeferredGroup) {
-	atomic.AddInt32(&ec.pendingDeferred, 1)
-	go func() {
-		ctx := graphql.WithFreshResponseContext(dg.Context)
-		dg.FieldSet.Dispatch(ctx)
-		ds := graphql.DeferredResult{
-			Path:   dg.Path,
-			Label:  dg.Label,
-			Result: dg.FieldSet,
-			Errors: graphql.GetErrors(ctx),
-		}
-		// null fields should bubble up
-		if dg.FieldSet.Invalids > 0 {
-			ds.Result = graphql.Null
-		}
-		ec.deferredResults <- ds
-	}()
-}
-
-func (ec *executionContext) introspectSchema() (*introspection.Schema, error) {
-	if ec.DisableIntrospection {
-		return nil, errors.New("introspection disabled")
+func newExecutionContext(
+	opCtx *graphql.OperationContext,
+	execSchema *executableSchema,
+	deferredResults chan graphql.DeferredResult,
+) *executionContext {
+	return &executionContext{
+		ExecutionContextState: graphql.NewExecutionContextState[ResolverRoot, DirectiveRoot, ComplexityRoot](
+			opCtx,
+			(*graphql.ExecutableSchemaState[ResolverRoot, DirectiveRoot, ComplexityRoot])(execSchema),
+			parsedSchema,
+			deferredResults,
+		),
 	}
-	return introspection.WrapSchema(ec.Schema()), nil
-}
-
-func (ec *executionContext) introspectType(name string) (*introspection.Type, error) {
-	if ec.DisableIntrospection {
-		return nil, errors.New("introspection disabled")
-	}
-	return introspection.WrapTypeFromDef(ec.Schema(), ec.Schema().Types[name]), nil
 }
 
 var sources = []*ast.Source{
@@ -685,3 +632,173 @@ input UpdateProfileInput {
 #}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
+
+// childFields_* functions provide shared child field context lookups.
+// Each function is generated once per unique object type, deduplicating the
+// switch statements that were previously inlined in every fieldContext_* function.
+
+func (ec *executionContext) childFields_PageInfo(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "hasNextPage":
+		return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+	case "hasPreviousPage":
+		return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+	case "startCursor":
+		return ec.fieldContext_PageInfo_startCursor(ctx, field)
+	case "endCursor":
+		return ec.fieldContext_PageInfo_endCursor(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+}
+
+func (ec *executionContext) childFields_Profile(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "id":
+		return ec.fieldContext_Profile_id(ctx, field)
+	case "createTime":
+		return ec.fieldContext_Profile_createTime(ctx, field)
+	case "updateTime":
+		return ec.fieldContext_Profile_updateTime(ctx, field)
+	case "sub":
+		return ec.fieldContext_Profile_sub(ctx, field)
+	case "name":
+		return ec.fieldContext_Profile_name(ctx, field)
+	case "gender":
+		return ec.fieldContext_Profile_gender(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
+}
+
+func (ec *executionContext) childFields_ProfileConnection(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "edges":
+		return ec.fieldContext_ProfileConnection_edges(ctx, field)
+	case "pageInfo":
+		return ec.fieldContext_ProfileConnection_pageInfo(ctx, field)
+	case "totalCount":
+		return ec.fieldContext_ProfileConnection_totalCount(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type ProfileConnection", field.Name)
+}
+
+func (ec *executionContext) childFields_ProfileEdge(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "node":
+		return ec.fieldContext_ProfileEdge_node(ctx, field)
+	case "cursor":
+		return ec.fieldContext_ProfileEdge_cursor(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type ProfileEdge", field.Name)
+}
+
+func (ec *executionContext) childFields___Directive(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "name":
+		return ec.fieldContext___Directive_name(ctx, field)
+	case "description":
+		return ec.fieldContext___Directive_description(ctx, field)
+	case "isRepeatable":
+		return ec.fieldContext___Directive_isRepeatable(ctx, field)
+	case "locations":
+		return ec.fieldContext___Directive_locations(ctx, field)
+	case "args":
+		return ec.fieldContext___Directive_args(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __Directive", field.Name)
+}
+
+func (ec *executionContext) childFields___EnumValue(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "name":
+		return ec.fieldContext___EnumValue_name(ctx, field)
+	case "description":
+		return ec.fieldContext___EnumValue_description(ctx, field)
+	case "isDeprecated":
+		return ec.fieldContext___EnumValue_isDeprecated(ctx, field)
+	case "deprecationReason":
+		return ec.fieldContext___EnumValue_deprecationReason(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __EnumValue", field.Name)
+}
+
+func (ec *executionContext) childFields___Field(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "name":
+		return ec.fieldContext___Field_name(ctx, field)
+	case "description":
+		return ec.fieldContext___Field_description(ctx, field)
+	case "args":
+		return ec.fieldContext___Field_args(ctx, field)
+	case "type":
+		return ec.fieldContext___Field_type(ctx, field)
+	case "isDeprecated":
+		return ec.fieldContext___Field_isDeprecated(ctx, field)
+	case "deprecationReason":
+		return ec.fieldContext___Field_deprecationReason(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __Field", field.Name)
+}
+
+func (ec *executionContext) childFields___InputValue(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "name":
+		return ec.fieldContext___InputValue_name(ctx, field)
+	case "description":
+		return ec.fieldContext___InputValue_description(ctx, field)
+	case "type":
+		return ec.fieldContext___InputValue_type(ctx, field)
+	case "defaultValue":
+		return ec.fieldContext___InputValue_defaultValue(ctx, field)
+	case "isDeprecated":
+		return ec.fieldContext___InputValue_isDeprecated(ctx, field)
+	case "deprecationReason":
+		return ec.fieldContext___InputValue_deprecationReason(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __InputValue", field.Name)
+}
+
+func (ec *executionContext) childFields___Schema(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "description":
+		return ec.fieldContext___Schema_description(ctx, field)
+	case "types":
+		return ec.fieldContext___Schema_types(ctx, field)
+	case "queryType":
+		return ec.fieldContext___Schema_queryType(ctx, field)
+	case "mutationType":
+		return ec.fieldContext___Schema_mutationType(ctx, field)
+	case "subscriptionType":
+		return ec.fieldContext___Schema_subscriptionType(ctx, field)
+	case "directives":
+		return ec.fieldContext___Schema_directives(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+}
+
+func (ec *executionContext) childFields___Type(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+	switch field.Name {
+	case "kind":
+		return ec.fieldContext___Type_kind(ctx, field)
+	case "name":
+		return ec.fieldContext___Type_name(ctx, field)
+	case "description":
+		return ec.fieldContext___Type_description(ctx, field)
+	case "specifiedByURL":
+		return ec.fieldContext___Type_specifiedByURL(ctx, field)
+	case "fields":
+		return ec.fieldContext___Type_fields(ctx, field)
+	case "interfaces":
+		return ec.fieldContext___Type_interfaces(ctx, field)
+	case "possibleTypes":
+		return ec.fieldContext___Type_possibleTypes(ctx, field)
+	case "enumValues":
+		return ec.fieldContext___Type_enumValues(ctx, field)
+	case "inputFields":
+		return ec.fieldContext___Type_inputFields(ctx, field)
+	case "ofType":
+		return ec.fieldContext___Type_ofType(ctx, field)
+	case "isOneOf":
+		return ec.fieldContext___Type_isOneOf(ctx, field)
+	}
+	return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
+}

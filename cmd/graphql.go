@@ -28,7 +28,7 @@ import (
 	"github.com/dlukt/graphql-backend-starter/config"
 	"github.com/dlukt/graphql-backend-starter/ent"
 	"github.com/dlukt/graphql-backend-starter/graph"
-	"github.com/gorilla/websocket"
+	coderws "github.com/coder/websocket"
 	"github.com/rs/cors"
 	"github.com/spf13/cobra"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -180,6 +180,13 @@ func openDB(databaseURL string) *ent.Client {
 func NewDefaultServer(es graphql.ExecutableSchema) *handler.Server {
 	srv := handler.New(es)
 
+	// Default to accepting all origins; restrict to WebsocketAllowedOrigins
+	// when set.
+	acceptOptions := coderws.AcceptOptions{InsecureSkipVerify: true}
+	if len(config.WebsocketAllowedOrigins) > 0 {
+		acceptOptions = coderws.AcceptOptions{OriginPatterns: config.WebsocketAllowedOrigins}
+	}
+
 	srv.AddTransport(transport.Websocket{
 		KeepAlivePingInterval: 10 * time.Second,
 		InitFunc: func(ctx context.Context, p transport.InitPayload) (context.Context, *transport.InitPayload, error) {
@@ -214,10 +221,8 @@ func NewDefaultServer(es graphql.ExecutableSchema) *handler.Server {
 			}
 			return ctx, nil, nil
 		},
-		Upgrader: websocket.Upgrader{
-			CheckOrigin: func(r *http.Request) bool {
-				return true
-			},
+		Implementation: transport.CoderWebsocketImplementation{
+			AcceptOptions: acceptOptions,
 		},
 	})
 	srv.AddTransport(transport.Options{})

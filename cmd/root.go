@@ -87,6 +87,12 @@ func init() {
 		"5432",
 		"postgres port",
 	)
+	rootCmd.PersistentFlags().StringSliceVar(
+		&config.WebsocketAllowedOrigins,
+		"ws_allowed_origins",
+		nil,
+		"comma-separated list of allowed websocket origins (e.g. app.example.com); empty (default) accepts all origins",
+	)
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

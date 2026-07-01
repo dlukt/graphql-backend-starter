@@ -42,6 +42,18 @@ go run main.go graphql \
 --db_port="5432"
 ```
 
+### restricting websocket origins
+
+By default the websocket transport accepts connections from any origin. Restrict
+this in production with `--ws_allowed_origins` (comma-separated host patterns):
+
+```bash
+go run main.go graphql \
+--debug=true \
+--ws_allowed_origins="app.example.com,*.example.com"
+```
+
+
 ## Getting started
 
 Let's assume your project is at github.com/user/repo

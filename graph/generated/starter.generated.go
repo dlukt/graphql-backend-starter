@@ -5,7 +5,7 @@ package generated
 import (
 	"context"
 	"errors"
-	"fmt"
+	"math"
 	"strconv"
 	"sync/atomic"
 
@@ -30,7 +30,10 @@ type MutationResolver interface {
 func (ec *executionContext) field_Mutation_createProfile_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateProfileInput2githubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐCreateProfileInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (ent.CreateProfileInput, error) {
+			return ec.unmarshalNCreateProfileInput2githubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐCreateProfileInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +44,10 @@ func (ec *executionContext) field_Mutation_createProfile_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_deleteProfile_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2githubᚗcomᚋrsᚋxidᚐID)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (xid.ID, error) {
+			return ec.unmarshalNID2githubᚗcomᚋrsᚋxidᚐID(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -52,12 +58,18 @@ func (ec *executionContext) field_Mutation_deleteProfile_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_updateProfile_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2githubᚗcomᚋrsᚋxidᚐID)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id",
+		func(ctx context.Context, v any) (xid.ID, error) {
+			return ec.unmarshalNID2githubᚗcomᚋrsᚋxidᚐID(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateProfileInput2githubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐUpdateProfileInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input",
+		func(ctx context.Context, v any) (ent.UpdateProfileInput, error) {
+			return ec.unmarshalNUpdateProfileInput2githubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐUpdateProfileInput(ctx, v)
+		})
 	if err != nil {
 		return nil, err
 	}
@@ -67,10 +79,6 @@ func (ec *executionContext) field_Mutation_updateProfile_args(ctx context.Contex
 
 // endregion ***************************** args.gotpl *****************************
 
-// region    ************************** directives.gotpl **************************
-
-// endregion ************************** directives.gotpl **************************
-
 // region    **************************** field.gotpl *****************************
 
 func (ec *executionContext) _Mutation_createProfile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -78,18 +86,21 @@ func (ec *executionContext) _Mutation_createProfile(ctx context.Context, field g
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_createProfile,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_createProfile(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CreateProfile(ctx, fc.Args["input"].(ent.CreateProfileInput))
+			return ec.Resolvers.Mutation().CreateProfile(ctx, fc.Args["input"].(ent.CreateProfileInput))
 		},
 		nil,
-		ec.marshalOProfile2ᚖgithubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐProfile,
+		func(ctx context.Context, selections ast.SelectionSet, v *ent.Profile) graphql.Marshaler {
+			return ec.marshalOProfile2ᚖgithubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐProfile(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_createProfile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -97,21 +108,7 @@ func (ec *executionContext) fieldContext_Mutation_createProfile(ctx context.Cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Profile_id(ctx, field)
-			case "createTime":
-				return ec.fieldContext_Profile_createTime(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_Profile_updateTime(ctx, field)
-			case "sub":
-				return ec.fieldContext_Profile_sub(ctx, field)
-			case "name":
-				return ec.fieldContext_Profile_name(ctx, field)
-			case "gender":
-				return ec.fieldContext_Profile_gender(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
+			return ec.childFields_Profile(ctx, field)
 		},
 	}
 	defer func() {
@@ -133,18 +130,21 @@ func (ec *executionContext) _Mutation_updateProfile(ctx context.Context, field g
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_updateProfile,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_updateProfile(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().UpdateProfile(ctx, fc.Args["id"].(xid.ID), fc.Args["input"].(ent.UpdateProfileInput))
+			return ec.Resolvers.Mutation().UpdateProfile(ctx, fc.Args["id"].(xid.ID), fc.Args["input"].(ent.UpdateProfileInput))
 		},
 		nil,
-		ec.marshalOProfile2ᚖgithubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐProfile,
+		func(ctx context.Context, selections ast.SelectionSet, v *ent.Profile) graphql.Marshaler {
+			return ec.marshalOProfile2ᚖgithubᚗcomᚋdluktᚋgraphqlᚑbackendᚑstarterᚋentᚐProfile(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_updateProfile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -152,21 +152,7 @@ func (ec *executionContext) fieldContext_Mutation_updateProfile(ctx context.Cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Profile_id(ctx, field)
-			case "createTime":
-				return ec.fieldContext_Profile_createTime(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_Profile_updateTime(ctx, field)
-			case "sub":
-				return ec.fieldContext_Profile_sub(ctx, field)
-			case "name":
-				return ec.fieldContext_Profile_name(ctx, field)
-			case "gender":
-				return ec.fieldContext_Profile_gender(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
+			return ec.childFields_Profile(ctx, field)
 		},
 	}
 	defer func() {
@@ -188,18 +174,21 @@ func (ec *executionContext) _Mutation_deleteProfile(ctx context.Context, field g
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_deleteProfile,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Mutation_deleteProfile(ctx, field)
+		},
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().DeleteProfile(ctx, fc.Args["id"].(xid.ID))
+			return ec.Resolvers.Mutation().DeleteProfile(ctx, fc.Args["id"].(xid.ID))
 		},
 		nil,
-		ec.marshalOID2ᚖgithubᚗcomᚋrsᚋxidᚐID,
+		func(ctx context.Context, selections ast.SelectionSet, v *xid.ID) graphql.Marshaler {
+			return ec.marshalOID2ᚖgithubᚗcomᚋrsᚋxidᚐID(ctx, selections, v)
+		},
 		true,
 		false,
 	)
 }
-
 func (ec *executionContext) fieldContext_Mutation_deleteProfile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
@@ -245,7 +234,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	})
 
 	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
+	deferredFieldSet := graphql.NewFieldSet(nil)
+	deferLabelToView := make(map[string]*graphql.FieldSetView)
 	for i, field := range fields {
 		innerCtx := graphql.WithRootFieldContext(ctx, &graphql.RootFieldContext{
 			Object: field.Name,
@@ -259,14 +249,23 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createProfile(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "updateProfile":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateProfile(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		case "deleteProfile":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteProfile(ctx, field)
 			})
+			if out.Values[i] == graphql.RequiredNull {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -276,16 +275,14 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		return graphql.Null
 	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+	atomic.AddInt32(&ec.Deferred, int32(min(len(deferLabelToView), math.MaxInt32)))
 
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
+	ec.ProcessDeferredGroup(graphql.DeferredGroup{
+		Defers:   deferLabelToView,
+		Path:     graphql.GetPath(ctx),
+		FieldSet: deferredFieldSet,
+		Context:  ctx,
+	})
 
 	return out
 }
