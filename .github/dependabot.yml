@@ -1,0 +1,44 @@
+version: 2
+updates:
+  # Go backend (root module)
+  - package-ecosystem: gomod
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps(go)"
+    groups:
+      go-minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    labels:
+      - dependencies
+      - go
+
+  # Frontend management app (npm)
+  - package-ecosystem: npm
+    directory: "/frontend/management"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    versioning-strategy: increase
+    commit-message:
+      prefix: "deps(npm)"
+    groups:
+      npm-production:
+        dependency-type: production
+        update-types:
+          - minor
+          - patch
+      npm-development:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+    labels:
+      - dependencies
+      - javascript
